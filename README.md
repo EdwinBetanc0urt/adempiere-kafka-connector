@@ -1,6 +1,7 @@
-# ADempiere Template Project
+# ADempiere Kafka Connector
 
-Fill it with a comment about project.
+A Queue manager for send records from ADempiere to queue, this implementation was created with [kafka](https://kafka.apache.org/) queue.
+The scope for this is a little test using a external queue for process documents and also is just a project used for learn about micro-services and a hobby of saturday :)
 
 ## Requirements
 - [JDK 11 or later](https://adoptium.net/)
@@ -8,26 +9,39 @@ Fill it with a comment about project.
 
 
 ### Packages Names
-you should change the follows packages for your own implementation, just change the word `template` by your implementation
+All packages was sign with entity type code `eca56`, note that this way is more clear and simple for look at
 
 ```Java
-org.spin.template.model.validator
-org.spin.template.setup
-org.spin.template.util
+org.spin.eca56.model.validator
+org.spin.eca56.setup
+org.spin.eca56.util
+org.spin.eca56.util.queue
+org.spin.eca56.util.support
+org.spin.eca56.util.support.documents
+org.spin.eca56.util.support.kafka
 ```
 
 ### Model Validators
-Change the `org.spin.template.model.validator.Validator` by your implementation, example: `org.spin.template.model.validator.MyOwnFunctionality`
+The main validator is located at `org.spin.eca56.model.validator.EngineAsQueue`, this read all tables flagged as document and add these tables to trigger:
+
+- `TIMING_AFTER_COMPLETE`
+- `TIMING_AFTER_REVERSECORRECT`
+- `TIMING_AFTER_REVERSEACCRUAL`
+- `TIMING_AFTER_VOID`
 
 ### Model Deploy class
-Change the `org.spin.template.setup.Deploy` by your implementation, example: `org.spin.template.setup.MyOwnSetupForDeploy`
+This project has two deploy class for all functionality:
 
-### Model Util class for core changes
-Change the `org.spin.template.util.Changes` by your implementation, example: `org.spin.template.util.MyOwnChanges`
+- `org.spin.eca56.setup.CreateConfig`: Create a App registration for connect with kafka server with the follow data:
+  - Value: `Engine-Queue`
+  - Name: `Engine as Queue`
+  - Host: `localhost`
+  - Port: `29092`
+- `org.spin.eca56.setup.DeployValidator`: Create the model validator config linked to current client
 
 ## Binary Project
 
-You can get all binaries from github [here](https://central.sonatype.com/artifact/io.github.adempiere/adempiere-template-project/1.0.0).
+You can get all binaries from github [here](https://central.sonatype.com/artifact/io.github.adempiere/adempiere-kafka-connector/1.0.0).
 
 All contruction is from github actions
 
@@ -44,13 +58,13 @@ Is very easy.
 - Gradle
 
 ```Java
-implementation 'io.github.adempiere:adempiere-template-project:1.0.0'
+implementation 'io.github.adempiere:adempiere-kafka-connector:1.0.0'
 ```
 
 - SBT
 
 ```
-libraryDependencies += "io.github.adempiere" % "adempiere-template-project" % "1.0.0"
+libraryDependencies += "io.github.adempiere" % "adempiere-kafka-connector" % "1.0.0"
 ```
 
 - Apache Maven
@@ -58,7 +72,7 @@ libraryDependencies += "io.github.adempiere" % "adempiere-template-project" % "1
 ```
 <dependency>
     <groupId>io.github.adempiere</groupId>
-    <artifactId>adempiere-template-project</artifactId>
+    <artifactId>adempiere-kafka-connector</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```

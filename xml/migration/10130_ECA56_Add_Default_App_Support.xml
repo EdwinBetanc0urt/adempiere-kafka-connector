@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Migrations>
+  <Migration EntityType="ECA56" Name="ECA56 Add Default App Support" ReleaseNo="1.0" SeqNo="10130">
+    <Step SeqNo="10" StepType="AD">
+      <PO AD_Table_ID="54542" Action="I" Record_ID="50038" Table="AD_AppSupport">
+        <Data AD_Column_ID="91312" Column="Value">MQS-Kafka-Connector-Sender</Data>
+        <Data AD_Column_ID="91310" Column="UUID">7fa64268-45fe-4d3c-8a20-cb9177aa8f76</Data>
+        <Data AD_Column_ID="91309" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="91307" Column="Updated">2023-07-29 12:30:25.611</Data>
+        <Data AD_Column_ID="91313" Column="Name">Kafka Connector Sender</Data>
+        <Data AD_Column_ID="91318" Column="IsDefault">false</Data>
+        <Data AD_Column_ID="91305" Column="IsActive">true</Data>
+        <Data AD_Column_ID="91315" Column="Help">A sender using kafka connector</Data>
+        <Data AD_Column_ID="91314" Column="Description">See: https://kafka.apache.org/</Data>
+        <Data AD_Column_ID="91308" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="91306" Column="Created">2023-07-29 12:30:25.611</Data>
+        <Data AD_Column_ID="91316" Column="Classname">org.spin.eca56.util.support.kafka.Sender</Data>
+        <Data AD_Column_ID="91317" Column="ApplicationType">MQS</Data>
+        <Data AD_Column_ID="91304" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="91303" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="91311" Column="AD_AppSupport_ID">50038</Data>
+      </PO>
+    </Step>
+  </Migration>
+</Migrations>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Migrations>
+  <Migration EntityType="ECA56" Name="ECA56 Add Setup for Functionality" ReleaseNo="1.0" SeqNo="10150">
+    <Step SeqNo="10" StepType="AD">
+      <PO AD_Table_ID="54786" Action="I" Record_ID="50087" Table="AD_SetupDefinition">
+        <Data AD_Column_ID="97377" Column="UUID">da539696-0756-440d-a022-5c584209b564</Data>
+        <Data AD_Column_ID="97376" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="97375" Column="Updated">2023-07-29 13:01:01.734</Data>
+        <Data AD_Column_ID="97374" Column="Name">Create Config</Data>
+        <Data AD_Column_ID="97373" Column="IsActive">true</Data>
+        <Data AD_Column_ID="97372" Column="Help" isNewNull="true"/>
+        <Data AD_Column_ID="97371" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="97370" Column="Description">Create Queues and App registration for this functionality</Data>
+        <Data AD_Column_ID="97369" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="97368" Column="Created">2023-07-29 13:01:01.734</Data>
+        <Data AD_Column_ID="97367" Column="Classname">org.spin.eca56.setup.CreateConfig</Data>
+        <Data AD_Column_ID="97366" Column="AD_SetupDefinition_ID">50087</Data>
+        <Data AD_Column_ID="97365" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="97364" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="20" StepType="AD">
+      <PO AD_Table_ID="54786" Action="I" Record_ID="50088" Table="AD_SetupDefinition">
+        <Data AD_Column_ID="97377" Column="UUID">b2cff835-8322-4f6f-add0-59baa85e2473</Data>
+        <Data AD_Column_ID="97376" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="97375" Column="Updated">2023-07-29 13:01:48.622</Data>
+        <Data AD_Column_ID="97374" Column="Name">Deploy Validator</Data>
+        <Data AD_Column_ID="97373" Column="IsActive">true</Data>
+        <Data AD_Column_ID="97372" Column="Help" isNewNull="true"/>
+        <Data AD_Column_ID="97371" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="97370" Column="Description">Allows define the model validator for this functionality, note that you should restar service</Data>
+        <Data AD_Column_ID="97369" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="97368" Column="Created">2023-07-29 13:01:48.622</Data>
+        <Data AD_Column_ID="97367" Column="Classname">org.spin.eca56.setup.DeployValidator</Data>
+        <Data AD_Column_ID="97366" Column="AD_SetupDefinition_ID">50088</Data>
+        <Data AD_Column_ID="97365" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="97364" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+  </Migration>
+</Migrations>

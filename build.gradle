@@ -28,6 +28,7 @@ dependencies {
     )
     //	ADempiere Core
     api "${baseGroupId}:base:${baseVersion}"
+    api 'org.apache.kafka:kafka_2.13:2.8.0'
 }
 
 sourceSets {
@@ -44,14 +45,14 @@ java {
 }
 
 
-def entityType = 'D'
+def entityType = 'ECA56'
 group = "io.github.adempiere"
 version = System.getenv("ADEMPIERE_LIBRARY_VERSION") ?: "local-1.0.0"
 
 jar {
 	manifest {
 		attributes(
-			"Implementation-Title": "ADempiere Template Management",
+			"Implementation-Title": "ADempiere Kafka Connector",
 			"Implementation-Version": version,
 			"EntityType": entityType
 		)
@@ -73,12 +74,12 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
 			groupId = group
-			artifactId = 'adempiere-template-project'
+			artifactId = 'adempiere-kafka-connector'
 			version = version
            	from components.java
            	pom {
-                name = 'ADempiere Template Project'
-                description = 'Fill it with project description'
+                name = 'ADempiere Kafka connector'
+                description = 'A Queue manager for send records from ADempiere to queue, this implementation was created with kafka queue'
                 url = 'http://adempiere.io/'
                 licenses {
                     license {
@@ -94,9 +95,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/adempiere/adempiere-template-project.git'
-                    developerConnection = 'scm:git:ssh://github.com/adempiere/adempiere-template-project.git'
-                    url = 'http://github.com/adempiere/adempiere-template-project'
+                    connection = 'scm:git:git://github.com/adempiere/adempiere-kafka-connector.git'
+                    developerConnection = 'scm:git:ssh://github.com/adempiere/adempiere-kafka-connector.git'
+                    url = 'http://github.com/adempiere/adempiere-kafka-connector'
                 }
             }
 		}

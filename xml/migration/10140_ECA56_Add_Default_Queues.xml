@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Migrations>
+  <Migration EntityType="ECA56" Name="ECA56 Add Default Queues" ReleaseNo="1.0" SeqNo="10140">
+    <Step SeqNo="10" StepType="AD">
+      <PO AD_Table_ID="104" Action="I" Record_ID="55788" Table="AD_Ref_List">
+        <Data AD_Column_ID="200" Column="Value">ADM</Data>
+        <Data AD_Column_ID="153" Column="ValidTo" isNewNull="true"/>
+        <Data AD_Column_ID="152" Column="ValidFrom" isNewNull="true"/>
+        <Data AD_Column_ID="84390" Column="UUID">41a36175-759e-4934-95fa-66c3901bec7b</Data>
+        <Data AD_Column_ID="567" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="566" Column="Updated">2023-07-29 12:48:36.035</Data>
+        <Data AD_Column_ID="149" Column="Name">Application Dictionary</Data>
+        <Data AD_Column_ID="563" Column="IsActive">true</Data>
+        <Data AD_Column_ID="7712" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="150" Column="Description" isNewNull="true"/>
+        <Data AD_Column_ID="565" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="564" Column="Created">2023-07-29 12:48:36.035</Data>
+        <Data AD_Column_ID="148" Column="AD_Ref_List_ID">55788</Data>
+        <Data AD_Column_ID="151" Column="AD_Reference_ID">54274</Data>
+        <Data AD_Column_ID="372" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="371" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="20" StepType="AD">
+      <PO AD_Table_ID="136" Action="I" Record_ID="0" Table="AD_Ref_List_Trl">
+        <Data AD_Column_ID="84391" Column="UUID">5d2b6307-133e-45c9-9c43-1346178e2d3a</Data>
+        <Data AD_Column_ID="710" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="709" Column="Updated">2023-07-29 12:48:37.347</Data>
+        <Data AD_Column_ID="338" Column="Name">Application Dictionary</Data>
+        <Data AD_Column_ID="340" Column="IsTranslated">false</Data>
+        <Data AD_Column_ID="706" Column="IsActive">true</Data>
+        <Data AD_Column_ID="339" Column="Description" isNewNull="true"/>
+        <Data AD_Column_ID="708" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="707" Column="Created">2023-07-29 12:48:37.347</Data>
+        <Data AD_Column_ID="336" Column="AD_Ref_List_ID">55788</Data>
+        <Data AD_Column_ID="1216" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="337" Column="AD_Language">es_MX</Data>
+        <Data AD_Column_ID="1215" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="30" StepType="AD">
+      <PO AD_Table_ID="136" Action="U" Record_ID="0" Table="AD_Ref_List_Trl">
+        <Data AD_Column_ID="338" Column="Name" oldValue="Application Dictionary">Diccionario de Aplicación</Data>
+        <Data AD_Column_ID="336" Column="AD_Ref_List_ID" oldValue="55788">55788</Data>
+        <Data AD_Column_ID="337" Column="AD_Language" oldValue="es_MX">es_MX</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="40" StepType="AD">
+      <PO AD_Table_ID="104" Action="I" Record_ID="55789" Table="AD_Ref_List">
+        <Data AD_Column_ID="200" Column="Value">DMM</Data>
+        <Data AD_Column_ID="153" Column="ValidTo" isNewNull="true"/>
+        <Data AD_Column_ID="152" Column="ValidFrom" isNewNull="true"/>
+        <Data AD_Column_ID="84390" Column="UUID">aad2af33-088f-49e9-886e-4f02d4f0240a</Data>
+        <Data AD_Column_ID="567" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="566" Column="Updated">2023-07-29 12:49:42.014</Data>
+        <Data AD_Column_ID="149" Column="Name">Document Management</Data>
+        <Data AD_Column_ID="563" Column="IsActive">true</Data>
+        <Data AD_Column_ID="7712" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="150" Column="Description" isNewNull="true"/>
+        <Data AD_Column_ID="565" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="564" Column="Created">2023-07-29 12:49:42.014</Data>
+        <Data AD_Column_ID="148" Column="AD_Ref_List_ID">55789</Data>
+        <Data AD_Column_ID="151" Column="AD_Reference_ID">54274</Data>
+        <Data AD_Column_ID="372" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="371" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="50" StepType="AD">
+      <PO AD_Table_ID="136" Action="I" Record_ID="0" Table="AD_Ref_List_Trl">
+        <Data AD_Column_ID="84391" Column="UUID">821be0f9-700b-4844-a8d7-25ec5b0654d6</Data>
+        <Data AD_Column_ID="710" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="709" Column="Updated">2023-07-29 12:49:42.796</Data>
+        <Data AD_Column_ID="338" Column="Name">Document Management</Data>
+        <Data AD_Column_ID="340" Column="IsTranslated">false</Data>
+        <Data AD_Column_ID="706" Column="IsActive">true</Data>
+        <Data AD_Column_ID="339" Column="Description" isNewNull="true"/>
+        <Data AD_Column_ID="708" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="707" Column="Created">2023-07-29 12:49:42.796</Data>
+        <Data AD_Column_ID="336" Column="AD_Ref_List_ID">55789</Data>
+        <Data AD_Column_ID="1216" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="337" Column="AD_Language">es_MX</Data>
+        <Data AD_Column_ID="1215" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="60" StepType="AD">
+      <PO AD_Table_ID="136" Action="U" Record_ID="0" Table="AD_Ref_List_Trl">
+        <Data AD_Column_ID="338" Column="Name" oldValue="Material Management">Gestión de Documentos</Data>
+        <Data AD_Column_ID="336" Column="AD_Ref_List_ID" oldValue="55789">55789</Data>
+        <Data AD_Column_ID="337" Column="AD_Language" oldValue="es_MX">es_MX</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="180" StepType="AD">
+      <PO AD_Table_ID="54843" Action="I" Record_ID="50006" Table="AD_QueueType">
+        <Data AD_Column_ID="99064" Column="WaitingTime">5</Data>
+        <Data AD_Column_ID="98913" Column="Value">ADM</Data>
+        <Data AD_Column_ID="98910" Column="UUID">e5b7cac5-d58d-4e6e-aaf6-09f3f5b89bd4</Data>
+        <Data AD_Column_ID="98909" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="98907" Column="Updated">2023-07-29 12:55:26.486</Data>
+        <Data AD_Column_ID="99065" Column="TimeUnit">I</Data>
+        <Data AD_Column_ID="98916" Column="QueueType">ADM</Data>
+        <Data AD_Column_ID="98912" Column="Name">Application Dictionary</Data>
+        <Data AD_Column_ID="98905" Column="IsActive">true</Data>
+        <Data AD_Column_ID="98915" Column="Help" isNewNull="true"/>
+        <Data AD_Column_ID="98914" Column="Description">Application dictionary changes</Data>
+        <Data AD_Column_ID="98908" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="98906" Column="Created">2023-07-29 12:55:26.486</Data>
+        <Data AD_Column_ID="98911" Column="Classname">org.spin.eca56.util.queue.ApplicationDictionary</Data>
+        <Data AD_Column_ID="98902" Column="AD_QueueType_ID">50006</Data>
+        <Data AD_Column_ID="98904" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="98903" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="220" StepType="AD">
+      <PO AD_Table_ID="54843" Action="I" Record_ID="50009" Table="AD_QueueType">
+        <Data AD_Column_ID="99064" Column="WaitingTime">5</Data>
+        <Data AD_Column_ID="98913" Column="Value">DMM</Data>
+        <Data AD_Column_ID="98910" Column="UUID">96168ca0-c09e-4b10-bb4e-5c2eb6da4f94</Data>
+        <Data AD_Column_ID="98909" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="98907" Column="Updated">2023-07-29 12:56:58.319</Data>
+        <Data AD_Column_ID="99065" Column="TimeUnit">I</Data>
+        <Data AD_Column_ID="98916" Column="QueueType">DMM</Data>
+        <Data AD_Column_ID="98912" Column="Name">Document Management</Data>
+        <Data AD_Column_ID="98905" Column="IsActive">true</Data>
+        <Data AD_Column_ID="98915" Column="Help" isNewNull="true"/>
+        <Data AD_Column_ID="98914" Column="Description">Document Management engine support</Data>
+        <Data AD_Column_ID="98908" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="98906" Column="Created">2023-07-29 12:56:58.319</Data>
+        <Data AD_Column_ID="98911" Column="Classname">org.spin.eca56.util.queue.DocumentManagement</Data>
+        <Data AD_Column_ID="98902" Column="AD_QueueType_ID">50009</Data>
+        <Data AD_Column_ID="98904" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="98903" Column="AD_Client_ID">0</Data>
+      </PO>
+    </Step>
+  </Migration>
+</Migrations>

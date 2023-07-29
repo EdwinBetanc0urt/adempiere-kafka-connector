@@ -14,26 +14,29 @@
  * All Rights Reserved.                                                       *
  * Contributor(s): Yamel Senih www.erpya.com                                  *
  *****************************************************************************/
-package org.spin.template.setup;
+package org.spin.eca56.setup;
 
 import java.util.Properties;
 
 import org.compiere.model.Query;
 import org.adempiere.core.domains.models.X_AD_ModelValidator;
-import org.spin.template.model.validator.Validator;
+import org.spin.eca56.model.validator.EngineAsQueue;
 import org.spin.util.ISetupDefinition;
 
 /**
- * Add here your setup class
- * Please rename this class and package
+ * This functionality setup allows add a model validator for catch all changes for:
+ * <li>Application Dictionary
+ * <li>Material Management
+ * <li>Financial Management
+ * <li>Accounting Management
+ * <li>Costing Management
  * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class Deploy implements ISetupDefinition {
+public class DeployValidator implements ISetupDefinition {
 
-	private static final String DESCRIPTION = "(*Created from Setup Automatically*)";
-	private static final String UUID = "(*AutomaticSetup*)";
-	private static final String NAME = "Template Setup";
-	private static final String ENTITY_TYPE = null;
+	private static final String DESCRIPTION = "Allows send all engines to queue";
+	private static final String NAME = "Process as Queue";
+	private static final String ENTITY_TYPE = "ECA56";
 	private static final int DEFAULT_SEQUENCE = 300;
 	
 	@Override
@@ -52,7 +55,7 @@ public class Deploy implements ISetupDefinition {
 	 */
 	private X_AD_ModelValidator createModelValidator(Properties context, String transactionName) {
 		X_AD_ModelValidator modelValidator = new Query(context, X_AD_ModelValidator.Table_Name, X_AD_ModelValidator.COLUMNNAME_ModelValidationClass + " = ?", transactionName)
-				.setParameters(Validator.class.getName())
+				.setParameters(EngineAsQueue.class.getName())
 				.setClient_ID()
 				.<X_AD_ModelValidator>first();
 		//	Validate
@@ -66,9 +69,7 @@ public class Deploy implements ISetupDefinition {
 		modelValidator.setEntityType(ENTITY_TYPE);
 		modelValidator.setDescription(DESCRIPTION);
 		modelValidator.setSeqNo(DEFAULT_SEQUENCE);
-		modelValidator.setModelValidationClass(Validator.class.getName());
-		modelValidator.setUUID(UUID);
-		modelValidator.setIsDirectLoad(true);
+		modelValidator.setModelValidationClass(EngineAsQueue.class.getName());
 		modelValidator.saveEx();
 		return modelValidator;
 	}

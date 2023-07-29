@@ -11,18 +11,32 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,    *
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.                     *
  * For the text or an alternative of this public license, you may reach us    *
- * Copyright (C) 2003-2019 E.R.P. Consultores y Asociados, C.A.               *
+ * Copyright (C) 2003-2023 E.R.P. Consultores y Asociados, C.A.               *
  * All Rights Reserved.                                                       *
  * Contributor(s): Yamel Senih www.erpya.com                                  *
  *****************************************************************************/
-package org.spin.template.util;
+package org.spin.eca56.util.support;
+
+import java.util.Map;
 
 /**
- * Add here all changes for core and statci methods
- * Please rename this class and package
- * @author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
+ * 	Interface for determinate if is a document to send, note that this is a mapping of values
+ * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class Changes {
-	/**	Colum added to core	*/
-	public static final String COLUMNNAME_ColumAddedToCore = "ColumAddedToCore";
+public interface IGenericDocument {
+	
+	//	Some default documents key
+	public static final String WINDOW = "window";
+	
+	/**
+	 * Get Command Key
+	 * @return
+	 */
+	public String getKey();
+	
+	/**
+	 * Get Values to Send
+	 * @return
+	 */
+	public Map<String, Object> getValues();
 }

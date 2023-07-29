@@ -12,29 +12,31 @@
  * You should have received a copy of the GNU General Public License                *
  * along with this program.	If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.spin.template.model.validator;
+package org.spin.eca56.model.validator;
 
-import org.adempiere.core.domains.models.I_C_Order;
-import org.adempiere.core.domains.models.I_C_OrderLine;
+import org.adempiere.core.domains.models.I_AD_Process;
+import org.adempiere.core.domains.models.I_AD_Table;
 import org.compiere.model.MClient;
-import org.compiere.model.MDocType;
-import org.compiere.model.MOrder;
+import org.compiere.model.MTable;
 import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
+import org.compiere.model.Query;
 import org.compiere.util.CLogger;
-import org.spin.template.util.Changes;
+import org.compiere.util.Env;
+import org.spin.eca56.util.queue.ApplicationDictionary;
+import org.spin.eca56.util.queue.DocumentManagement;
+import org.spin.queue.util.QueueLoader;
 
 /**
- * Write here your change comment
- * Please rename this class and package
+ * Convert the current engines to queue, this allows process all functionalities as external engines and async
  * @author Yamel Senih ysenih@erpya.com
  *
  */
-public class Validator implements ModelValidator {
+public class EngineAsQueue implements ModelValidator {
 
 	/** Logger */
-	private static CLogger log = CLogger.getCLogger(Validator.class);
+	private static CLogger log = CLogger.getCLogger(EngineAsQueue.class);
 	/** Client */
 	private int clientId = -1;
 	
@@ -48,8 +50,11 @@ public class Validator implements ModelValidator {
 			log.info("Initializing global validator: " + this.toString());
 		}
 		//	Add Persistence for IsDefault values
-		engine.addDocValidate(I_C_Order.Table_Name, this);
-		engine.addModelChange(I_C_OrderLine.Table_Name, this);
+		new Query(Env.getCtx(), I_AD_Table.Table_Name, I_AD_Table.COLUMNNAME_IsDocument + " = 'Y'", null)
+                .setOnlyActiveRecords(true)
+                .<MTable>list().forEach(table -> {
+                	engine.addDocValidate(table.getTableName(), this);
+                });
 	}
 	
 	@Override
@@ -67,11 +72,12 @@ public class Validator implements ModelValidator {
 	public String modelChange(PO entity, int type) throws Exception {
 		if(type == TYPE_BEFORE_NEW
 				|| type == TYPE_BEFORE_CHANGE) {
-			if(entity.get_TableName().equals(I_C_OrderLine.Table_Name)) {
+			if(entity.get_TableName().equals(I_AD_Process.Table_Name)) {
 				//	For Sales Orders
 				if(entity.is_new()
-						|| entity.is_ValueChanged(I_C_OrderLine.COLUMNNAME_M_Product_ID)) {
-					
+						|| (!entity.is_ValueChanged(I_AD_Process.COLUMNNAME_Statistic_Count)
+								&& !entity.is_ValueChanged(I_AD_Process.COLUMNNAME_Statistic_Seconds))) {
+					QueueLoader.getInstance().getQueueManager(ApplicationDictionary.CODE).withEntity(entity);
 				}
 			}
 		}
@@ -80,16 +86,11 @@ public class Validator implements ModelValidator {
 
 	@Override
 	public String docValidate(PO entity, int timing) {
-		if(timing == TIMING_BEFORE_COMPLETE) {
-			if(entity.get_TableName().equals(I_C_Order.Table_Name)) {
-				MOrder order = (MOrder) entity;
-				MDocType documentType = MDocType.get(entity.getCtx(), order.getC_DocTypeTarget_ID());
-				if(order.isSOTrx()
-						&& !order.isReturnOrder()
-						&& documentType.get_ValueAsBoolean(Changes.COLUMNNAME_ColumAddedToCore)) {
-					
-				}
-			}
+		if(timing == TIMING_AFTER_COMPLETE
+				|| timing == TIMING_AFTER_REVERSECORRECT
+				|| timing == TIMING_AFTER_REVERSEACCRUAL
+				|| timing == TIMING_AFTER_VOID) {
+			QueueLoader.getInstance().getQueueManager(DocumentManagement.CODE).withEntity(entity).addToQueue();
 		}
 		return null;
 	}
