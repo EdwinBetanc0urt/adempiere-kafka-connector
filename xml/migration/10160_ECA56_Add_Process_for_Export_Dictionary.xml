@@ -681,5 +681,10 @@
         <Data AD_Column_ID="6160" Column="AD_Tree_ID" oldValue="10">10</Data>
       </PO>
     </Step>
+    <Step SeqNo="360" StepType="AD">
+      <PO AD_Table_ID="284" Action="U" Record_ID="54692" Table="AD_Process">
+        <Data AD_Column_ID="5790" Column="AccessLevel" oldValue="3">6</Data>
+      </PO>
+    </Step>
   </Migration>
 </Migrations>
