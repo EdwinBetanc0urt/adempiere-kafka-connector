@@ -54,4 +54,9 @@ public class TestDocument implements IGenericDocument {
 	public static TestDocument newInstance() {
 		return new TestDocument();
 	}
+
+	@Override
+	public String getChannel() {
+		return "Test";
+	}
 }

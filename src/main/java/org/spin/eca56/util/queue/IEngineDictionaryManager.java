@@ -16,18 +16,17 @@
 package org.spin.eca56.util.queue;
 
 import org.compiere.model.PO;
-import org.spin.eca56.util.support.IGenericDocument;
+import org.spin.eca56.util.support.IGenericDictionaryDocument;
 
 /**
  * 	A contract that will be implemented for each engine
  * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public interface IEngineManager {
+public interface IEngineDictionaryManager extends IEngineManager {
 	
-	/**
-	 * Get the document manager from table name
-	 * @param entity
-	 * @return
-	 */
-	public IGenericDocument getDocumentManager(PO entity);
+	public IGenericDictionaryDocument getDocumentManager(PO entity, String language);
+	
+	public IGenericDictionaryDocument getDocumentManagerByRole(PO entity, String language, int roleId);
+
+	public IGenericDictionaryDocument getDocumentManagerByUser(PO entity, String language, int userId);
 }

@@ -55,12 +55,11 @@ public class DocumentManagement extends QueueManager implements IEngineManager {
 	private void send(int queueId) {
 		PO process = getEntity();
 		if(process != null) {
-			Order orderEngine = getDocumentManager(process.get_TableName());
-			if(orderEngine != null) {
-				orderEngine.setOrder((MOrder) process);
+			Order entityEngine = getDocumentManager(process);
+			if(entityEngine != null) {
 				IGenericSender sender = DefaultEngineQueueUtil.getEngineManager();
 				if(sender != null) {
-					sender.send(orderEngine, IGenericSender.DOCUMENT_MANAGEMENT);
+					sender.send(entityEngine, entityEngine.getChannel());
 				} else {
 					throw new AdempiereException("@AD_AppRegistration_ID@ @NotFound@");
 				}
@@ -70,12 +69,16 @@ public class DocumentManagement extends QueueManager implements IEngineManager {
 	}
 
 	@Override
-	public Order getDocumentManager(String tableName) {
+	public Order getDocumentManager(PO entity) {
+		if(entity == null) {
+			return null;
+		}
+		String tableName = entity.get_TableName();
 		if(Util.isEmpty(tableName)) {
 			return null;
 		}
 		if(tableName.equals(I_C_Order.Table_Name)) {
-			return Order.newInstance();
+			return Order.newInstance().withOrder((MOrder) entity);
 		}
 		return null;
 	}

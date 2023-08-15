@@ -18,6 +18,15 @@
 
 package org.spin.eca56.process;
 
+import java.util.Enumeration;
+
+import org.compiere.model.MClientInfo;
+import org.compiere.model.MMenu;
+import org.compiere.model.MTree;
+import org.compiere.model.MTreeNode;
+import org.spin.eca56.util.queue.ApplicationDictionary;
+import org.spin.queue.util.QueueLoader;
+
 /** 
  * 	Generated Process for (Export Dictionary Definition)
  *  @author Yamel Senih
@@ -27,7 +36,20 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 
 	@Override
 	protected String doIt() throws Exception {
-//		QueueLoader.getInstance().getQueueManager(ApplicationDictionary.CODE).withEntity(entity);
-		return "";
+		MClientInfo clientInfo = MClientInfo.get(getCtx(), getAD_Client_ID());
+		if(clientInfo.getAD_Tree_Menu_ID() > 0) {
+			MTree tree = new MTree(getCtx(), clientInfo.getAD_Tree_Menu_ID(), false, false, null, null);
+			MTreeNode rootNode = tree.getRoot();
+			Enumeration<?> childrens = rootNode.children();
+			while (childrens.hasMoreElements()) {
+				MTreeNode childNode = (MTreeNode)childrens.nextElement();
+				QueueLoader.getInstance()
+				.getQueueManager(ApplicationDictionary.CODE)
+				.withEntity(MMenu.getFromId(getCtx(), childNode.getNode_ID()))
+				.addToQueue();
+			}
+			return "@AD_Menu_ID@ " + tree.getName();
+		}
+		return "@AD_Menu_ID@ @NotFound@";
 	}
 }

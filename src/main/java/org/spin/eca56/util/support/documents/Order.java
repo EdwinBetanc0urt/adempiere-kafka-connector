@@ -35,7 +35,8 @@ import org.spin.eca56.util.support.IGenericDocument;
 public class Order implements IGenericDocument {
 
 	//	Some default documents key
-	public static final String KEY = "order";
+	public static final String KEY = "new";
+	public static final String CHANNEL = "order";
 	private Map<String, Object> document;
 	
 	@Override
@@ -48,7 +49,7 @@ public class Order implements IGenericDocument {
 		return document;
 	}
 	
-	public void setOrder(MOrder order) {
+	public Order withOrder(MOrder order) {
 		document = new HashMap<>();
 		Map<String, Object> documentDetail = new HashMap<>();
 		documentDetail.put("id", order.getC_Order_ID());
@@ -82,6 +83,7 @@ public class Order implements IGenericDocument {
 		}
 		documentDetail.put("lines", orderLinesDetail);
 		document.put(KEY, documentDetail);
+		return this;
 	}
 	
 	/**
@@ -90,6 +92,11 @@ public class Order implements IGenericDocument {
 	 */
 	public static Order newInstance() {
 		return new Order();
+	}
+
+	@Override
+	public String getChannel() {
+		return CHANNEL;
 	}
 	
 	

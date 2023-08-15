@@ -34,6 +34,7 @@ public class Process implements IGenericDocument {
 
 	//	Some default documents key
 	public static final String KEY = "process";
+	public static final String CHANNEL = "new";
 	private Map<String, Object> document;
 	
 	@Override
@@ -46,7 +47,7 @@ public class Process implements IGenericDocument {
 		return document;
 	}
 	
-	public void setProcess(MProcess process) {
+	public Process withProcess(MProcess process) {
 		document = new HashMap<>();
 		Map<String, Object> documentDetail = new HashMap<>();
 		documentDetail.put("id", process.getAD_Process_ID());
@@ -100,6 +101,7 @@ public class Process implements IGenericDocument {
 		}
 		documentDetail.put("parameters", parametersDetail);
 		document.put(KEY, documentDetail);
+		return this;
 	}
 	
 	/**
@@ -108,6 +110,11 @@ public class Process implements IGenericDocument {
 	 */
 	public static Process newInstance() {
 		return new Process();
+	}
+
+	@Override
+	public String getChannel() {
+		return CHANNEL;
 	}
 	
 	

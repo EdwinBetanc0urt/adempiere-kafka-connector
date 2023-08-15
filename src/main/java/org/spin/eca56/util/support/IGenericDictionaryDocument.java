@@ -17,33 +17,18 @@
  *****************************************************************************/
 package org.spin.eca56.util.support;
 
-import java.util.Map;
-
 /**
- * 	Interface for determinate if is a document to send, note that this is a mapping of values
+ * 	Interface for determinate if is a document to send, note that this is a mapping of values.
+ * 	For Dictionary exists some variants like Client, Role, User and Language
  * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public interface IGenericDocument {
+public interface IGenericDictionaryDocument extends IGenericDocument {
 	
-	//	Some default documents key
-	public static final String WINDOW = "window";
+	public IGenericDictionaryDocument withClientId(int clientId);
 	
-	/**
-	 * Get Command Key
-	 * @return
-	 */
-	public String getKey();
+	public IGenericDictionaryDocument withRoleId(int roleId);
 	
+	public IGenericDictionaryDocument withUserId(int userId);
 	
-	/***
-	 * get channel for document
-	 * @return
-	 */
-	public String getChannel();
-	
-	/**
-	 * Get Values to Send
-	 * @return
-	 */
-	public Map<String, Object> getValues();
+	public IGenericDictionaryDocument withLanguage(String language);
 }
