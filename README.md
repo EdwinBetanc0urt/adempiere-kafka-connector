@@ -8,6 +8,18 @@ The scope for this is a little test using a external queue for process documents
 - [Gradle 8.0.1 or later](https://gradle.org/install/)
 
 
+## Running It (Easy way)
+
+This project is directly related to [OpenSearch-Gateway-rs](https://github.com/adempiere/opensearch_gateway_rs#run-docker-compose-easy-way). I you want to test it then is nice if you can deploy the  project [OpenSearch-Gateway-rs](https://github.com/adempiere/opensearch_gateway_rs#run-docker-compose-easy-way).
+
+A simple config for queue can be this:
+
+![Queue config](docs/Queue_Config.png)
+
+The runnning is:
+
+![Running OpenSearch Gateway](docs/Exporting_Menu.gif)
+
 ### Packages Names
 All packages was sign with entity type code `eca56`, note that this way is more clear and simple for look at
 
