@@ -25,8 +25,6 @@ import org.adempiere.core.domains.models.I_AD_Role;
 import org.adempiere.core.domains.models.I_AD_User;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MLanguage;
-import org.compiere.model.MMenu;
-import org.compiere.model.MProcess;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.Env;
@@ -120,33 +118,48 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 
 	@Override
 	public IGenericDocument getDocumentManager(PO entity) {
-		if(entity == null) {
-			return null;
-		}
-		String tableName = entity.get_TableName();
-		if(Util.isEmpty(tableName)) {
-			return null;
-		}
-		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return Process.newInstance().withProcess((MProcess) entity);
-		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-			return Menu.newInstance().withMenu((MMenu) entity);
-		}
 		return null;
 	}
 
 	@Override
 	public IGenericDictionaryDocument getDocumentManager(PO entity, String language) {
-		return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withMenu((MMenu) entity);
+		String tableName = entity.get_TableName();
+		if(Util.isEmpty(tableName)) {
+			return null;
+		}
+		if(tableName.equals(I_AD_Process.Table_Name)) {
+			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
+			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+		}
+		return null;
 	}
 
 	@Override
 	public IGenericDictionaryDocument getDocumentManagerByRole(PO entity, String language, int roleId) {
-		return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withMenu((MMenu) entity);
+		String tableName = entity.get_TableName();
+		if(Util.isEmpty(tableName)) {
+			return null;
+		}
+		if(tableName.equals(I_AD_Process.Table_Name)) {
+			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
+		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
+			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
+		}
+		return null;
 	}
 
 	@Override
 	public IGenericDictionaryDocument getDocumentManagerByUser(PO entity, String language, int userId) {
-		return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withMenu((MMenu) entity);
+		String tableName = entity.get_TableName();
+		if(Util.isEmpty(tableName)) {
+			return null;
+		}
+		if(tableName.equals(I_AD_Process.Table_Name)) {
+			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
+			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+		}
+		return null;
 	}
 }

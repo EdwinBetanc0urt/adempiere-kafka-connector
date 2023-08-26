@@ -19,11 +19,18 @@
 package org.spin.eca56.process;
 
 import java.util.Enumeration;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.adempiere.core.domains.models.I_AD_Process;
+import org.adempiere.core.domains.models.I_AD_Window;
+import org.adempiere.model.MBrowse;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MMenu;
+import org.compiere.model.MProcess;
 import org.compiere.model.MTree;
 import org.compiere.model.MTreeNode;
+import org.compiere.model.MWindow;
+import org.compiere.model.Query;
 import org.spin.eca56.util.queue.ApplicationDictionary;
 import org.spin.queue.util.QueueLoader;
 
@@ -33,23 +40,70 @@ import org.spin.queue.util.QueueLoader;
  *  @version Release 3.9.4
  */
 public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstract {
+	
+	private AtomicInteger counter = new AtomicInteger();
 
 	@Override
 	protected String doIt() throws Exception {
-		MClientInfo clientInfo = MClientInfo.get(getCtx(), getAD_Client_ID());
-		if(clientInfo.getAD_Tree_Menu_ID() > 0) {
-			MTree tree = new MTree(getCtx(), clientInfo.getAD_Tree_Menu_ID(), false, false, null, null);
-			MTreeNode rootNode = tree.getRoot();
-			Enumeration<?> childrens = rootNode.children();
-			while (childrens.hasMoreElements()) {
-				MTreeNode childNode = (MTreeNode)childrens.nextElement();
+		//	For menu
+		if(isExportMenu()) {
+			MClientInfo clientInfo = MClientInfo.get(getCtx(), getAD_Client_ID());
+			if(clientInfo.getAD_Tree_Menu_ID() > 0) {
+				addLog("@AD_Menu_ID@");
+				MTree tree = new MTree(getCtx(), clientInfo.getAD_Tree_Menu_ID(), false, false, null, null);
+				MTreeNode rootNode = tree.getRoot();
+				Enumeration<?> childrens = rootNode.children();
+				while (childrens.hasMoreElements()) {
+					MTreeNode childNode = (MTreeNode)childrens.nextElement();
+					QueueLoader.getInstance()
+					.getQueueManager(ApplicationDictionary.CODE)
+					.withEntity(MMenu.getFromId(getCtx(), childNode.getNode_ID()))
+					.addToQueue();
+				}
+				addLog(tree.getName());
+				counter.incrementAndGet();
+			}
+		}
+		//	For Process
+		if(isExportProcess()) {
+			addLog("@AD_Process_ID@");
+			new Query(getCtx(), I_AD_Process.Table_Name, null, get_TrxName()).setOnlyActiveRecords(true).getIDsAsList().forEach(processId -> {
+				MProcess process = new MProcess(getCtx(), processId, get_TrxName());
 				QueueLoader.getInstance()
 				.getQueueManager(ApplicationDictionary.CODE)
-				.withEntity(MMenu.getFromId(getCtx(), childNode.getNode_ID()))
+				.withEntity(process)
 				.addToQueue();
-			}
-			return "@AD_Menu_ID@ " + tree.getName();
+				addLog(process.getValue() + " - " + process.getName());
+				counter.incrementAndGet();
+			});
 		}
-		return "@AD_Menu_ID@ @NotFound@";
+		//	For Windows
+		if(isExportWindows()) {
+			addLog("@AD_Window_ID@");
+			new Query(getCtx(), I_AD_Window.Table_Name, null, get_TrxName()).setOnlyActiveRecords(true).getIDsAsList().forEach(windowId -> {
+				MWindow window = new MWindow(getCtx(), windowId, get_TrxName());
+				QueueLoader.getInstance()
+				.getQueueManager(ApplicationDictionary.CODE)
+				.withEntity(window)
+				.addToQueue();
+				addLog(window.getName());
+				counter.incrementAndGet();
+			});
+		}
+		//	For Browsers
+		if(isExportBrowsers()) {
+			addLog("@AD_Browse_ID@");
+			new Query(getCtx(), I_AD_Process.Table_Name, null, get_TrxName()).setOnlyActiveRecords(true).getIDsAsList().forEach(browseId -> {
+				MBrowse browser = new MBrowse(getCtx(), browseId, get_TrxName());
+				QueueLoader.getInstance()
+				.getQueueManager(ApplicationDictionary.CODE)
+				.withEntity(browser)
+				.addToQueue();
+				addLog(browser.getValue() + " - " + browser.getName());
+				counter.incrementAndGet();
+			});
+		}
+		//	
+		return "@Created@ " + counter.get();
 	}
 }

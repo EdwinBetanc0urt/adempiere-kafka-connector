@@ -22,40 +22,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.adempiere.core.domains.models.I_AD_Browse;
+import org.adempiere.core.domains.models.I_AD_Form;
+import org.adempiere.core.domains.models.I_AD_Process;
+import org.adempiere.core.domains.models.I_AD_Process_Para;
+import org.adempiere.core.domains.models.I_AD_Reference;
+import org.adempiere.core.domains.models.I_AD_Workflow;
+import org.adempiere.model.MBrowse;
+import org.compiere.model.MForm;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
-import org.spin.eca56.util.support.IGenericDocument;
+import org.compiere.model.PO;
+import org.compiere.wf.MWorkflow;
+import org.spin.eca56.util.support.DictionaryDocument;
 
 /**
  * 	the document class for Process senders
  * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class Process implements IGenericDocument {
+public class Process extends DictionaryDocument {
 
 	//	Some default documents key
-	public static final String KEY = "process";
-	public static final String CHANNEL = "new";
-	private Map<String, Object> document;
+	public static final String KEY = "new";
+	public static final String CHANNEL = "process";
 	
 	@Override
 	public String getKey() {
 		return KEY;
 	}
-
-	@Override
-	public Map<String, Object> getValues() {
-		return document;
-	}
 	
-	public Process withProcess(MProcess process) {
-		document = new HashMap<>();
+	@Override
+	public DictionaryDocument withEntity(PO entity) {
+		MProcess process = (MProcess) entity;
 		Map<String, Object> documentDetail = new HashMap<>();
 		documentDetail.put("id", process.getAD_Process_ID());
 		documentDetail.put("uuid", process.getUUID());
 		documentDetail.put("code", process.getValue());
-		documentDetail.put("name", process.getName());
-		documentDetail.put("description", process.getDescription());
-		documentDetail.put("help", process.getHelp());
+		documentDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
+		documentDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
+		documentDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
 		documentDetail.put("entity_type", process.getEntityType());
 		documentDetail.put("access_level", process.getAccessLevel());
 		documentDetail.put("class_name", process.getClassname());
@@ -69,7 +74,36 @@ public class Process implements IGenericDocument {
 		documentDetail.put("browser_id", process.getAD_Browse_ID());
 		documentDetail.put("report_view_id", process.getAD_ReportView_ID());
 		documentDetail.put("print_format_id", process.getAD_PrintFormat_ID());
-		
+		if(process.getAD_Form_ID() > 0) {
+			MForm form = new MForm(process.getCtx(), process.getAD_Form_ID(), null);
+			Map<String, Object> referenceDetail = new HashMap<>();
+			referenceDetail.put("id", form.getAD_Form_ID());
+			referenceDetail.put("uuid", form.getUUID());
+			referenceDetail.put("name", form.get_Translation(I_AD_Form.COLUMNNAME_Name, getLanguage()));
+			referenceDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, getLanguage()));
+			referenceDetail.put("help", form.get_Translation(I_AD_Form.COLUMNNAME_Help, getLanguage()));
+			documentDetail.put("form", referenceDetail);
+		}
+		if(process.getAD_Browse_ID() > 0) {
+			MBrowse smartBrowser = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
+			Map<String, Object> referenceDetail = new HashMap<>();
+			referenceDetail.put("id", smartBrowser.getAD_Browse_ID());
+			referenceDetail.put("uuid", smartBrowser.getUUID());
+			referenceDetail.put("name", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
+			referenceDetail.put("description", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
+			referenceDetail.put("help", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
+			documentDetail.put("browse", referenceDetail);
+		}
+		if(process.getAD_Workflow_ID() > 0) {
+			MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
+			Map<String, Object> referenceDetail = new HashMap<>();
+			referenceDetail.put("id", workflow.getAD_Workflow_ID());
+			referenceDetail.put("uuid", workflow.getUUID());
+			referenceDetail.put("name", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Name, getLanguage()));
+			referenceDetail.put("description", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Description, getLanguage()));
+			referenceDetail.put("help", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Help, getLanguage()));
+			documentDetail.put("workflow", referenceDetail);
+		}
 		//	Parameters
 		List<MProcessPara> parameters = process.getParametersAsList();
 		List<Map<String, Object>> parametersDetail = new ArrayList<>();
@@ -78,30 +112,45 @@ public class Process implements IGenericDocument {
 				Map<String, Object> detail = new HashMap<>();
 				detail.put("id", parameter.getAD_Process_Para_ID());
 				detail.put("uuid", parameter.getUUID());
-				detail.put("name", parameter.getName());
-				detail.put("description", parameter.getDescription());
-				detail.put("help", parameter.getHelp());
+				detail.put("name", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Name, getLanguage()));
+				detail.put("description", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Description, getLanguage()));
+				detail.put("help", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Help, getLanguage()));
 				detail.put("entity_type", parameter.getEntityType());
 				detail.put("column_name", parameter.getColumnName());
 				detail.put("element_id", parameter.getAD_Element_ID());
 				detail.put("default_value", parameter.getDefaultValue());
 				detail.put("default_value_to", parameter.getDefaultValue2());
 				detail.put("is_range", parameter.isRange());
+				detail.put("is_info_only", parameter.isInfoOnly());
 				detail.put("is_mandatory", parameter.isMandatory());
 				detail.put("display_logic", parameter.getDisplayLogic());
 				detail.put("sequence", parameter.getSeqNo());
 				detail.put("value_format", parameter.getVFormat());
 				detail.put("min_value", parameter.getValueMin());
 				detail.put("max_value", parameter.getValueMax());
-				detail.put("display_type", parameter.getAD_Reference_ID());
+				detail.put("reference_id", parameter.getAD_Reference_ID());
+				if(parameter.getAD_Reference_ID() > 0) {
+					PO reference = (PO) parameter.getAD_Reference();
+					Map<String, Object> referenceDetail = new HashMap<>();
+					referenceDetail.put("id", reference.get_ID());
+					referenceDetail.put("uuid", reference.get_UUID());
+					referenceDetail.put("name", reference.get_Translation(I_AD_Reference.COLUMNNAME_Name, getLanguage()));
+					referenceDetail.put("description", reference.get_Translation(I_AD_Reference.COLUMNNAME_Description, getLanguage()));
+					referenceDetail.put("help", reference.get_Translation(I_AD_Reference.COLUMNNAME_Help, getLanguage()));
+					documentDetail.put("display_type", referenceDetail);
+				}
 				detail.put("reference_value_id", parameter.getAD_Reference_Value_ID());
 				detail.put("validation_id", parameter.getAD_Val_Rule_ID());
 				parametersDetail.add(detail);
 			});
 		}
 		documentDetail.put("parameters", parametersDetail);
-		document.put(KEY, documentDetail);
+		putDocument(documentDetail);
 		return this;
+	}
+	
+	private Process() {
+		super();
 	}
 	
 	/**
@@ -116,6 +165,4 @@ public class Process implements IGenericDocument {
 	public String getChannel() {
 		return CHANNEL;
 	}
-	
-	
 }

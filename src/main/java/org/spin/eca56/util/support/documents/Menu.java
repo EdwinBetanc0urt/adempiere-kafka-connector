@@ -38,33 +38,24 @@ import org.compiere.model.MRole;
 import org.compiere.model.MTree;
 import org.compiere.model.MTreeNode;
 import org.compiere.model.MWindow;
+import org.compiere.model.PO;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.compiere.wf.MWorkflow;
-import org.spin.eca56.util.support.IGenericDictionaryDocument;
+import org.spin.eca56.util.support.DictionaryDocument;
 
 /**
  * 	The document class for Menu sender
  * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class Menu implements IGenericDictionaryDocument {
+public class Menu extends DictionaryDocument {
 
 	public static final String CHANNEL = "menu";
 	public static final String KEY = "new";
-	private Map<String, Object> document;
-	private int clientId = -1;
-	private int roleId = -1;
-	private int userId = -1;
-	private String language;
 	
 	@Override
 	public String getKey() {
 		return KEY;
-	}
-
-	@Override
-	public Map<String, Object> getValues() {
-		return document;
 	}
 	
 	/**
@@ -90,8 +81,8 @@ public class Menu implements IGenericDictionaryDocument {
 		Map<String, Object> detail = new HashMap<>();
 		detail.put("id", menu.getAD_Menu_ID());
 		detail.put("uuid", menu.getUUID());
-		detail.put("name", menu.get_Translation(I_AD_Menu.COLUMNNAME_Name, language));
-		detail.put("description", menu.get_Translation(I_AD_Menu.COLUMNNAME_Description, language));
+		detail.put("name", menu.get_Translation(I_AD_Menu.COLUMNNAME_Name, getLanguage()));
+		detail.put("description", menu.get_Translation(I_AD_Menu.COLUMNNAME_Description, getLanguage()));
 		detail.put("parent_id", node.getParent_ID());
 		detail.put("sequence", Integer.parseInt(node.getSeqNo()));
 		detail.put("is_read_only", menu.isReadOnly());
@@ -106,9 +97,9 @@ public class Menu implements IGenericDictionaryDocument {
 					Map<String, Object> referenceDetail = new HashMap<>();
 					referenceDetail.put("id", form.getAD_Form_ID());
 					referenceDetail.put("uuid", form.getUUID());
-					referenceDetail.put("name", form.get_Translation(I_AD_Form.COLUMNNAME_Name, language));
-					referenceDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, language));
-					referenceDetail.put("help", form.get_Translation(I_AD_Form.COLUMNNAME_Help, language));
+					referenceDetail.put("name", form.get_Translation(I_AD_Form.COLUMNNAME_Name, getLanguage()));
+					referenceDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, getLanguage()));
+					referenceDetail.put("help", form.get_Translation(I_AD_Form.COLUMNNAME_Help, getLanguage()));
 					detail.put("form", referenceDetail);
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
@@ -117,9 +108,9 @@ public class Menu implements IGenericDictionaryDocument {
 					Map<String, Object> referenceDetail = new HashMap<>();
 					referenceDetail.put("id", window.getAD_Window_ID());
 					referenceDetail.put("uuid", window.getUUID());
-					referenceDetail.put("name", window.get_Translation(I_AD_Window.COLUMNNAME_Name, language));
-					referenceDetail.put("description", window.get_Translation(I_AD_Window.COLUMNNAME_Description, language));
-					referenceDetail.put("help", window.get_Translation(I_AD_Window.COLUMNNAME_Help, language));
+					referenceDetail.put("name", window.get_Translation(I_AD_Window.COLUMNNAME_Name, getLanguage()));
+					referenceDetail.put("description", window.get_Translation(I_AD_Window.COLUMNNAME_Description, getLanguage()));
+					referenceDetail.put("help", window.get_Translation(I_AD_Window.COLUMNNAME_Help, getLanguage()));
 					detail.put("window", referenceDetail);
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_Process)
@@ -129,9 +120,9 @@ public class Menu implements IGenericDictionaryDocument {
 					Map<String, Object> referenceDetail = new HashMap<>();
 					referenceDetail.put("id", process.getAD_Process_ID());
 					referenceDetail.put("uuid", process.getUUID());
-					referenceDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, language));
-					referenceDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, language));
-					referenceDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, language));
+					referenceDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
+					referenceDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
+					referenceDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
 					detail.put("process", referenceDetail);
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
@@ -140,9 +131,9 @@ public class Menu implements IGenericDictionaryDocument {
 					Map<String, Object> referenceDetail = new HashMap<>();
 					referenceDetail.put("id", smartBrowser.getAD_Browse_ID());
 					referenceDetail.put("uuid", smartBrowser.getUUID());
-					referenceDetail.put("name", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Name, language));
-					referenceDetail.put("description", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Description, language));
-					referenceDetail.put("help", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Help, language));
+					referenceDetail.put("name", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
+					referenceDetail.put("description", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
+					referenceDetail.put("help", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
 					detail.put("browse", referenceDetail);
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_WorkFlow)) {
@@ -151,33 +142,23 @@ public class Menu implements IGenericDictionaryDocument {
 					Map<String, Object> referenceDetail = new HashMap<>();
 					referenceDetail.put("id", workflow.getAD_Workflow_ID());
 					referenceDetail.put("uuid", workflow.getUUID());
-					referenceDetail.put("name", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Name, language));
-					referenceDetail.put("description", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Description, language));
-					referenceDetail.put("help", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Help, language));
+					referenceDetail.put("name", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Name, getLanguage()));
+					referenceDetail.put("description", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Description, getLanguage()));
+					referenceDetail.put("help", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Help, getLanguage()));
 					detail.put("workflow", referenceDetail);
 				}
 			}
 		}
-		//	Generic Detail
-		detail.put("language", language);
-		if(clientId >= 0) {
-			detail.put("client_id", clientId);
-		}
-		if(roleId >= 0) {
-			detail.put("role_id", roleId);
-		}
-		if(userId >= 0) {
-			detail.put("user_id", userId);
-		}
-		detail.put("index_value", getIndexValue());
 		return detail;
 	}
 	
-	public Menu withMenu(MMenu menu) {
+	@Override
+	public DictionaryDocument withEntity(PO entity) {
+		MMenu menu = (MMenu) entity;
 		MClientInfo clientInfo = MClientInfo.get(menu.getCtx());
 		int currentRoleId = Env.getAD_Role_ID(menu.getCtx());
-		if(roleId >= 0) {
-			Env.setContext(Env.getCtx(), "#AD_Role_ID", roleId);
+		if(getRoleId() >= 0) {
+			Env.setContext(Env.getCtx(), "#AD_Role_ID", getRoleId());
 		}
 		MRole.getDefault(menu.getCtx(), true);
 		MTree tree = new MTree(menu.getCtx(), clientInfo.getAD_Tree_Menu_ID(), false, false, null, null);
@@ -190,7 +171,6 @@ public class Menu implements IGenericDictionaryDocument {
 		if(node == null) {
 			return this;
 		}
-		document = new HashMap<>();
 		Enumeration<?> childrens = node.children();
 		Map<String, Object> documentDetail = convertNode(node);
 		List<Map<String, Object>> children = new ArrayList<>();
@@ -202,12 +182,12 @@ public class Menu implements IGenericDictionaryDocument {
 			children.add(child);
 		}
 		documentDetail.put("children", children);
-		document.put(CHANNEL, documentDetail);
+		putDocument(documentDetail);
 		return this;
 	}
 	
 	private Menu() {
-		language = Env.getAD_Language(Env.getCtx());
+		super();
 	}
 	
 	/**
@@ -222,47 +202,4 @@ public class Menu implements IGenericDictionaryDocument {
 	public String getChannel() {
 		return CHANNEL;
 	}
-	
-	private String getIndexValue() {
-		StringBuffer channel = new StringBuffer(CHANNEL);
-		if(!language.equals("en_US")) {
-			channel.append("_").append(language);
-		}
-		if(clientId > 0) {
-			channel.append("_").append(clientId);
-		}
-		if(roleId > 0) {
-			channel.append("_").append(roleId);
-		}
-		if(userId > 0) {
-			channel.append("_").append(userId);
-		}
-		return channel.toString().toLowerCase();
-	}
-
-	@Override
-	public Menu withClientId(int clientId) {
-		this.clientId = clientId;
-		return this;
-	}
-
-	@Override
-	public Menu withRoleId(int roleId) {
-		this.roleId = roleId;
-		return this;
-	}
-
-	@Override
-	public Menu withUserId(int userId) {
-		this.userId = userId;
-		return this;
-	}
-
-	@Override
-	public Menu withLanguage(String language) {
-		this.language = language;
-		return this;
-	}
-	
-	
 }
