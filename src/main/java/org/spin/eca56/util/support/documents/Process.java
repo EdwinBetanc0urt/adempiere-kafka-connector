@@ -137,7 +137,7 @@ public class Process extends DictionaryDocument {
 					referenceDetail.put("name", reference.get_Translation(I_AD_Reference.COLUMNNAME_Name, getLanguage()));
 					referenceDetail.put("description", reference.get_Translation(I_AD_Reference.COLUMNNAME_Description, getLanguage()));
 					referenceDetail.put("help", reference.get_Translation(I_AD_Reference.COLUMNNAME_Help, getLanguage()));
-					documentDetail.put("display_type", referenceDetail);
+					detail.put("display_type", referenceDetail);
 				}
 				detail.put("reference_value_id", parameter.getAD_Reference_Value_ID());
 				detail.put("validation_id", parameter.getAD_Val_Rule_ID());
@@ -145,6 +145,7 @@ public class Process extends DictionaryDocument {
 			});
 		}
 		documentDetail.put("parameters", parametersDetail);
+		documentDetail.put("has_parameters", parametersDetail.size() > 0);
 		putDocument(documentDetail);
 		return this;
 	}

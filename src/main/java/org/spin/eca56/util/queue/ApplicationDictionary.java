@@ -18,11 +18,13 @@ package org.spin.eca56.util.queue;
 
 import java.util.List;
 
+import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Language;
 import org.adempiere.core.domains.models.I_AD_Menu;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Role;
 import org.adempiere.core.domains.models.I_AD_User;
+import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MLanguage;
 import org.compiere.model.PO;
@@ -32,8 +34,10 @@ import org.compiere.util.Util;
 import org.spin.eca56.util.support.IGenericDictionaryDocument;
 import org.spin.eca56.util.support.IGenericDocument;
 import org.spin.eca56.util.support.IGenericSender;
+import org.spin.eca56.util.support.documents.Browser;
 import org.spin.eca56.util.support.documents.Menu;
 import org.spin.eca56.util.support.documents.Process;
+import org.spin.eca56.util.support.documents.Window;
 import org.spin.queue.model.MADQueue;
 import org.spin.queue.util.QueueManager;
 
@@ -129,6 +133,10 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		}
 		if(tableName.equals(I_AD_Process.Table_Name)) {
 			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
+			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+		} else if(tableName.equals(I_AD_Window.Table_Name)) {
+			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
 			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		}
@@ -142,7 +150,11 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			return null;
 		}
 		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
+			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
+			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+		} else if(tableName.equals(I_AD_Window.Table_Name)) {
+			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
 			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
 		}
@@ -157,6 +169,10 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		}
 		if(tableName.equals(I_AD_Process.Table_Name)) {
 			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
+			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+		} else if(tableName.equals(I_AD_Window.Table_Name)) {
+			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
 			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
 		}

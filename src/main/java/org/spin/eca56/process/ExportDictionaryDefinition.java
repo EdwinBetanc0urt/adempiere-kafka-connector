@@ -21,6 +21,7 @@ package org.spin.eca56.process;
 import java.util.Enumeration;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
@@ -93,7 +94,7 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 		//	For Browsers
 		if(isExportBrowsers()) {
 			addLog("@AD_Browse_ID@");
-			new Query(getCtx(), I_AD_Process.Table_Name, null, get_TrxName()).setOnlyActiveRecords(true).getIDsAsList().forEach(browseId -> {
+			new Query(getCtx(), I_AD_Browse.Table_Name, null, get_TrxName()).setOnlyActiveRecords(true).getIDsAsList().forEach(browseId -> {
 				MBrowse browser = new MBrowse(getCtx(), browseId, get_TrxName());
 				QueueLoader.getInstance()
 				.getQueueManager(ApplicationDictionary.CODE)
