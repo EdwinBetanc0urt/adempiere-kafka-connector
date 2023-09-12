@@ -14,7 +14,11 @@ This project is directly related to [OpenSearch-Gateway-rs](https://github.com/a
 
 A simple config for queue can be this:
 
-![Queue config](docs/Queue_Config.png)
+![Setup Create Config](docs/Setup_Create_Config.png)
+
+![Setup Deploy Validator](docs/Setup_Deploy_Validator.png)
+
+![App Registration Queue config](docs/App_Registration_Queue.png)
 
 The runnning is:
 
