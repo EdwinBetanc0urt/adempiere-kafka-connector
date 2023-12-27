@@ -25,26 +25,15 @@ import java.util.Optional;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Form;
-import org.adempiere.core.domains.models.I_AD_Image;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Process_Para;
 import org.adempiere.core.domains.models.I_AD_Workflow;
-import org.adempiere.core.domains.models.I_C_Location;
-import org.adempiere.core.domains.models.I_M_AttributeSetInstance;
-import org.adempiere.core.domains.models.X_AD_Reference;
 import org.adempiere.model.MBrowse;
 import org.compiere.model.MForm;
-import org.compiere.model.MLookupFactory;
-import org.compiere.model.MLookupInfo;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
 import org.compiere.model.MReportView;
-import org.compiere.model.MValRule;
 import org.compiere.model.PO;
-import org.compiere.util.DisplayType;
-import org.compiere.util.Env;
-import org.compiere.util.Language;
-import org.compiere.util.Util;
 import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
 import org.spin.util.AbstractExportFormat;
@@ -154,39 +143,13 @@ public class Process extends DictionaryDocument {
 				detail.put("reference_value_id", parameter.getAD_Reference_Value_ID());
 				detail.put("validation_id", parameter.getAD_Val_Rule_ID());
 				String embeddedContextColumn = null;
-				if(parameter.getAD_Reference_ID() > 0 && ReferenceUtil.isLookupReference(parameter.getAD_Reference_ID())) {
-					X_AD_Reference reference = (X_AD_Reference) parameter.getAD_Reference();
+				ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(parameter.getColumnName(), parameter.getAD_Reference_ID(), parameter.getAD_Reference_Value_ID(), parameter.getAD_Val_Rule_ID());
+				if(referenceValues != null) {
 					Map<String, Object> referenceDetail = new HashMap<>();
-					referenceDetail.put("id", reference.get_ID());
-					MLookupInfo lookupInformation = null;
-					String tableName = null;
-					//	Special references
-					if(DisplayType.TableDir == parameter.getAD_Reference_ID()) {
-						tableName = parameter.getColumnName().replaceAll("_ID", "");
-					} else if (DisplayType.Location == parameter.getAD_Reference_ID()) {
-						tableName = I_C_Location.COLUMNNAME_C_Location_ID.replaceAll("_ID", "");
-					} else if (DisplayType.PAttribute == parameter.getAD_Reference_ID()) {
-						tableName = I_M_AttributeSetInstance.COLUMNNAME_M_AttributeSetInstance_ID.replaceAll("_ID", "");
-					} else if(DisplayType.Image == parameter.getAD_Reference_ID()) {
-						tableName = I_AD_Image.COLUMNNAME_AD_Image_ID.replaceAll("_ID", "");
-					}
-					if(Util.isEmpty(tableName)) {
-						lookupInformation = MLookupFactory.getLookupInfo(process.getCtx(), 0, 0, parameter.getAD_Reference_ID(), Language.getLanguage(Env.getAD_Language(Env.getCtx())), parameter.getColumnName(), parameter.getAD_Reference_Value_ID(), false, null, false);
-						if(lookupInformation != null) {
-							String validationRuleValue = null;
-							if(parameter.getAD_Val_Rule_ID() > 0) {
-								MValRule validationRule = MValRule.get(process.getCtx(), parameter.getAD_Val_Rule_ID());
-								validationRuleValue = validationRule.getCode();
-							}
-							tableName = lookupInformation.TableName;
-							embeddedContextColumn = Optional.ofNullable(lookupInformation.Query).orElse("") 
-									+ Optional.ofNullable(lookupInformation.QueryDirect).orElse("") 
-									+ Optional.ofNullable(lookupInformation.ValidationCode).orElse("")
-									+ Optional.ofNullable(validationRuleValue).orElse("");
-						}
-					}
-					referenceDetail.put("table_name", tableName);
+					referenceDetail.put("id", referenceValues.getReferenceId());
+					referenceDetail.put("table_name", referenceValues.getTableName());
 					detail.put("display_type", referenceDetail);
+					embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
 				}
 				detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(parameter.getDefaultValue()).orElse("")
 						+ Optional.ofNullable(parameter.getDefaultValue2()).orElse("")

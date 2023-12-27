@@ -22,14 +22,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.adempiere.core.domains.models.I_AD_Field;
 import org.adempiere.core.domains.models.I_AD_Process;
-import org.adempiere.core.domains.models.I_AD_Reference;
 import org.adempiere.core.domains.models.I_AD_Tab;
 import org.adempiere.core.domains.models.I_AD_Table;
 import org.adempiere.core.domains.models.I_AD_Window;
+import org.compiere.model.MColumn;
 import org.compiere.model.MField;
 import org.compiere.model.MProcess;
 import org.compiere.model.MTab;
@@ -183,6 +184,7 @@ public class Window extends DictionaryDocument {
 	}
 	
 	private Map<String, Object> parseField(MField field) {
+		MColumn column = MColumn.get(field.getCtx(), field.getAD_Column_ID());
 		Map<String, Object> detail = new HashMap<>();
 		detail.put("id", field.getAD_Field_ID());
 		detail.put("uuid", field.getUUID());
@@ -190,22 +192,41 @@ public class Window extends DictionaryDocument {
 		detail.put("description", field.get_Translation(I_AD_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Field.COLUMNNAME_Help, getLanguage()));
 		detail.put("entity_type", field.getEntityType());
-		detail.put("column_name", field.getAD_Column().getColumnName());
-		detail.put("default_value", field.getDefaultValue());
+		detail.put("column_name", column.getColumnName());
+		detail.put("default_value", Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue()));
 		detail.put("display_logic", field.getDisplayLogic());
+		detail.put("read_only_logic", column.getReadOnlyLogic());
+		detail.put("mandatory_logic", column.getMandatoryLogic());
+		detail.put("is_mandatory", (field.getIsMandatory() != null && field.getIsMandatory().equals("Y")? true: column.isMandatory()));
 		detail.put("sequence", field.getSeqNo());
 		detail.put("grid_sequence", field.getSeqNoGrid());
 		detail.put("reference_id", field.getAD_Reference_ID());
-		if(field.getAD_Reference_ID() > 0) {
-			PO reference = (PO) field.getAD_Reference();
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", reference.get_ID());
-			referenceDetail.put("uuid", reference.get_UUID());
-			referenceDetail.put("name", reference.get_Translation(I_AD_Reference.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", reference.get_Translation(I_AD_Reference.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", reference.get_Translation(I_AD_Reference.COLUMNNAME_Help, getLanguage()));
-			detail.put("display_type", referenceDetail);
+		String embeddedContextColumn = null;
+		int referenceId = field.getAD_Reference_ID();
+		if(referenceId <= 0) {
+			referenceId = column.getAD_Reference_ID();
 		}
+		int referenceValueId = field.getAD_Reference_Value_ID();
+		if(referenceValueId <= 0) {
+			referenceValueId = column.getAD_Reference_Value_ID();
+		}
+		int validationRuleId = field.getAD_Val_Rule_ID();
+		if(validationRuleId <= 0) {
+			validationRuleId = column.getAD_Val_Rule_ID();
+		}
+		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), referenceId, referenceValueId, validationRuleId);
+		if(referenceValues != null) {
+			Map<String, Object> referenceDetail = new HashMap<>();
+			referenceDetail.put("id", referenceValues.getReferenceId());
+			referenceDetail.put("table_name", referenceValues.getTableName());
+			detail.put("display_type", referenceDetail);
+			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
+		}
+		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue())
+				+ Optional.ofNullable(field.getDisplayLogic()).orElse("")
+				+ Optional.ofNullable(column.getMandatoryLogic()).orElse("")
+				+ Optional.ofNullable(column.getReadOnlyLogic()).orElse("")
+				+ Optional.ofNullable(embeddedContextColumn).orElse("")));
 		detail.put("reference_value_id", field.getAD_Reference_Value_ID());
 		detail.put("validation_id", field.getAD_Val_Rule_ID());
 		return detail;
