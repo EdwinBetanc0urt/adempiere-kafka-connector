@@ -30,6 +30,7 @@ import org.adempiere.core.domains.models.I_AD_Table;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
+import org.adempiere.model.MViewColumn;
 import org.compiere.model.MProcess;
 import org.compiere.model.MTable;
 import org.compiere.model.MWindow;
@@ -78,7 +79,7 @@ public class Browser extends DictionaryDocument {
 			documentDetail.put("process", referenceDetail);
 		}
 		if(browser.getAD_Window_ID() > 0) {
-			MWindow window = new MWindow(browser.getCtx(), browser.getAD_Window_ID(), null);
+			MWindow window = MWindow.get(browser.getCtx(), browser.getAD_Window_ID());
 			Map<String, Object> referenceDetail = new HashMap<>();
 			referenceDetail.put("id", window.getAD_Window_ID());
 			referenceDetail.put("uuid", window.getUUID());
@@ -88,7 +89,7 @@ public class Browser extends DictionaryDocument {
 			documentDetail.put("window", referenceDetail);
 		}
 		if(browser.getAD_Table_ID() > 0) {
-			MTable table = new MTable(browser.getCtx(), browser.getAD_Table_ID(), null);
+			MTable table = MTable.get(browser.getCtx(), browser.getAD_Table_ID());
 			Map<String, Object> referenceDetail = new HashMap<>();
 			referenceDetail.put("id", table.getAD_Window_ID());
 			referenceDetail.put("uuid", table.getUUID());
@@ -123,7 +124,8 @@ public class Browser extends DictionaryDocument {
 	
 	private Map<String, Object> parseField(MBrowseField field) {
 		Map<String, Object> detail = new HashMap<>();
-		String columnName = field.getAD_View_Column().getColumnName();
+		MViewColumn viewColumn = MViewColumn.getById(field.getCtx(), field.getAD_View_Column_ID(), null);
+		String columnName = viewColumn.getColumnName();
 		detail.put("id", field.getAD_Browse_Field_ID());
 		detail.put("uuid", field.getUUID());
 		detail.put("name", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Name, getLanguage()));
