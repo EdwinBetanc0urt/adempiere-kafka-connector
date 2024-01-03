@@ -68,7 +68,7 @@ public class Window extends DictionaryDocument {
 		documentDetail.put("window_type", window.getWindowType());
 		documentDetail.put("is_sales_transaction", window.isSOTrx());
 		//	Tabs
-		documentDetail.put("tabs", convertTabs(Arrays.asList(window.getTabs(true, null))));
+		documentDetail.put("tabs", convertTabs(Arrays.asList(window.getTabs(false, null))));
 		putDocument(documentDetail);
 		return this;
 	}
@@ -130,19 +130,13 @@ public class Window extends DictionaryDocument {
 			referenceDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
 			detail.put("process", referenceDetail);
 		}
-		List<MField> fields = getFieldsFromTab(tab);
+		List<MField> fields = Arrays.asList(tab.getFields(false, null));
 		detail.put("fields", convertFields(fields));
 		detail.put("row_fields", convertFields(fields.stream().filter(field -> field.isDisplayed()).collect(Collectors.toList())));
 		detail.put("grid_fields", convertFields(fields.stream().filter(field -> field.isDisplayedGrid()).collect(Collectors.toList())));
 		//	Processes
 		detail.put("process", convertProcesses(getProcessFromTab(tab)));
 		return detail;
-	}
-	
-	private List<MField> getFieldsFromTab(MTab tab) {
-		return new Query(tab.getCtx(), I_AD_Field.Table_Name, I_AD_Field.COLUMNNAME_AD_Tab_ID + " = ?", null)
-				.setParameters(tab.getAD_Tab_ID())
-				.list();
 	}
 	
 	private List<MProcess> getProcessFromTab(MTab tab) {
