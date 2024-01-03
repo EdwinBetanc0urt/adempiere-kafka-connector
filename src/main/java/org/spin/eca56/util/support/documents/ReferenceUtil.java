@@ -31,7 +31,6 @@ import org.adempiere.core.domains.models.I_C_ElementValue;
 import org.adempiere.core.domains.models.I_C_Location;
 import org.adempiere.core.domains.models.I_M_AttributeSetInstance;
 import org.adempiere.core.domains.models.I_S_ResourceAssignment;
-import org.adempiere.core.domains.models.X_AD_Reference;
 import org.compiere.model.MRefTable;
 import org.compiere.model.MValRule;
 import org.compiere.util.DisplayType;
@@ -94,9 +93,9 @@ public class ReferenceUtil {
 	public static ReferenceValues getReferenceDefinition(String columnName, int referenceId, int referenceValueId, int validationRuleId) {
 		String embeddedContextColumn = null;
 		if(referenceId > 0 && ReferenceUtil.isLookupReference(referenceId)) {
-			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceId, null);
+//			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceId, null);
 			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", reference.get_ID());
+			referenceDetail.put("id", referenceId);
 //			MLookupInfo lookupInformation = null;
 			String tableName = getTableNameFromReference(columnName, referenceId);
 //			//	Special references
