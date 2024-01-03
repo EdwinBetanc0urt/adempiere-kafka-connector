@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Browse_Field;
 import org.adempiere.core.domains.models.I_AD_Process;
-import org.adempiere.core.domains.models.I_AD_Reference;
 import org.adempiere.core.domains.models.I_AD_Table;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
@@ -61,8 +61,6 @@ public class Browser extends DictionaryDocument {
 		documentDetail.put("name", browser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", browser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", browser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
-		documentDetail.put("entity_type", browser.getEntityType());
-		documentDetail.put("access_level", browser.getAccessLevel());
 		documentDetail.put("is_collapsible_by_default", browser.isCollapsibleByDefault());
 		documentDetail.put("is_deleteable", browser.isDeleteable());
 		documentDetail.put("is_execute_query_by_default", browser.isExecutedQueryByDefault());
@@ -125,13 +123,13 @@ public class Browser extends DictionaryDocument {
 	
 	private Map<String, Object> parseField(MBrowseField field) {
 		Map<String, Object> detail = new HashMap<>();
+		String columnName = field.getAD_View_Column().getColumnName();
 		detail.put("id", field.getAD_Browse_Field_ID());
 		detail.put("uuid", field.getUUID());
 		detail.put("name", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Help, getLanguage()));
-		detail.put("entity_type", field.getEntityType());
-		detail.put("column_name", field.getAD_View_Column().getColumnName());
+		detail.put("column_name", columnName);
 		detail.put("element_id", field.getAD_Element_ID());
 		detail.put("default_value", field.getDefaultValue());
 		detail.put("default_value_to", field.getDefaultValue2());
@@ -139,23 +137,29 @@ public class Browser extends DictionaryDocument {
 		detail.put("is_info_only", field.isInfoOnly());
 		detail.put("is_mandatory", field.isMandatory());
 		detail.put("display_logic", field.getDisplayLogic());
+		detail.put("read_only_logic", field.getReadOnlyLogic());
 		detail.put("sequence", field.getSeqNo());
 		detail.put("value_format", field.getVFormat());
 		detail.put("min_value", field.getValueMin());
 		detail.put("max_value", field.getValueMax());
 		detail.put("reference_id", field.getAD_Reference_ID());
-		if(field.getAD_Reference_ID() > 0) {
-			PO reference = (PO) field.getAD_Reference();
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", reference.get_ID());
-			referenceDetail.put("uuid", reference.get_UUID());
-			referenceDetail.put("name", reference.get_Translation(I_AD_Reference.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", reference.get_Translation(I_AD_Reference.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", reference.get_Translation(I_AD_Reference.COLUMNNAME_Help, getLanguage()));
-			detail.put("display_type", referenceDetail);
-		}
 		detail.put("reference_value_id", field.getAD_Reference_Value_ID());
 		detail.put("validation_id", field.getAD_Val_Rule_ID());
+		String embeddedContextColumn = null;
+		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(columnName, field.getAD_Reference_ID(), field.getAD_Reference_Value_ID(), field.getAD_Val_Rule_ID());
+		if(referenceValues != null) {
+			Map<String, Object> referenceDetail = new HashMap<>();
+			referenceDetail.put("id", referenceValues.getReferenceId());
+			referenceDetail.put("table_name", referenceValues.getTableName());
+			detail.put("display_type", referenceDetail);
+			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
+		}
+		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse("")
+				+ Optional.ofNullable(field.getDefaultValue2()).orElse("")
+				+ Optional.ofNullable(field.getDisplayLogic()).orElse("")
+				+ Optional.ofNullable(field.getReadOnlyLogic()).orElse("")
+				+ Optional.ofNullable(embeddedContextColumn).orElse("")));
+		detail.put("dependent_fields", DependenceUtil.generateDependentBrowseFields(field));
 		return detail;
 	}
 	

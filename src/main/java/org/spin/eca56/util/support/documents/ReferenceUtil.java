@@ -32,12 +32,10 @@ import org.adempiere.core.domains.models.I_C_Location;
 import org.adempiere.core.domains.models.I_M_AttributeSetInstance;
 import org.adempiere.core.domains.models.I_S_ResourceAssignment;
 import org.adempiere.core.domains.models.X_AD_Reference;
-import org.compiere.model.MLookupFactory;
-import org.compiere.model.MLookupInfo;
+import org.compiere.model.MRefTable;
 import org.compiere.model.MValRule;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
-import org.compiere.util.Language;
 import org.compiere.util.Util;
 
 /**
@@ -99,24 +97,38 @@ public class ReferenceUtil {
 			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceId, null);
 			Map<String, Object> referenceDetail = new HashMap<>();
 			referenceDetail.put("id", reference.get_ID());
-			MLookupInfo lookupInformation = null;
+//			MLookupInfo lookupInformation = null;
 			String tableName = getTableNameFromReference(columnName, referenceId);
-			//	Special references
-			if(Util.isEmpty(tableName)) {
-				lookupInformation = MLookupFactory.getLookupInfo(Env.getCtx(), 0, 0, referenceId, Language.getBaseLanguage(), columnName, referenceValueId, false, null, false);
-				if(lookupInformation != null) {
-					String validationRuleValue = null;
-					if(validationRuleId > 0) {
-						MValRule validationRule = MValRule.get(Env.getCtx(), validationRuleId);
-						validationRuleValue = validationRule.getCode();
-					}
-					tableName = lookupInformation.TableName;
-					embeddedContextColumn = Optional.ofNullable(lookupInformation.Query).orElse("") 
-							+ Optional.ofNullable(lookupInformation.QueryDirect).orElse("") 
-							+ Optional.ofNullable(lookupInformation.ValidationCode).orElse("")
-							+ Optional.ofNullable(validationRuleValue).orElse("");
+//			//	Special references
+//			if(Util.isEmpty(tableName)) {
+//				lookupInformation = MLookupFactory.getLookupInfo(Env.getCtx(), 0, 0, referenceId, Language.getBaseLanguage(), columnName, referenceValueId, false, null, false);
+//				if(lookupInformation != null) {
+//					String validationRuleValue = null;
+//					if(validationRuleId > 0) {
+//						MValRule validationRule = MValRule.get(Env.getCtx(), validationRuleId);
+//						validationRuleValue = validationRule.getCode();
+//					}
+//					tableName = lookupInformation.TableName;
+//					embeddedContextColumn = Optional.ofNullable(lookupInformation.Query).orElse("") 
+//							+ Optional.ofNullable(lookupInformation.QueryDirect).orElse("") 
+//							+ Optional.ofNullable(lookupInformation.ValidationCode).orElse("")
+//							+ Optional.ofNullable(validationRuleValue).orElse("");
+//				}
+//			}
+			String whereClauseReference = null;
+			String validationRuleValue = null;
+			if(validationRuleId > 0) {
+				MValRule validationRule = MValRule.get(Env.getCtx(), validationRuleId);
+				validationRuleValue = validationRule.getCode();
+			}
+			if((referenceId == DisplayType.Table || referenceId == DisplayType.Search) && referenceValueId > 0) {
+				MRefTable tableReference = MRefTable.getById(Env.getCtx(), referenceValueId);
+				if(tableReference != null) {
+					whereClauseReference = tableReference.getWhereClause();
 				}
 			}
+			embeddedContextColumn = Optional.ofNullable(whereClauseReference).orElse("")
+					+ Optional.ofNullable(validationRuleValue).orElse("");
 			return ReferenceValues.newInstance(referenceId, tableName, embeddedContextColumn);
 		}
 		return null;

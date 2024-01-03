@@ -156,6 +156,7 @@ public class Process extends DictionaryDocument {
 						+ Optional.ofNullable(parameter.getDisplayLogic()).orElse("")
 						+ Optional.ofNullable(parameter.getReadOnlyLogic()).orElse("")
 						+ Optional.ofNullable(embeddedContextColumn).orElse("")));
+				detail.put("dependent_fields", DependenceUtil.generateDependentProcessParameters(parameter));
 				parametersDetail.add(detail);
 			});
 		}

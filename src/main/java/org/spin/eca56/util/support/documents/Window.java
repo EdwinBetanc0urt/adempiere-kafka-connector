@@ -229,6 +229,7 @@ public class Window extends DictionaryDocument {
 				+ Optional.ofNullable(embeddedContextColumn).orElse("")));
 		detail.put("reference_value_id", field.getAD_Reference_Value_ID());
 		detail.put("validation_id", field.getAD_Val_Rule_ID());
+		detail.put("dependent_fields", DependenceUtil.generateDependentWindowFields(field));
 		return detail;
 	}
 	
