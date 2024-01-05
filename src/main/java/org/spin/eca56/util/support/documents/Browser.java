@@ -147,13 +147,14 @@ public class Browser extends DictionaryDocument {
 		detail.put("reference_id", field.getAD_Reference_ID());
 		detail.put("reference_value_id", field.getAD_Reference_Value_ID());
 		detail.put("validation_id", field.getAD_Val_Rule_ID());
+		detail.put("display_type", field.getAD_Reference_ID());
 		String embeddedContextColumn = null;
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(columnName, field.getAD_Reference_ID(), field.getAD_Reference_Value_ID(), field.getAD_Val_Rule_ID());
 		if(referenceValues != null) {
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", referenceValues.getReferenceId());
-			referenceDetail.put("table_name", referenceValues.getTableName());
-			detail.put("display_type", referenceDetail);
+//			Map<String, Object> referenceDetail = new HashMap<>();
+//			referenceDetail.put("id", referenceValues.getReferenceId());
+//			referenceDetail.put("table_name", referenceValues.getTableName());
+//			detail.put("display_type", referenceDetail);
 			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
 		}
 		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse("")

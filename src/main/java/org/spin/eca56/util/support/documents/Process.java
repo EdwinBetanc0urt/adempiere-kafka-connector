@@ -142,13 +142,14 @@ public class Process extends DictionaryDocument {
 				detail.put("reference_id", parameter.getAD_Reference_ID());
 				detail.put("reference_value_id", parameter.getAD_Reference_Value_ID());
 				detail.put("validation_id", parameter.getAD_Val_Rule_ID());
+				detail.put("display_type", parameter.getAD_Reference_ID());
 				String embeddedContextColumn = null;
 				ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(parameter.getColumnName(), parameter.getAD_Reference_ID(), parameter.getAD_Reference_Value_ID(), parameter.getAD_Val_Rule_ID());
 				if(referenceValues != null) {
-					Map<String, Object> referenceDetail = new HashMap<>();
-					referenceDetail.put("id", referenceValues.getReferenceId());
-					referenceDetail.put("table_name", referenceValues.getTableName());
-					detail.put("display_type", referenceDetail);
+//					Map<String, Object> referenceDetail = new HashMap<>();
+//					referenceDetail.put("id", referenceValues.getReferenceId());
+//					referenceDetail.put("table_name", referenceValues.getTableName());
+//					detail.put("display_type", referenceDetail);
 					embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
 				}
 				detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(parameter.getDefaultValue()).orElse("")

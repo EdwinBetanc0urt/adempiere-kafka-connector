@@ -78,18 +78,18 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 					if(documentByLanguage != null) {
 						sender.send(documentByLanguage, documentByLanguage.getChannel());
 					}
-					getRoles().forEach(roleId -> {
-						IGenericDictionaryDocument documentByRole = getDocumentManagerByRole(entity, language.getAD_Language(), roleId);
-						if(documentByRole != null) {
-							sender.send(documentByRole, documentByRole.getChannel());
-						}
-					});
-					getUsers().forEach(userId -> {
-						IGenericDictionaryDocument documentByUser = getDocumentManagerByUser(entity, language.getAD_Language(), userId);
-						if(documentByUser != null) {
-							sender.send(documentByUser, documentByUser.getChannel());
-						}
-					});
+//					getRoles().forEach(roleId -> {
+//						IGenericDictionaryDocument documentByRole = getDocumentManagerByRole(entity, language.getAD_Language(), roleId);
+//						if(documentByRole != null) {
+//							sender.send(documentByRole, documentByRole.getChannel());
+//						}
+//					});
+//					getUsers().forEach(userId -> {
+//						IGenericDictionaryDocument documentByUser = getDocumentManagerByUser(entity, language.getAD_Language(), userId);
+//						if(documentByUser != null) {
+//							sender.send(documentByUser, documentByUser.getChannel());
+//						}
+//					});
 				});
 			} else {
 				throw new AdempiereException("@AD_AppRegistration_ID@ @NotFound@");

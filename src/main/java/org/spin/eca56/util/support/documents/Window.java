@@ -92,7 +92,6 @@ public class Window extends DictionaryDocument {
 		detail.put("description", tab.get_Translation(I_AD_Tab.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", tab.get_Translation(I_AD_Tab.COLUMNNAME_Help, getLanguage()));
 		detail.put("commit_warning", tab.get_Translation(I_AD_Tab.COLUMNNAME_CommitWarning, getLanguage()));
-		detail.put("entity_type", tab.getEntityType());
 		detail.put("display_logic", tab.getDisplayLogic());
 		detail.put("read_only_logic", tab.getReadOnlyLogic());
 		detail.put("is_active", tab.isActive());
@@ -185,7 +184,6 @@ public class Window extends DictionaryDocument {
 		detail.put("name", field.get_Translation(I_AD_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Field.COLUMNNAME_Help, getLanguage()));
-		detail.put("entity_type", field.getEntityType());
 		detail.put("column_name", column.getColumnName());
 		detail.put("default_value", Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue()));
 		detail.put("display_logic", field.getDisplayLogic());
@@ -194,7 +192,6 @@ public class Window extends DictionaryDocument {
 		detail.put("is_mandatory", (field.getIsMandatory() != null && field.getIsMandatory().equals("Y")? true: column.isMandatory()));
 		detail.put("sequence", field.getSeqNo());
 		detail.put("grid_sequence", field.getSeqNoGrid());
-		detail.put("reference_id", field.getAD_Reference_ID());
 		String embeddedContextColumn = null;
 		int referenceId = field.getAD_Reference_ID();
 		if(referenceId <= 0) {
@@ -210,10 +207,10 @@ public class Window extends DictionaryDocument {
 		}
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), referenceId, referenceValueId, validationRuleId);
 		if(referenceValues != null) {
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", referenceValues.getReferenceId());
-			referenceDetail.put("table_name", referenceValues.getTableName());
-			detail.put("display_type", referenceDetail);
+//			Map<String, Object> referenceDetail = new HashMap<>();
+//			referenceDetail.put("id", referenceValues.getReferenceId());
+//			referenceDetail.put("table_name", referenceValues.getTableName());
+//			detail.put("display_type", referenceDetail);
 			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
 		}
 		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue())
@@ -221,8 +218,10 @@ public class Window extends DictionaryDocument {
 				+ Optional.ofNullable(column.getMandatoryLogic()).orElse("")
 				+ Optional.ofNullable(column.getReadOnlyLogic()).orElse("")
 				+ Optional.ofNullable(embeddedContextColumn).orElse("")));
-		detail.put("reference_value_id", field.getAD_Reference_Value_ID());
-		detail.put("validation_id", field.getAD_Val_Rule_ID());
+		detail.put("reference_id", referenceId);
+		detail.put("display_type", referenceId);
+		detail.put("reference_value_id", referenceValueId);
+		detail.put("validation_id", validationRuleId);
 		detail.put("dependent_fields", DependenceUtil.generateDependentWindowFields(field));
 		return detail;
 	}
