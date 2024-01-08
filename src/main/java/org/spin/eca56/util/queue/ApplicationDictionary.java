@@ -78,18 +78,18 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 					if(documentByLanguage != null) {
 						sender.send(documentByLanguage, documentByLanguage.getChannel());
 					}
-//					getRoles().forEach(roleId -> {
-//						IGenericDictionaryDocument documentByRole = getDocumentManagerByRole(entity, language.getAD_Language(), roleId);
-//						if(documentByRole != null) {
-//							sender.send(documentByRole, documentByRole.getChannel());
-//						}
-//					});
-//					getUsers().forEach(userId -> {
-//						IGenericDictionaryDocument documentByUser = getDocumentManagerByUser(entity, language.getAD_Language(), userId);
-//						if(documentByUser != null) {
-//							sender.send(documentByUser, documentByUser.getChannel());
-//						}
-//					});
+					getRoles().forEach(roleId -> {
+						IGenericDictionaryDocument documentByRole = getDocumentManagerByRole(entity, language.getAD_Language(), roleId);
+						if(documentByRole != null) {
+							sender.send(documentByRole, documentByRole.getChannel());
+						}
+					});
+					getUsers().forEach(userId -> {
+						IGenericDictionaryDocument documentByUser = getDocumentManagerByUser(entity, language.getAD_Language(), userId);
+						if(documentByUser != null) {
+							sender.send(documentByUser, documentByUser.getChannel());
+						}
+					});
 				});
 			} else {
 				throw new AdempiereException("@AD_AppRegistration_ID@ @NotFound@");
@@ -150,11 +150,11 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			return null;
 		}
 		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return null;//Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return null;//Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return null;//Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
 			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
 		}
@@ -163,19 +163,19 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 
 	@Override
 	public IGenericDictionaryDocument getDocumentManagerByUser(PO entity, String language, int userId) {
-		String tableName = entity.get_TableName();
-		if(Util.isEmpty(tableName)) {
-			return null;
-		}
-		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
-		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
-		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
-		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
-		}
+//		String tableName = entity.get_TableName();
+//		if(Util.isEmpty(tableName)) {
+//			return null;
+//		}
+//		if(tableName.equals(I_AD_Process.Table_Name)) {
+//			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
+//			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//		} else if(tableName.equals(I_AD_Window.Table_Name)) {
+//			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
+//			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//		}
 		return null;
 	}
 }

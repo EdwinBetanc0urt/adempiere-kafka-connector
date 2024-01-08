@@ -53,9 +53,9 @@ public class DocumentManagement extends QueueManager implements IEngineManager {
 	}
 	
 	private void send(int queueId) {
-		PO process = getEntity();
-		if(process != null) {
-			Order entityEngine = getDocumentManager(process);
+		PO document = getEntity();
+		if(document != null) {
+			Order entityEngine = getDocumentManager(document);
 			if(entityEngine != null) {
 				IGenericSender sender = DefaultEngineQueueUtil.getEngineManager();
 				if(sender != null) {
