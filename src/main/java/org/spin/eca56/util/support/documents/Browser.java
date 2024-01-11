@@ -31,10 +31,12 @@ import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MViewColumn;
+import org.compiere.model.MColumn;
 import org.compiere.model.MProcess;
 import org.compiere.model.MTable;
 import org.compiere.model.MWindow;
 import org.compiere.model.PO;
+import org.compiere.util.Util;
 import org.spin.eca56.util.support.DictionaryDocument;
 
 /**
@@ -126,12 +128,23 @@ public class Browser extends DictionaryDocument {
 		Map<String, Object> detail = new HashMap<>();
 		MViewColumn viewColumn = MViewColumn.getById(field.getCtx(), field.getAD_View_Column_ID(), null);
 		String columnName = viewColumn.getColumnName();
+		String elementName = null;
+		if(viewColumn.getAD_Column_ID() != 0) {
+			MColumn column = MColumn.get(field.getCtx(), viewColumn.getAD_Column_ID());
+			elementName = column.getColumnName();
+		}
+
+		//	Default element
+		if(Util.isEmpty(elementName)) {
+			elementName = field.getAD_Element().getColumnName();
+		}
 		detail.put("id", field.getAD_Browse_Field_ID());
 		detail.put("uuid", field.getUUID());
 		detail.put("name", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Help, getLanguage()));
 		detail.put("column_name", columnName);
+		detail.put("element_name", elementName);
 		detail.put("element_id", field.getAD_Element_ID());
 		detail.put("default_value", field.getDefaultValue());
 		detail.put("default_value_to", field.getDefaultValue2());
@@ -144,10 +157,17 @@ public class Browser extends DictionaryDocument {
 		detail.put("value_format", field.getVFormat());
 		detail.put("min_value", field.getValueMin());
 		detail.put("max_value", field.getValueMax());
-		detail.put("reference_id", field.getAD_Reference_ID());
 		detail.put("reference_value_id", field.getAD_Reference_Value_ID());
 		detail.put("validation_id", field.getAD_Val_Rule_ID());
 		detail.put("display_type", field.getAD_Reference_ID());
+		//	
+		detail.put("is_displayed", field.isDisplayed());
+		detail.put("is_query_criteria", field.isQueryCriteria());
+		detail.put("is_order_by", field.isOrderBy());
+		detail.put("is_read_only", field.isReadOnly());
+		detail.put("is_key", field.isKey());
+		detail.put("is_identifier", field.isIdentifier());
+		detail.put("grid_sequence", field.getSeqNoGrid());
 		String embeddedContextColumn = null;
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(columnName, field.getAD_Reference_ID(), field.getAD_Reference_Value_ID(), field.getAD_Val_Rule_ID());
 		if(referenceValues != null) {

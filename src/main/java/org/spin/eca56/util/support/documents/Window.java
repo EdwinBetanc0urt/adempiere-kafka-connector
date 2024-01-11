@@ -192,6 +192,9 @@ public class Window extends DictionaryDocument {
 		detail.put("is_mandatory", (field.getIsMandatory() != null && field.getIsMandatory().equals("Y")? true: column.isMandatory()));
 		detail.put("sequence", field.getSeqNo());
 		detail.put("grid_sequence", field.getSeqNoGrid());
+		//
+		detail.put("is_displayed", field.isDisplayed());
+		detail.put("is_read_only", field.isReadOnly());
 		String embeddedContextColumn = null;
 		int referenceId = field.getAD_Reference_ID();
 		if(referenceId <= 0) {
@@ -218,7 +221,6 @@ public class Window extends DictionaryDocument {
 				+ Optional.ofNullable(column.getMandatoryLogic()).orElse("")
 				+ Optional.ofNullable(column.getReadOnlyLogic()).orElse("")
 				+ Optional.ofNullable(embeddedContextColumn).orElse("")));
-		detail.put("reference_id", referenceId);
 		detail.put("display_type", referenceId);
 		detail.put("reference_value_id", referenceValueId);
 		detail.put("validation_id", validationRuleId);

@@ -139,7 +139,6 @@ public class Process extends DictionaryDocument {
 				detail.put("value_format", parameter.getVFormat());
 				detail.put("min_value", parameter.getValueMin());
 				detail.put("max_value", parameter.getValueMax());
-				detail.put("reference_id", parameter.getAD_Reference_ID());
 				detail.put("reference_value_id", parameter.getAD_Reference_Value_ID());
 				detail.put("validation_id", parameter.getAD_Val_Rule_ID());
 				detail.put("display_type", parameter.getAD_Reference_ID());
