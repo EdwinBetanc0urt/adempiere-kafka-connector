@@ -19,26 +19,31 @@ package org.spin.eca56.util.support.documents;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.adempiere.core.domains.models.I_AD_Element;
 import org.adempiere.core.domains.models.I_AD_Field;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Tab;
-import org.adempiere.core.domains.models.I_AD_Table;
 import org.adempiere.core.domains.models.I_AD_Window;
+import org.adempiere.model.MBrowse;
 import org.compiere.model.MColumn;
 import org.compiere.model.MField;
+import org.compiere.model.MForm;
 import org.compiere.model.MProcess;
 import org.compiere.model.MTab;
 import org.compiere.model.MTable;
 import org.compiere.model.MWindow;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
+import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
+import org.spin.util.ASPUtil;
 
 /**
  * 	the document class for Window senders
@@ -72,10 +77,20 @@ public class Window extends DictionaryDocument {
 		putDocument(documentDetail);
 		return this;
 	}
-	
+
+	private Map<String, Object> parseDictionaryEntity(PO entity) {
+		Map<String, Object> documentEntity = new HashMap<>();
+		documentEntity.put("id", entity.get_ID());
+		documentEntity.put("uuid", entity.get_UUID());
+		documentEntity.put("name", entity.get_Translation(I_AD_Element.COLUMNNAME_Name, getLanguage()));
+		documentEntity.put("description", entity.get_Translation(I_AD_Element.COLUMNNAME_Description, getLanguage()));
+		documentEntity.put("help", entity.get_Translation(I_AD_Element.COLUMNNAME_Help, getLanguage()));
+		return documentEntity;
+	}
+
 	private List<Map<String, Object>> convertTabs(List<MTab> tabs) {
 		List<Map<String, Object>> tabsDetail = new ArrayList<>();
-		if(tabs == null) {
+		if(tabs == null || tabs.isEmpty()) {
 			return tabsDetail;
 		}
 		tabs.forEach(tab -> {
@@ -91,57 +106,146 @@ public class Window extends DictionaryDocument {
 		detail.put("name", tab.get_Translation(I_AD_Tab.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", tab.get_Translation(I_AD_Tab.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", tab.get_Translation(I_AD_Tab.COLUMNNAME_Help, getLanguage()));
-		detail.put("commit_warning", tab.get_Translation(I_AD_Tab.COLUMNNAME_CommitWarning, getLanguage()));
-		detail.put("display_logic", tab.getDisplayLogic());
-		detail.put("read_only_logic", tab.getReadOnlyLogic());
 		detail.put("is_active", tab.isActive());
+		// Record attributes
+		detail.put("is_insert_record", tab.isInsertRecord());
+		detail.put("commit_warning", tab.get_Translation(I_AD_Tab.COLUMNNAME_CommitWarning, getLanguage()));
+		// Attributes
+		detail.put("display_logic", tab.getDisplayLogic());
 		detail.put("sequence", tab.getSeqNo());
 		detail.put("tab_level", tab.getTabLevel());
+		detail.put("is_read_only", tab.isReadOnly());
+		detail.put("read_only_logic", tab.getReadOnlyLogic());
 		detail.put("is_single_row", tab.isSingleRow());
-		detail.put("is_has_tree", tab.isHasTree());
-		detail.put("is_sort_tab", tab.isSortTab());
 		detail.put("is_advanced_tab", tab.isAdvancedTab());
+		detail.put("is_has_tree", tab.isHasTree());
 		detail.put("is_info_tab", tab.isInfoTab());
 		detail.put("is_translation_tab", tab.isTranslationTab());
-		detail.put("is_insert_record", tab.isInsertRecord());
-		detail.put("is_read_only", tab.isReadOnly());
+
+		// Table attributes
 		if(tab.getAD_Table_ID() > 0) {
 			MTable table = new MTable(tab.getCtx(), tab.getAD_Table_ID(), null);
 			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", table.getAD_Window_ID());
-			referenceDetail.put("uuid", table.getUUID());
 			referenceDetail.put("table_name", table.getTableName());
-			referenceDetail.put("name", table.get_Translation(I_AD_Table.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", table.get_Translation(I_AD_Table.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", table.get_Translation(I_AD_Table.COLUMNNAME_Help, getLanguage()));
+			referenceDetail.put("access_level", table.getAccessLevel());
+			referenceDetail.put("key_columns",
+				Arrays.asList(
+					table.getKeyColumns()
+				)
+			);
+			referenceDetail.put("is_view", table.isView());
 			referenceDetail.put("is_document", table.isDocument());
 			referenceDetail.put("is_deleteable", table.isDeleteable());
-			referenceDetail.put("is_view", table.isView());
+			referenceDetail.put("is_change_log", table.isChangeLog());
+			List<String> identifierColumns = table.getColumnsAsList(false).stream()
+				.filter(column -> {
+					return column.isIdentifier();
+				})
+				.sorted(Comparator.comparing(MColumn::getSeqNo))
+				.map(column -> {
+					return column.getColumnName();
+				})
+				.collect(Collectors.toList())
+			;
+			referenceDetail.put("identifier_columns", identifierColumns);
+			List<String> selectionColums = table.getColumnsAsList(false).stream()
+				.filter(column -> {
+					return column.isSelectionColumn();
+				})
+				.map(column -> {
+					return column.getColumnName();
+				})
+				.collect(Collectors.toList())
+			;
+			referenceDetail.put("selection_colums", selectionColums);
 			detail.put("table", referenceDetail);
 		}
+
+		// Link attributes
+		List<String> contextColumnsList = ReferenceUtil.getContextColumnNames(
+			Optional.ofNullable(tab.getWhereClause()).orElse("")
+			+ Optional.ofNullable(tab.getOrderByClause()).orElse("")
+		);
+		detail.put("context_column_names", contextColumnsList);
+		if(tab.getParent_Column_ID() > 0) {
+			//	Parent Link Column Name
+			MColumn column = MColumn.get(tab.getCtx(), tab.getParent_Column_ID());
+			detail.put("parent_column_name", column.getColumnName());
+		}
+		if(tab.getAD_Column_ID() > 0) {
+			//	Link Column Name
+			MColumn column = MColumn.get(tab.getCtx(), tab.getAD_Column_ID());
+			detail.put("link_column_name", column.getColumnName());
+		}
+		// Sort attributes
+		detail.put("is_sort_tab", tab.isSortTab());
+		if (tab.isSortTab()) {
+			//	Sort Column
+			if(tab.getAD_ColumnSortOrder_ID() > 0) {
+				MColumn column = MColumn.get(tab.getCtx(), tab.getAD_ColumnSortOrder_ID());
+				detail.put("sort_order_column_name", column.getColumnName());
+			}
+			//	Sort Yes / No
+			if(tab.getAD_ColumnSortYesNo_ID() > 0) {
+				MColumn column = MColumn.get(tab.getCtx(), tab.getAD_ColumnSortYesNo_ID());
+				detail.put("sort_yes_no_column_name", column.getColumnName());
+			}
+		}
+
+		// External info
+		detail.put("window_id", tab.getAD_Window_ID());
 		if(tab.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(tab.getCtx(), tab.getAD_Process_ID());
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", process.getAD_Process_ID());
-			referenceDetail.put("uuid", process.getUUID());
-			referenceDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
-			detail.put("process", referenceDetail);
+			if (process.isActive()) {
+				Map<String, Object> referenceDetail = parseProcess(process);
+				detail.put("process", referenceDetail);
+			}
 		}
 		List<MField> fields = Arrays.asList(tab.getFields(false, null));
 		detail.put("fields", convertFields(fields));
 		detail.put("row_fields", convertFields(fields.stream().filter(field -> field.isDisplayed()).collect(Collectors.toList())));
 		detail.put("grid_fields", convertFields(fields.stream().filter(field -> field.isDisplayedGrid()).collect(Collectors.toList())));
 		//	Processes
-		detail.put("process", convertProcesses(getProcessFromTab(tab)));
+		detail.put("processes", convertProcesses(getProcessFromTab(tab)));
 		return detail;
 	}
-	
+
 	private List<MProcess> getProcessFromTab(MTab tab) {
-		return new Query(tab.getCtx(), I_AD_Process.Table_Name, "EXISTS(SELECT 1 FROM AD_Table_Process tp WHERE tp.AD_Process_ID = AD_Process.AD_Process_ID AND tp.AD_Table_ID = ?)", null)
-				.setParameters(tab.getAD_Table_ID())
-				.list();
+		final String whereClause = "IsActive = 'Y' AND ("
+				// first process on tab
+				+ "AD_Process_ID = ? " // #1
+				// process on column
+				+ "OR EXISTS("
+					+ "SELECT 1 FROM AD_Field f "
+					+ "INNER JOIN AD_Column c ON(c.AD_Column_ID = f.AD_Column_ID) "
+					+ "WHERE c.AD_Process_ID = AD_Process.AD_Process_ID "
+					+ "AND f.IsDisplayed = 'Y' "
+					+ "AND f.AD_Tab_ID = ? " // #2
+					+ "AND f.IsActive = 'Y'"
+				+ ") "
+				// process on table
+				+ "OR EXISTS("
+					+ "SELECT 1 FROM AD_Table_Process AS tp "
+					+ "WHERE tp.AD_Process_ID = AD_Process.AD_Process_ID "
+					+ "AND tp.AD_Table_ID = ? " // #3
+					+ "AND tp.IsActive = 'Y'"
+				+ ")"
+			+ ")"
+		;
+
+		List<Object> filterList = new ArrayList<>();
+		filterList.add(tab.getAD_Process_ID());
+		filterList.add(tab.getAD_Tab_ID());
+		filterList.add(tab.getAD_Table_ID());
+
+		return new Query(
+			tab.getCtx(),
+			I_AD_Process.Table_Name,
+			whereClause,
+			null
+		)
+			.setParameters(filterList)
+			.list();
 	}
 	
 	private List<Map<String, Object>> convertFields(List<MField> fields) {
@@ -155,13 +259,15 @@ public class Window extends DictionaryDocument {
 		return fieldsDetail;
 	}
 	
-	private List<Map<String, Object>> convertProcesses(List<MProcess> process) {
+	private List<Map<String, Object>> convertProcesses(List<MProcess> processesList) {
 		List<Map<String, Object>> processesDetail = new ArrayList<>();
-		if(process == null) {
+		if(processesList == null || processesList.isEmpty()) {
 			return processesDetail;
 		}
-		process.forEach(field -> {
-			processesDetail.add(parseProcess(field));
+		processesList.forEach(process -> {
+			processesDetail.add(
+				parseProcess(process)
+			);
 		});
 		return processesDetail;
 	}
@@ -173,42 +279,80 @@ public class Window extends DictionaryDocument {
 		detail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
+		detail.put("is_report", process.isReport());
+
+		// Linked
+		if (process.getAD_Browse_ID() > 0) {
+			MBrowse browse = ASPUtil.getInstance(process.getCtx()).getBrowse(process.getAD_Browse_ID());
+			detail.put("browser_id", browse.getAD_Browse_ID());
+			detail.put("browse", parseDictionaryEntity(browse));
+		} else if (process.getAD_Form_ID() > 0) {
+			MForm form = new MForm(process.getCtx(), process.getAD_Workflow_ID(), null);
+			detail.put("form_id", process.getAD_Form_ID());
+			detail.put("form", parseDictionaryEntity(form));
+		} else if (process.getAD_Workflow_ID() > 0) {
+			MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
+			detail.put("workflow_id", process.getAD_Workflow_ID());
+			detail.put("workflow", parseDictionaryEntity(workflow));
+		}
 		return detail;
 	}
-	
+
 	private Map<String, Object> parseField(MField field) {
-		MColumn column = MColumn.get(field.getCtx(), field.getAD_Column_ID());
 		Map<String, Object> detail = new HashMap<>();
 		detail.put("id", field.getAD_Field_ID());
 		detail.put("uuid", field.getUUID());
 		detail.put("name", field.get_Translation(I_AD_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Field.COLUMNNAME_Help, getLanguage()));
+
+		//	Column Properties
+		MColumn column = MColumn.get(field.getCtx(), field.getAD_Column_ID());
 		detail.put("column_name", column.getColumnName());
+		detail.put("column_sql", column.getColumnSQL());
+		detail.put("is_key", column.isKey());
+		detail.put("is_translated", column.isTranslated());
+		detail.put("is_identifier", column.isIdentifier());
+		detail.put("identifier_sequence", column.getSeqNo());
+		detail.put("is_selection_column", column.isSelectionColumn());
 		detail.put("default_value", Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue()));
-		detail.put("display_logic", field.getDisplayLogic());
-		detail.put("read_only_logic", column.getReadOnlyLogic());
-		detail.put("mandatory_logic", column.getMandatoryLogic());
-		detail.put("is_mandatory", (field.getIsMandatory() != null && field.getIsMandatory().equals("Y")? true: column.isMandatory()));
-		detail.put("sequence", field.getSeqNo());
-		detail.put("grid_sequence", field.getSeqNoGrid());
-		//
+		detail.put("callout", column.getCallout());
+
+		//	Displayed Properties
 		detail.put("is_displayed", field.isDisplayed());
+		detail.put("display_logic", field.getDisplayLogic());
+		detail.put("sequence", field.getSeqNo());
+		detail.put("is_field_only", field.isFieldOnly());
+		detail.put("is_displayed_grid", field.isDisplayedGrid());
+		detail.put("grid_sequence", field.getSeqNoGrid());
+
+		//	Editable Properties
 		detail.put("is_read_only", field.isReadOnly());
-		String embeddedContextColumn = null;
-		int referenceId = field.getAD_Reference_ID();
-		if(referenceId <= 0) {
-			referenceId = column.getAD_Reference_ID();
+		detail.put("read_only_logic", column.getReadOnlyLogic());
+		detail.put("is_updateable", column.isUpdateable());
+		detail.put("is_always_updateable", column.isAlwaysUpdateable());
+
+		//	Mandatory Properties
+		detail.put("is_mandatory", (field.getIsMandatory() != null && field.getIsMandatory().equals("Y")? true: column.isMandatory()));
+		detail.put("mandatory_logic", column.getMandatoryLogic());
+
+		int displayTypeId = field.getAD_Reference_ID();
+		if(displayTypeId <= 0) {
+			displayTypeId = column.getAD_Reference_ID();
 		}
+		detail.put("display_type", displayTypeId);
 		int referenceValueId = field.getAD_Reference_Value_ID();
 		if(referenceValueId <= 0) {
 			referenceValueId = column.getAD_Reference_Value_ID();
 		}
+		detail.put("reference_value_id", referenceValueId);
+
 		int validationRuleId = field.getAD_Val_Rule_ID();
 		if(validationRuleId <= 0) {
 			validationRuleId = column.getAD_Val_Rule_ID();
 		}
-		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), referenceId, referenceValueId, validationRuleId);
+		String embeddedContextColumn = null;
+		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), displayTypeId, referenceValueId, validationRuleId);
 		if(referenceValues != null) {
 //			Map<String, Object> referenceDetail = new HashMap<>();
 //			referenceDetail.put("id", referenceValues.getReferenceId());
@@ -216,14 +360,13 @@ public class Window extends DictionaryDocument {
 //			detail.put("display_type", referenceDetail);
 			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
 		}
-		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue())
-				+ Optional.ofNullable(field.getDisplayLogic()).orElse("")
-				+ Optional.ofNullable(column.getMandatoryLogic()).orElse("")
-				+ Optional.ofNullable(column.getReadOnlyLogic()).orElse("")
-				+ Optional.ofNullable(embeddedContextColumn).orElse("")));
-		detail.put("display_type", referenceId);
-		detail.put("reference_value_id", referenceValueId);
-		detail.put("validation_id", validationRuleId);
+		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(
+			Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue())
+			+ Optional.ofNullable(field.getDisplayLogic()).orElse("")
+			+ Optional.ofNullable(column.getMandatoryLogic()).orElse("")
+			+ Optional.ofNullable(column.getReadOnlyLogic()).orElse("")
+			+ Optional.ofNullable(embeddedContextColumn).orElse(""))
+		);
 		detail.put("dependent_fields", DependenceUtil.generateDependentWindowFields(field));
 		return detail;
 	}
