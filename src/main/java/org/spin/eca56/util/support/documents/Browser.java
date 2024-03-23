@@ -85,7 +85,7 @@ public class Browser extends DictionaryDocument {
 		}
 
 		// External Reference
-		documentDetail.put("view_id", browser.getAD_View_ID());
+		documentDetail.put("process_id", browser.getAD_Process_ID());
 		if(browser.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(browser.getCtx(), browser.getAD_Process_ID());
 			Map<String, Object> referenceDetail = new HashMap<>();
@@ -96,6 +96,8 @@ public class Browser extends DictionaryDocument {
 			referenceDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
 			documentDetail.put("process", referenceDetail);
 		}
+
+		documentDetail.put("window_id", browser.getAD_Window_ID());
 		if(browser.getAD_Window_ID() > 0) {
 			MWindow window = MWindow.get(browser.getCtx(), browser.getAD_Window_ID());
 			Map<String, Object> referenceDetail = new HashMap<>();
