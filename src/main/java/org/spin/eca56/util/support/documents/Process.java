@@ -23,11 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.adempiere.core.domains.models.I_AD_Browse;
-import org.adempiere.core.domains.models.I_AD_Form;
+import org.adempiere.core.domains.models.I_AD_Element;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Process_Para;
-import org.adempiere.core.domains.models.I_AD_Workflow;
 import org.adempiere.model.MBrowse;
 import org.compiere.model.MForm;
 import org.compiere.model.MProcess;
@@ -36,6 +34,7 @@ import org.compiere.model.MReportView;
 import org.compiere.model.PO;
 import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
+import org.spin.util.ASPUtil;
 import org.spin.util.AbstractExportFormat;
 import org.spin.util.ReportExportHandler;
 
@@ -53,7 +52,18 @@ public class Process extends DictionaryDocument {
 	public String getKey() {
 		return KEY;
 	}
-	
+
+	private Map<String, Object> parseDictionaryEntity(PO entity) {
+		Map<String, Object> documentEntity = new HashMap<>();
+		documentEntity.put("id", entity.get_ID());
+		documentEntity.put("uuid", entity.get_UUID());
+		documentEntity.put("name", entity.get_Translation(I_AD_Element.COLUMNNAME_Name, getLanguage()));
+		documentEntity.put("description", entity.get_Translation(I_AD_Element.COLUMNNAME_Description, getLanguage()));
+		documentEntity.put("help", entity.get_Translation(I_AD_Element.COLUMNNAME_Help, getLanguage()));
+		return documentEntity;
+	}
+
+
 	@Override
 	public DictionaryDocument withEntity(PO entity) {
 		MProcess process = (MProcess) entity;
@@ -64,15 +74,14 @@ public class Process extends DictionaryDocument {
 		documentDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
-		documentDetail.put("is_report", process.isReport());
 		documentDetail.put("is_active", process.isActive());
 		documentDetail.put("show_help", process.getShowHelp());
-		documentDetail.put("workflow_id", process.getAD_Workflow_ID());
-		documentDetail.put("form_id", process.getAD_Form_ID());
-		documentDetail.put("browser_id", process.getAD_Browse_ID());
-		documentDetail.put("report_view_id", process.getAD_ReportView_ID());
-		documentDetail.put("print_format_id", process.getAD_PrintFormat_ID());
+
+		// Report
+		documentDetail.put("is_report", process.isReport());
 		if(process.isReport()) {
+			documentDetail.put("report_view_id", process.getAD_ReportView_ID());
+			documentDetail.put("print_format_id", process.getAD_PrintFormat_ID());
 			MReportView reportView = null;
 			if(process.getAD_ReportView_ID() > 0) {
 				reportView = MReportView.get(entity.getCtx(), process.getAD_ReportView_ID());
@@ -85,85 +94,89 @@ public class Process extends DictionaryDocument {
 			}
 			documentDetail.put("report_export_types", reportExportReference);
 		}
-		if(process.getAD_Form_ID() > 0) {
-			MForm form = new MForm(process.getCtx(), process.getAD_Form_ID(), null);
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", form.getAD_Form_ID());
-			referenceDetail.put("uuid", form.getUUID());
-			referenceDetail.put("name", form.get_Translation(I_AD_Form.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", form.get_Translation(I_AD_Form.COLUMNNAME_Help, getLanguage()));
-			documentDetail.put("form", referenceDetail);
-		}
-		if(process.getAD_Browse_ID() > 0) {
-			MBrowse smartBrowser = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", smartBrowser.getAD_Browse_ID());
-			referenceDetail.put("uuid", smartBrowser.getUUID());
-			referenceDetail.put("name", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
-			documentDetail.put("browse", referenceDetail);
-		}
-		if(process.getAD_Workflow_ID() > 0) {
+
+		// Linked
+		if (process.getAD_Browse_ID() > 0) {
+			MBrowse browse = ASPUtil.getInstance(process.getCtx()).getBrowse(process.getAD_Browse_ID());
+			documentDetail.put("browser_id", browse.getAD_Browse_ID());
+			documentDetail.put("browse", parseDictionaryEntity(browse));
+		} else if (process.getAD_Form_ID() > 0) {
+			MForm form = new MForm(process.getCtx(), process.getAD_Workflow_ID(), null);
+			documentDetail.put("form_id", process.getAD_Form_ID());
+			documentDetail.put("form", parseDictionaryEntity(form));
+		} else if (process.getAD_Workflow_ID() > 0) {
 			MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", workflow.getAD_Workflow_ID());
-			referenceDetail.put("uuid", workflow.getUUID());
-			referenceDetail.put("name", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Help, getLanguage()));
-			documentDetail.put("workflow", referenceDetail);
+			documentDetail.put("workflow_id", process.getAD_Workflow_ID());
+			documentDetail.put("workflow", parseDictionaryEntity(workflow));
 		}
+
 		//	Parameters
 		List<MProcessPara> parameters = process.getParametersAsList();
+		boolean hasParameters = parameters != null && !parameters.isEmpty();
+		documentDetail.put("has_parameters",  hasParameters);
+
 		List<Map<String, Object>> parametersDetail = new ArrayList<>();
-		if(parameters != null) {
+		if(hasParameters ) {
 			parameters.forEach(parameter -> {
-				Map<String, Object> detail = new HashMap<>();
-				detail.put("id", parameter.getAD_Process_Para_ID());
-				detail.put("uuid", parameter.getUUID());
-				detail.put("name", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Name, getLanguage()));
-				detail.put("description", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Description, getLanguage()));
-				detail.put("help", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Help, getLanguage()));
-				detail.put("column_name", parameter.getColumnName());
-				detail.put("element_id", parameter.getAD_Element_ID());
-				detail.put("default_value", parameter.getDefaultValue());
-				detail.put("default_value_to", parameter.getDefaultValue2());
-				detail.put("is_range", parameter.isRange());
-				detail.put("is_info_only", parameter.isInfoOnly());
-				detail.put("is_mandatory", parameter.isMandatory());
-				detail.put("display_logic", parameter.getDisplayLogic());
-				detail.put("read_only_logic", parameter.getReadOnlyLogic());
-				detail.put("sequence", parameter.getSeqNo());
-				detail.put("value_format", parameter.getVFormat());
-				detail.put("min_value", parameter.getValueMin());
-				detail.put("max_value", parameter.getValueMax());
-				detail.put("reference_value_id", parameter.getAD_Reference_Value_ID());
-				detail.put("validation_id", parameter.getAD_Val_Rule_ID());
-				detail.put("display_type", parameter.getAD_Reference_ID());
-				String embeddedContextColumn = null;
-				ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(parameter.getColumnName(), parameter.getAD_Reference_ID(), parameter.getAD_Reference_Value_ID(), parameter.getAD_Val_Rule_ID());
-				if(referenceValues != null) {
-//					Map<String, Object> referenceDetail = new HashMap<>();
-//					referenceDetail.put("id", referenceValues.getReferenceId());
-//					referenceDetail.put("table_name", referenceValues.getTableName());
-//					detail.put("display_type", referenceDetail);
-					embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
-				}
-				detail.put("context_column_names", ReferenceUtil.getContextColumnNames(Optional.ofNullable(parameter.getDefaultValue()).orElse("")
-						+ Optional.ofNullable(parameter.getDefaultValue2()).orElse("")
-						+ Optional.ofNullable(parameter.getDisplayLogic()).orElse("")
-						+ Optional.ofNullable(parameter.getReadOnlyLogic()).orElse("")
-						+ Optional.ofNullable(embeddedContextColumn).orElse("")));
-				detail.put("dependent_fields", DependenceUtil.generateDependentProcessParameters(parameter));
+				Map<String, Object> detail = parseProcessParameter(parameter);
 				parametersDetail.add(detail);
 			});
 		}
 		documentDetail.put("parameters", parametersDetail);
-		documentDetail.put("has_parameters", parametersDetail.size() > 0);
 		putDocument(documentDetail);
 		return this;
+	}
+
+	Map<String, Object> parseProcessParameter(MProcessPara parameter) {
+		Map<String, Object> detail = new HashMap<>();
+
+		detail.put("id", parameter.getAD_Process_Para_ID());
+		detail.put("uuid", parameter.getUUID());
+		detail.put("column_name", parameter.getColumnName());
+		detail.put("name", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Name, getLanguage()));
+		detail.put("description", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Description, getLanguage()));
+		detail.put("help", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Help, getLanguage()));
+		detail.put("display_type", parameter.getAD_Reference_ID());
+
+		//	Value Properties
+		detail.put("is_range", parameter.isRange());
+		detail.put("default_value", parameter.getDefaultValue());
+		detail.put("default_value_to", parameter.getDefaultValue2());
+		detail.put("field_length", parameter.getFieldLength());
+		detail.put("value_format", parameter.getVFormat());
+		detail.put("min_value", parameter.getValueMin());
+		detail.put("max_value", parameter.getValueMax());
+
+		//	Display Properties
+		detail.put("display_logic", parameter.getDisplayLogic());
+		detail.put("sequence", parameter.getSeqNo());
+
+		//	Mandatory Properties
+		detail.put("is_mandatory", parameter.isMandatory());
+		
+		//	Editable Properties
+		detail.put("read_only_logic", parameter.getReadOnlyLogic());
+		detail.put("is_info_only", parameter.isInfoOnly());
+
+		// External Info
+		detail.put("element_name", parameter.getAD_Element().getColumnName());
+		String embeddedContextColumn = null;
+		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(parameter.getColumnName(), parameter.getAD_Reference_ID(), parameter.getAD_Reference_Value_ID(), parameter.getAD_Val_Rule_ID());
+		if(referenceValues != null) {
+			// Map<String, Object> referenceDetail = new HashMap<>();
+			// referenceDetail.put("id", referenceValues.getReferenceId());
+			// referenceDetail.put("table_name", referenceValues.getTableName());
+			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
+		}
+		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(
+				Optional.ofNullable(parameter.getDefaultValue()).orElse("")
+				+ Optional.ofNullable(parameter.getDefaultValue2()).orElse("")
+				+ Optional.ofNullable(parameter.getDisplayLogic()).orElse("")
+				+ Optional.ofNullable(parameter.getReadOnlyLogic()).orElse("")
+				+ Optional.ofNullable(embeddedContextColumn).orElse(""))
+		);
+		detail.put("dependent_fields", DependenceUtil.generateDependentProcessParameters(parameter));
+		return detail;
 	}
 	
 	private Process() {
