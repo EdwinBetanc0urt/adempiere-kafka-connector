@@ -147,6 +147,7 @@ public class Browser extends DictionaryDocument {
 
 		//
 		detail.put("is_order_by", field.isOrderBy());
+		detail.put("sort_sequence", field.getSortNo());
 		detail.put("is_key", field.isKey());
 		detail.put("is_identifier", field.isIdentifier());
 
