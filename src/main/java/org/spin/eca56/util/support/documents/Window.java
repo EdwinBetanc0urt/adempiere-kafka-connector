@@ -306,6 +306,11 @@ public class Window extends DictionaryDocument {
 		detail.put("description", field.get_Translation(I_AD_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Field.COLUMNNAME_Help, getLanguage()));
 
+		//
+		detail.put("is_allow_copy", field.isAllowCopy());
+		detail.put("is_heading", field.isHeading());
+		detail.put("is_field_only", field.isFieldOnly());
+
 		//	Column Properties
 		MColumn column = MColumn.get(field.getCtx(), field.getAD_Column_ID());
 		detail.put("column_name", column.getColumnName());
@@ -315,14 +320,21 @@ public class Window extends DictionaryDocument {
 		detail.put("is_identifier", column.isIdentifier());
 		detail.put("identifier_sequence", column.getSeqNo());
 		detail.put("is_selection_column", column.isSelectionColumn());
-		detail.put("default_value", Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue()));
 		detail.put("callout", column.getCallout());
+		
+		//	Value Properties
+		detail.put("default_value", Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue()));
+		detail.put("field_length", column.getFieldLength());
+		detail.put("v_format", column.getVFormat());
+		detail.put("format_pattern", column.getFormatPattern());
+		detail.put("value_min", column.getValueMin());
+		detail.put("value_max", column.getValueMax());
+		detail.put("is_encrypted", field.isEncrypted());
 
-		//	Displayed Properties
+		//	Display Properties
 		detail.put("is_displayed", field.isDisplayed());
 		detail.put("display_logic", field.getDisplayLogic());
 		detail.put("sequence", field.getSeqNo());
-		detail.put("is_field_only", field.isFieldOnly());
 		detail.put("is_displayed_grid", field.isDisplayedGrid());
 		detail.put("grid_sequence", field.getSeqNoGrid());
 
