@@ -19,6 +19,7 @@ package org.spin.eca56.util.queue;
 import java.util.List;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
+import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Language;
 import org.adempiere.core.domains.models.I_AD_Menu;
 import org.adempiere.core.domains.models.I_AD_Process;
@@ -35,6 +36,7 @@ import org.spin.eca56.util.support.IGenericDictionaryDocument;
 import org.spin.eca56.util.support.IGenericDocument;
 import org.spin.eca56.util.support.IGenericSender;
 import org.spin.eca56.util.support.documents.Browser;
+import org.spin.eca56.util.support.documents.Form;
 import org.spin.eca56.util.support.documents.Menu;
 import org.spin.eca56.util.support.documents.Process;
 import org.spin.eca56.util.support.documents.Window;
@@ -139,6 +141,8 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
 			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+		} else if (tableName.equals(I_AD_Form.Table_Name)) {
+			return Form.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		}
 		return null;
 	}
