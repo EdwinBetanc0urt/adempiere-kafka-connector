@@ -159,7 +159,6 @@ public class Process extends DictionaryDocument {
 		detail.put("is_info_only", parameter.isInfoOnly());
 
 		// External Info
-		detail.put("element_name", parameter.getAD_Element().getColumnName());
 		String embeddedContextColumn = null;
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(parameter.getColumnName(), parameter.getAD_Reference_ID(), parameter.getAD_Reference_Value_ID(), parameter.getAD_Val_Rule_ID());
 		if(referenceValues != null) {
