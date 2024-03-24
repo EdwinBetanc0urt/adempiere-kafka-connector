@@ -69,7 +69,6 @@ public class Window extends DictionaryDocument {
 		documentDetail.put("name", window.get_Translation(I_AD_Window.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", window.get_Translation(I_AD_Window.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", window.get_Translation(I_AD_Window.COLUMNNAME_Help, getLanguage()));
-		documentDetail.put("entity_type", window.getEntityType());
 		documentDetail.put("window_type", window.getWindowType());
 		documentDetail.put("is_sales_transaction", window.isSOTrx());
 		//	Tabs
@@ -106,7 +105,6 @@ public class Window extends DictionaryDocument {
 		detail.put("name", tab.get_Translation(I_AD_Tab.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", tab.get_Translation(I_AD_Tab.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", tab.get_Translation(I_AD_Tab.COLUMNNAME_Help, getLanguage()));
-		detail.put("is_active", tab.isActive());
 		// Record attributes
 		detail.put("is_insert_record", tab.isInsertRecord());
 		detail.put("commit_warning", tab.get_Translation(I_AD_Tab.COLUMNNAME_CommitWarning, getLanguage()));
@@ -125,6 +123,8 @@ public class Window extends DictionaryDocument {
 		// Table attributes
 		if(tab.getAD_Table_ID() > 0) {
 			MTable table = new MTable(tab.getCtx(), tab.getAD_Table_ID(), null);
+			detail.put("table_name", table.getTableName());
+
 			Map<String, Object> referenceDetail = new HashMap<>();
 			referenceDetail.put("table_name", table.getTableName());
 			referenceDetail.put("access_level", table.getAccessLevel());
@@ -194,6 +194,7 @@ public class Window extends DictionaryDocument {
 
 		// External info
 		detail.put("window_id", tab.getAD_Window_ID());
+		detail.put("process_id", tab.getAD_Process_ID());
 		if(tab.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(tab.getCtx(), tab.getAD_Process_ID());
 			if (process.isActive()) {
@@ -201,12 +202,14 @@ public class Window extends DictionaryDocument {
 				detail.put("process", referenceDetail);
 			}
 		}
+		detail.put("processes", convertProcesses(getProcessFromTab(tab)));
+		
+		//	Fields
 		List<MField> fields = Arrays.asList(tab.getFields(false, null));
 		detail.put("fields", convertFields(fields));
 		detail.put("row_fields", convertFields(fields.stream().filter(field -> field.isDisplayed()).collect(Collectors.toList())));
 		detail.put("grid_fields", convertFields(fields.stream().filter(field -> field.isDisplayedGrid()).collect(Collectors.toList())));
 		//	Processes
-		detail.put("processes", convertProcesses(getProcessFromTab(tab)));
 		return detail;
 	}
 
@@ -282,17 +285,17 @@ public class Window extends DictionaryDocument {
 		detail.put("is_report", process.isReport());
 
 		// Linked
+		detail.put("browser_id", process.getAD_Browse_ID());
+		detail.put("form_id", process.getAD_Form_ID());
+		detail.put("workflow_id", process.getAD_Workflow_ID());
 		if (process.getAD_Browse_ID() > 0) {
 			MBrowse browse = ASPUtil.getInstance(process.getCtx()).getBrowse(process.getAD_Browse_ID());
-			detail.put("browser_id", browse.getAD_Browse_ID());
 			detail.put("browse", parseDictionaryEntity(browse));
 		} else if (process.getAD_Form_ID() > 0) {
 			MForm form = new MForm(process.getCtx(), process.getAD_Workflow_ID(), null);
-			detail.put("form_id", process.getAD_Form_ID());
 			detail.put("form", parseDictionaryEntity(form));
 		} else if (process.getAD_Workflow_ID() > 0) {
 			MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
-			detail.put("workflow_id", process.getAD_Workflow_ID());
 			detail.put("workflow", parseDictionaryEntity(workflow));
 		}
 		return detail;
@@ -321,6 +324,12 @@ public class Window extends DictionaryDocument {
 		detail.put("identifier_sequence", column.getSeqNo());
 		detail.put("is_selection_column", column.isSelectionColumn());
 		detail.put("callout", column.getCallout());
+
+		int displayTypeId = field.getAD_Reference_ID();
+		if(displayTypeId <= 0) {
+			displayTypeId = column.getAD_Reference_ID();
+		}
+		detail.put("display_type", displayTypeId);
 		
 		//	Value Properties
 		detail.put("default_value", Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue()));
@@ -348,17 +357,11 @@ public class Window extends DictionaryDocument {
 		detail.put("is_mandatory", (field.getIsMandatory() != null && field.getIsMandatory().equals("Y")? true: column.isMandatory()));
 		detail.put("mandatory_logic", column.getMandatoryLogic());
 
-		int displayTypeId = field.getAD_Reference_ID();
-		if(displayTypeId <= 0) {
-			displayTypeId = column.getAD_Reference_ID();
-		}
-		detail.put("display_type", displayTypeId);
+		//	External Info
 		int referenceValueId = field.getAD_Reference_Value_ID();
 		if(referenceValueId <= 0) {
 			referenceValueId = column.getAD_Reference_Value_ID();
 		}
-		detail.put("reference_value_id", referenceValueId);
-
 		int validationRuleId = field.getAD_Val_Rule_ID();
 		if(validationRuleId <= 0) {
 			validationRuleId = column.getAD_Val_Rule_ID();
@@ -366,10 +369,10 @@ public class Window extends DictionaryDocument {
 		String embeddedContextColumn = null;
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), displayTypeId, referenceValueId, validationRuleId);
 		if(referenceValues != null) {
-//			Map<String, Object> referenceDetail = new HashMap<>();
-//			referenceDetail.put("id", referenceValues.getReferenceId());
-//			referenceDetail.put("table_name", referenceValues.getTableName());
-//			detail.put("display_type", referenceDetail);
+			// Map<String, Object> referenceDetail = new HashMap<>();
+			// referenceDetail.put("id", referenceValues.getReferenceId());
+			// referenceDetail.put("table_name", referenceValues.getTableName());
+			// detail.put("display_type", referenceDetail);
 			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
 		}
 		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(
@@ -380,6 +383,12 @@ public class Window extends DictionaryDocument {
 			+ Optional.ofNullable(embeddedContextColumn).orElse(""))
 		);
 		detail.put("dependent_fields", DependenceUtil.generateDependentWindowFields(field));
+		detail.put("process_id", column.getAD_Process_ID());
+		if (column.getAD_Process_ID() > 0) {
+			detail.put("process", parseProcess(
+				MProcess.get(field.getCtx(), column.getAD_Process_ID())
+			));
+		}
 		return detail;
 	}
 	

@@ -35,7 +35,6 @@ public class DefaultEngineQueueUtil {
 	
 	/**
 	 * Get notifier from queue definition
-	 * @param queue
 	 * @return
 	 */
 	public static IGenericSender getEngineManager() {
