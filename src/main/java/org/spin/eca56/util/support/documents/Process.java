@@ -74,7 +74,6 @@ public class Process extends DictionaryDocument {
 		documentDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
-		documentDetail.put("is_active", process.isActive());
 		documentDetail.put("show_help", process.getShowHelp());
 
 		// Report
@@ -96,17 +95,17 @@ public class Process extends DictionaryDocument {
 		}
 
 		// Linked
+		documentDetail.put("browser_id", process.getAD_Browse_ID());
+		documentDetail.put("form_id", process.getAD_Form_ID());
+		documentDetail.put("workflow_id", process.getAD_Workflow_ID());
 		if (process.getAD_Browse_ID() > 0) {
 			MBrowse browse = ASPUtil.getInstance(process.getCtx()).getBrowse(process.getAD_Browse_ID());
-			documentDetail.put("browser_id", browse.getAD_Browse_ID());
 			documentDetail.put("browse", parseDictionaryEntity(browse));
 		} else if (process.getAD_Form_ID() > 0) {
 			MForm form = new MForm(process.getCtx(), process.getAD_Workflow_ID(), null);
-			documentDetail.put("form_id", process.getAD_Form_ID());
 			documentDetail.put("form", parseDictionaryEntity(form));
 		} else if (process.getAD_Workflow_ID() > 0) {
 			MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
-			documentDetail.put("workflow_id", process.getAD_Workflow_ID());
 			documentDetail.put("workflow", parseDictionaryEntity(workflow));
 		}
 

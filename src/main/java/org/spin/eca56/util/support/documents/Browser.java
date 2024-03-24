@@ -25,8 +25,7 @@ import java.util.Optional;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Browse_Field;
-import org.adempiere.core.domains.models.I_AD_Process;
-import org.adempiere.core.domains.models.I_AD_Window;
+import org.adempiere.core.domains.models.I_AD_Element;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MViewColumn;
@@ -52,7 +51,17 @@ public class Browser extends DictionaryDocument {
 	public String getKey() {
 		return KEY;
 	}
-	
+
+	private Map<String, Object> parseDictionaryEntity(PO entity) {
+		Map<String, Object> documentEntity = new HashMap<>();
+		documentEntity.put("id", entity.get_ID());
+		documentEntity.put("uuid", entity.get_UUID());
+		documentEntity.put("name", entity.get_Translation(I_AD_Element.COLUMNNAME_Name, getLanguage()));
+		documentEntity.put("description", entity.get_Translation(I_AD_Element.COLUMNNAME_Description, getLanguage()));
+		documentEntity.put("help", entity.get_Translation(I_AD_Element.COLUMNNAME_Help, getLanguage()));
+		return documentEntity;
+	}
+
 	@Override
 	public DictionaryDocument withEntity(PO entity) {
 		MBrowse browser = (MBrowse) entity;
@@ -63,7 +72,6 @@ public class Browser extends DictionaryDocument {
 		documentDetail.put("name", browser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", browser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", browser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
-		documentDetail.put("is_active", browser.isActive());
 		documentDetail.put("is_execute_query_by_default", browser.isExecutedQueryByDefault());
 		documentDetail.put("is_collapsible_by_default", browser.isCollapsibleByDefault());
 		documentDetail.put("is_selected_by_default", browser.isSelectedByDefault());
@@ -74,7 +82,7 @@ public class Browser extends DictionaryDocument {
 			MViewColumn viewColumn = MViewColumn.getById(browser.getCtx(), fieldKey.getAD_View_Column_ID(), null);
 			documentDetail.put("field_key", viewColumn.getColumnName());
 		}
-		
+
 		// Record Attributes
 		documentDetail.put("access_level", browser.getAccessLevel());
 		documentDetail.put("is_updateable", browser.isUpdateable());
@@ -88,24 +96,14 @@ public class Browser extends DictionaryDocument {
 		documentDetail.put("process_id", browser.getAD_Process_ID());
 		if(browser.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(browser.getCtx(), browser.getAD_Process_ID());
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", process.getAD_Process_ID());
-			referenceDetail.put("uuid", process.getUUID());
-			referenceDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
+			Map<String, Object> referenceDetail = parseDictionaryEntity(process);
 			documentDetail.put("process", referenceDetail);
 		}
 
 		documentDetail.put("window_id", browser.getAD_Window_ID());
 		if(browser.getAD_Window_ID() > 0) {
 			MWindow window = MWindow.get(browser.getCtx(), browser.getAD_Window_ID());
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", window.getAD_Window_ID());
-			referenceDetail.put("uuid", window.getUUID());
-			referenceDetail.put("name", window.get_Translation(I_AD_Window.COLUMNNAME_Name, getLanguage()));
-			referenceDetail.put("description", window.get_Translation(I_AD_Window.COLUMNNAME_Description, getLanguage()));
-			referenceDetail.put("help", window.get_Translation(I_AD_Window.COLUMNNAME_Help, getLanguage()));
+			Map<String, Object> referenceDetail = parseDictionaryEntity(window);
 			documentDetail.put("window", referenceDetail);
 		}
 		documentDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
@@ -118,7 +116,7 @@ public class Browser extends DictionaryDocument {
 		documentDetail.put("identifier_fields", convertFields(browser.getIdentifierFields()));
 		documentDetail.put("order_fields", convertFields(browser.getOrderByFields()));
 		documentDetail.put("editable_fields", convertFields(browser.getNotReadOnlyFields()));
-		
+
 		putDocument(documentDetail);
 		return this;
 	}
@@ -188,7 +186,6 @@ public class Browser extends DictionaryDocument {
 			elementName = field.getAD_Element().getColumnName();
 		}
 		detail.put("element_name", elementName);
-		detail.put("reference_value_id", field.getAD_Reference_Value_ID());
 		String embeddedContextColumn = null;
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(columnName, field.getAD_Reference_ID(), field.getAD_Reference_Value_ID(), field.getAD_Val_Rule_ID());
 		if(referenceValues != null) {
