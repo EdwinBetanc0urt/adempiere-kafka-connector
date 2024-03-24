@@ -30,6 +30,7 @@ import org.adempiere.core.domains.models.I_AD_Image;
 import org.adempiere.core.domains.models.I_C_ElementValue;
 import org.adempiere.core.domains.models.I_C_Location;
 import org.adempiere.core.domains.models.I_M_AttributeSetInstance;
+import org.adempiere.core.domains.models.I_M_Locator;
 import org.adempiere.core.domains.models.I_S_ResourceAssignment;
 import org.compiere.model.MRefTable;
 import org.compiere.model.MValRule;
@@ -45,26 +46,23 @@ public class ReferenceUtil {
 
 	/**
 	 * Validate reference
-	 * TODO: Improve support to ID reference to get display column
 	 * TODO: Add support to Resource Assigment reference to get display column
-	 * @param referenceId
-	 * @param referenceValueId
-	 * @param columnName
+	 * @param displayTypeId
 	 * @return
 	 */
-	public static boolean isLookupReference(int referenceId) {
-		if (DisplayType.isLookup(referenceId) 
-				|| DisplayType.Account == referenceId
-				|| DisplayType.ID == referenceId
-				|| DisplayType.Location == referenceId 
-				|| DisplayType.PAttribute == referenceId
-				|| DisplayType.Locator == referenceId
-				|| DisplayType.Image == referenceId) {
+	public static boolean isLookupReference(int displayTypeId) {
+		if (DisplayType.isLookup(displayTypeId)
+				|| DisplayType.Account == displayTypeId
+				|| DisplayType.ID == displayTypeId
+				|| DisplayType.Location == displayTypeId
+				|| DisplayType.Locator == displayTypeId
+				|| DisplayType.PAttribute == displayTypeId
+				|| DisplayType.Image == displayTypeId) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Get Context column names from context
 	 * @param context
@@ -141,20 +139,22 @@ public class ReferenceUtil {
 	 */
 	public static String getTableNameFromReference(String columnName, int referenceId) {
 		String tableName = null;
-		if(DisplayType.TableDir == referenceId) {
+		if(DisplayType.TableDir == referenceId || DisplayType.ID == referenceId) {
 			tableName = columnName.replaceAll("_ID", "");
 		} else if (DisplayType.Location == referenceId) {
-			tableName = I_C_Location.COLUMNNAME_C_Location_ID.replaceAll("_ID", "");
+			tableName = I_C_Location.Table_Name;
+		} else if (DisplayType.Locator == referenceId) {
+			tableName = I_M_Locator.Table_Name;
 		} else if (DisplayType.PAttribute == referenceId) {
-			tableName = I_M_AttributeSetInstance.COLUMNNAME_M_AttributeSetInstance_ID.replaceAll("_ID", "");
+			tableName = I_M_AttributeSetInstance.Table_Name;
 		} else if(DisplayType.Image == referenceId) {
-			tableName = I_AD_Image.COLUMNNAME_AD_Image_ID.replaceAll("_ID", "");
+			tableName = I_AD_Image.Table_Name;
 		} else if(DisplayType.Assignment == referenceId) {
-			tableName = I_S_ResourceAssignment.COLUMNNAME_S_ResourceAssignment_ID.replaceAll("_ID", "");
+			tableName = I_S_ResourceAssignment.Table_Name;
 		} else if(DisplayType.Chart == referenceId) {
-			tableName = I_AD_Chart.COLUMNNAME_AD_Chart_ID.replaceAll("_ID", "");
+			tableName = I_AD_Chart.Table_Name;
 		} else if(DisplayType.Account == referenceId) {
-			tableName = I_C_ElementValue.COLUMNNAME_C_ElementValue_ID.replaceAll("_ID", "");
+			tableName = I_C_ElementValue.Table_Name;
 		}
 		return tableName;
 	}
