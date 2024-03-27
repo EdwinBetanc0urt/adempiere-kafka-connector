@@ -66,7 +66,7 @@ public class Browser extends DictionaryDocument {
 	public DictionaryDocument withEntity(PO entity) {
 		MBrowse browser = (MBrowse) entity;
 		Map<String, Object> documentDetail = new HashMap<>();
-		documentDetail.put("id", browser.getAD_Process_ID());
+		documentDetail.put("id", browser.getAD_Browse_ID());
 		documentDetail.put("uuid", browser.getUUID());
 		documentDetail.put("code", browser.getValue());
 		documentDetail.put("name", browser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
