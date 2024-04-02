@@ -158,6 +158,7 @@ public class Window extends DictionaryDocument {
 				.collect(Collectors.toList())
 			;
 			referenceDetail.put("selection_colums", selectionColums);
+			detail.put("table_name", table.getTableName());
 			detail.put("table", referenceDetail);
 		}
 
