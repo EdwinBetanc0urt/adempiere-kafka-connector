@@ -97,7 +97,7 @@ public class DependenceUtil {
 		MProcess process = MProcess.get(processParameter.getCtx(), processParameter.getAD_Process_ID());
 		List<MProcessPara> parametersList = process.getParametersAsList();
 
-		parametersList.stream()
+		parametersList.parallelStream()
 			.filter(currentParameter -> {
 				if (!currentParameter.isActive()) {
 					return false;
@@ -145,10 +145,10 @@ public class DependenceUtil {
 		if (tabsList == null) {
 			return depenentFieldsList;
 		}
-		tabsList.stream()
+		tabsList.parallelStream()
 			.filter(currentTab -> {
 				// transaltion tab is not rendering on client
-				return currentTab.isActive() && !currentTab.isTranslationTab();
+				return currentTab.isActive() && !currentTab.isTranslationTab() && !currentTab.isSortTab();
 			})
 			.forEach(tab -> {
 				List<MField> fieldsList = Arrays.asList(tab.getFields(false, null));
@@ -156,7 +156,7 @@ public class DependenceUtil {
 					return;
 				}
 
-				fieldsList.stream()
+				fieldsList.parallelStream()
 					.filter(currentField -> {
 						if (!currentField.isActive()) {
 							return false;
@@ -233,7 +233,7 @@ public class DependenceUtil {
 		MBrowse browse = MBrowse.get(browseField.getCtx(), browseField.getAD_Browse_ID());
 		List<MBrowseField> browseFieldsList = browse.getFields();
 
-		browseFieldsList.stream()
+		browseFieldsList.parallelStream()
 			.filter(currentBrowseField -> {
 				if(!currentBrowseField.isActive()) {
 					return false;
