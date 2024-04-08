@@ -43,7 +43,6 @@ import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
-import org.spin.util.ASPUtil;
 
 /**
  * 	the document class for Window senders
@@ -122,7 +121,7 @@ public class Window extends DictionaryDocument {
 
 		// Table attributes
 		if(tab.getAD_Table_ID() > 0) {
-			MTable table = new MTable(tab.getCtx(), tab.getAD_Table_ID(), null);
+			MTable table = MTable.get(tab.getCtx(), tab.getAD_Table_ID());
 			detail.put("table_name", table.getTableName());
 
 			Map<String, Object> referenceDetail = new HashMap<>();
@@ -204,7 +203,7 @@ public class Window extends DictionaryDocument {
 			}
 		}
 		detail.put("processes", convertProcesses(getProcessFromTab(tab)));
-		
+
 		//	Fields
 		List<MField> fields = Arrays.asList(tab.getFields(false, null));
 		detail.put("fields", convertFields(fields));
@@ -268,7 +267,7 @@ public class Window extends DictionaryDocument {
 		if(processesList == null || processesList.isEmpty()) {
 			return processesDetail;
 		}
-		processesList.forEach(process -> {
+		processesList.parallelStream().forEach(process -> {
 			processesDetail.add(
 				parseProcess(process)
 			);
@@ -290,7 +289,7 @@ public class Window extends DictionaryDocument {
 		detail.put("form_id", process.getAD_Form_ID());
 		detail.put("workflow_id", process.getAD_Workflow_ID());
 		if (process.getAD_Browse_ID() > 0) {
-			MBrowse browse = ASPUtil.getInstance(process.getCtx()).getBrowse(process.getAD_Browse_ID());
+			MBrowse browse = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
 			detail.put("browse", parseDictionaryEntity(browse));
 		} else if (process.getAD_Form_ID() > 0) {
 			MForm form = new MForm(process.getCtx(), process.getAD_Workflow_ID(), null);

@@ -34,7 +34,6 @@ import org.compiere.model.MReportView;
 import org.compiere.model.PO;
 import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
-import org.spin.util.ASPUtil;
 import org.spin.util.AbstractExportFormat;
 import org.spin.util.ReportExportHandler;
 
@@ -99,7 +98,7 @@ public class Process extends DictionaryDocument {
 		documentDetail.put("form_id", process.getAD_Form_ID());
 		documentDetail.put("workflow_id", process.getAD_Workflow_ID());
 		if (process.getAD_Browse_ID() > 0) {
-			MBrowse browse = ASPUtil.getInstance(process.getCtx()).getBrowse(process.getAD_Browse_ID());
+			MBrowse browse = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
 			documentDetail.put("browse", parseDictionaryEntity(browse));
 		} else if (process.getAD_Form_ID() > 0) {
 			MForm form = new MForm(process.getCtx(), process.getAD_Workflow_ID(), null);
