@@ -366,21 +366,21 @@ public class Window extends DictionaryDocument {
 		if(validationRuleId <= 0) {
 			validationRuleId = column.getAD_Val_Rule_ID();
 		}
-		String embeddedContextColumn = null;
+
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), displayTypeId, referenceValueId, validationRuleId);
 		if(referenceValues != null) {
-			// Map<String, Object> referenceDetail = new HashMap<>();
+			Map<String, Object> referenceDetail = new HashMap<>();
 			// referenceDetail.put("id", referenceValues.getReferenceId());
-			// referenceDetail.put("table_name", referenceValues.getTableName());
-			// detail.put("display_type", referenceDetail);
-			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
+			referenceDetail.put("table_name", referenceValues.getTableName());
+			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
+					referenceValues.getEmbeddedContextColumn()
+				)
+			);
+			detail.put("reference", referenceDetail);
 		}
 		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(
-			Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue())
-			+ Optional.ofNullable(field.getDisplayLogic()).orElse("")
-			+ Optional.ofNullable(column.getMandatoryLogic()).orElse("")
-			+ Optional.ofNullable(column.getReadOnlyLogic()).orElse("")
-			+ Optional.ofNullable(embeddedContextColumn).orElse(""))
+				Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue())
+			)
 		);
 		detail.put("dependent_fields", DependenceUtil.generateDependentWindowFields(field));
 		detail.put("process_id", column.getAD_Process_ID());

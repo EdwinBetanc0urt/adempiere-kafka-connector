@@ -186,25 +186,26 @@ public class Browser extends DictionaryDocument {
 			elementName = field.getAD_Element().getColumnName();
 		}
 		detail.put("element_name", elementName);
-		String embeddedContextColumn = null;
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(columnName, field.getAD_Reference_ID(), field.getAD_Reference_Value_ID(), field.getAD_Val_Rule_ID());
 		if(referenceValues != null) {
-			// Map<String, Object> referenceDetail = new HashMap<>();
+			Map<String, Object> referenceDetail = new HashMap<>();
 			// referenceDetail.put("id", referenceValues.getReferenceId());
-			// referenceDetail.put("table_name", referenceValues.getTableName());
-			// detail.put("display_type", referenceDetail);
-			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
+			referenceDetail.put("table_name", referenceValues.getTableName());
+			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
+					referenceValues.getEmbeddedContextColumn()
+				)
+			);
+			detail.put("reference", referenceDetail);
 		}
 		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(
 				Optional.ofNullable(field.getDefaultValue()).orElse("")
 				+ Optional.ofNullable(field.getDefaultValue2()).orElse("")
-				+ Optional.ofNullable(field.getDisplayLogic()).orElse("")
-				+ Optional.ofNullable(field.getReadOnlyLogic()).orElse("")
-				+ Optional.ofNullable(embeddedContextColumn).orElse("")));
+			)
+		);
 		detail.put("dependent_fields", DependenceUtil.generateDependentBrowseFields(field));
 		return detail;
 	}
-	
+
 	private Browser() {
 		super();
 	}
