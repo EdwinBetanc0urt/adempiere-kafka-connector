@@ -157,29 +157,30 @@ public class Process extends DictionaryDocument {
 		detail.put("is_info_only", parameter.isInfoOnly());
 
 		// External Info
-		String embeddedContextColumn = null;
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(parameter.getColumnName(), parameter.getAD_Reference_ID(), parameter.getAD_Reference_Value_ID(), parameter.getAD_Val_Rule_ID());
 		if(referenceValues != null) {
-			// Map<String, Object> referenceDetail = new HashMap<>();
+			Map<String, Object> referenceDetail = new HashMap<>();
 			// referenceDetail.put("id", referenceValues.getReferenceId());
-			// referenceDetail.put("table_name", referenceValues.getTableName());
-			embeddedContextColumn = referenceValues.getEmbeddedContextColumn();
+			referenceDetail.put("table_name", referenceValues.getTableName());
+			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
+					referenceValues.getEmbeddedContextColumn()
+				)
+			);
+			detail.put("reference", referenceDetail);
 		}
 		detail.put("context_column_names", ReferenceUtil.getContextColumnNames(
 				Optional.ofNullable(parameter.getDefaultValue()).orElse("")
 				+ Optional.ofNullable(parameter.getDefaultValue2()).orElse("")
-				+ Optional.ofNullable(parameter.getDisplayLogic()).orElse("")
-				+ Optional.ofNullable(parameter.getReadOnlyLogic()).orElse("")
-				+ Optional.ofNullable(embeddedContextColumn).orElse(""))
+			)
 		);
 		detail.put("dependent_fields", DependenceUtil.generateDependentProcessParameters(parameter));
 		return detail;
 	}
-	
+
 	private Process() {
 		super();
 	}
-	
+
 	/**
 	 * Default instance
 	 * @return
