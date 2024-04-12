@@ -101,6 +101,8 @@ public class Menu extends DictionaryDocument {
 					referenceDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, getLanguage()));
 					referenceDetail.put("help", form.get_Translation(I_AD_Form.COLUMNNAME_Help, getLanguage()));
 					detail.put("form", referenceDetail);
+					detail.put("action_id", form.getAD_Form_ID());
+					detail.put("action_uuid", form.getUUID());
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_Window)) {
 				if(menu.getAD_Window_ID() > 0) {
@@ -112,6 +114,8 @@ public class Menu extends DictionaryDocument {
 					referenceDetail.put("description", window.get_Translation(I_AD_Window.COLUMNNAME_Description, getLanguage()));
 					referenceDetail.put("help", window.get_Translation(I_AD_Window.COLUMNNAME_Help, getLanguage()));
 					detail.put("window", referenceDetail);
+					detail.put("action_id", window.getAD_Window_ID());
+					detail.put("action_uuid", window.getUUID());
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_Process)
 				|| menu.getAction().equals(MMenu.ACTION_Report)) {
@@ -124,6 +128,8 @@ public class Menu extends DictionaryDocument {
 					referenceDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
 					referenceDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
 					detail.put("process", referenceDetail);
+					detail.put("action_id", process.getAD_Process_ID());
+					detail.put("action_uuid", process.getUUID());
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_SmartBrowse)) {
 				if(menu.getAD_Browse_ID() > 0) {
@@ -135,6 +141,8 @@ public class Menu extends DictionaryDocument {
 					referenceDetail.put("description", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
 					referenceDetail.put("help", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
 					detail.put("browse", referenceDetail);
+					detail.put("action_id", smartBrowser.getAD_Browse_ID());
+					detail.put("action_uuid", smartBrowser.getUUID());
 				}
 			} else if(menu.getAction().equals(MMenu.ACTION_WorkFlow)) {
 				if(menu.getAD_Workflow_ID() > 0) {
@@ -146,6 +154,8 @@ public class Menu extends DictionaryDocument {
 					referenceDetail.put("description", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Description, getLanguage()));
 					referenceDetail.put("help", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Help, getLanguage()));
 					detail.put("workflow", referenceDetail);
+					detail.put("action_id", workflow.getAD_Workflow_ID());
+					detail.put("action_uuid", workflow.getUUID());
 				}
 			}
 		}
