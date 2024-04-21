@@ -142,7 +142,7 @@ public class ReferenceUtil {
 		String tableName = null;
 		if(DisplayType.ID == referenceId || DisplayType.Search == referenceId
 			|| DisplayType.Table == referenceId || DisplayType.TableDir == referenceId) {
-			tableName = columnName.replaceAll("(_ID_To|_ID)$", "");
+			tableName = columnName.replaceAll("(_ID_To|_To_ID|_ID)$", "");
 		} else if (DisplayType.List == referenceId) {
 			tableName = I_AD_Reference.Table_Name;
 		} else if (DisplayType.Location == referenceId) {
