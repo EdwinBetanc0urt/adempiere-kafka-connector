@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.adempiere.core.domains.models.I_AD_Chart;
 import org.adempiere.core.domains.models.I_AD_Image;
+import org.adempiere.core.domains.models.I_AD_Reference;
 import org.adempiere.core.domains.models.I_C_ElementValue;
 import org.adempiere.core.domains.models.I_C_Location;
 import org.adempiere.core.domains.models.I_M_AttributeSetInstance;
@@ -56,8 +57,8 @@ public class ReferenceUtil {
 				|| DisplayType.ID == displayTypeId
 				|| DisplayType.Location == displayTypeId
 				|| DisplayType.Locator == displayTypeId
-				|| DisplayType.PAttribute == displayTypeId
-				|| DisplayType.Image == displayTypeId) {
+				|| DisplayType.Image == displayTypeId
+				|| DisplayType.PAttribute == displayTypeId) {
 			return true;
 		}
 		return false;
@@ -139,8 +140,11 @@ public class ReferenceUtil {
 	 */
 	public static String getTableNameFromReference(String columnName, int referenceId) {
 		String tableName = null;
-		if(DisplayType.TableDir == referenceId || DisplayType.ID == referenceId) {
-			tableName = columnName.replaceAll("_ID", "");
+		if(DisplayType.ID == referenceId || DisplayType.Search == referenceId
+			|| DisplayType.Table == referenceId || DisplayType.TableDir == referenceId) {
+			tableName = columnName.replaceAll("(_ID_To|_To_ID|_ID)$", "");
+		} else if (DisplayType.List == referenceId) {
+			tableName = I_AD_Reference.Table_Name;
 		} else if (DisplayType.Location == referenceId) {
 			tableName = I_C_Location.Table_Name;
 		} else if (DisplayType.Locator == referenceId) {
