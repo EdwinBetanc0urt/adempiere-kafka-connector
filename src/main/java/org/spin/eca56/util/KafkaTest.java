@@ -2,10 +2,11 @@ package org.spin.eca56.util;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
@@ -27,13 +28,14 @@ public class KafkaTest {
 				intents = 100;
 			}
 
-			Properties config = new Properties();
-			config.put("client.id", "erp2");
-			config.put("group.id", "foo01");
-			config.put("bootstrap.servers", completeUrl);
-			config.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-			config.put("value.deserializer", MapDeserializer.class.getName());
-			try (KafkaConsumer<String, Map<String , Object>> consumer = new KafkaConsumer<String, Map<String , Object>>(config)) {
+			HashMap<String, Object> consumerConfigs = new HashMap<String,Object>();
+			consumerConfigs.put(ConsumerConfig.CLIENT_ID_CONFIG, "erp2");
+			consumerConfigs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, completeUrl);
+			consumerConfigs.put(ConsumerConfig.GROUP_ID_CONFIG, "foo01");
+			consumerConfigs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringDeserializer.class.getName());
+			consumerConfigs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MapDeserializer.class.getName());
+
+			try (KafkaConsumer<String, Map<String , Object>> consumer = new KafkaConsumer<String, Map<String , Object>>(consumerConfigs)) {
 				consumer.subscribe(Arrays.asList(topic));
 				AtomicInteger iterate = new AtomicInteger(0);
 				AtomicInteger errors = new AtomicInteger();

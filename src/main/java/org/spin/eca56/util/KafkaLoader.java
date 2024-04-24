@@ -18,14 +18,14 @@ package org.spin.eca56.util;
 import java.net.InetAddress;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.errors.TopicExistsException;
 
 /**
@@ -35,10 +35,11 @@ import org.apache.kafka.common.errors.TopicExistsException;
 public class KafkaLoader {
 	/**	Instance	*/
 	private static KafkaLoader instance;
+
 	/**	Producer	*/
-	@SuppressWarnings("rawtypes")
-	private Map<String, KafkaProducer> producers = new HashMap<>();
-	
+	private HashMap<String, KafkaProducer<String, Object>> producers = new HashMap<>();
+
+
 	/**
 	 * default instance
 	 * @return
@@ -55,9 +56,14 @@ public class KafkaLoader {
 	 * @param topic
 	 * @param cloud
 	 */
-	private void createTopic(final String topic, final Properties cloud) {
+	private void createTopic(final String topic, final HashMap<String, Object> cloud) {
 		final NewTopic newTopic = new NewTopic(topic, Optional.empty(), Optional.empty());
 		try (final AdminClient adminClient = AdminClient.create(cloud)) {
+			HashMap<String, String> topicConfigs = new HashMap<>();
+			topicConfigs.put(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "20971520");
+			topicConfigs.put(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "20971520");
+
+			newTopic.configs(topicConfigs);
 			adminClient.createTopics(Collections.singletonList(newTopic)).all().get();
 		} catch (final InterruptedException | ExecutionException e) {
 			// Ignore if TopicExistsException, which may be valid if topic exists
@@ -73,19 +79,21 @@ public class KafkaLoader {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("rawtypes")
-	public KafkaProducer getProducer(String url, String topic) throws Exception {
+	public KafkaProducer<String, Object> getProducer(String url, String topic) throws Exception {
 		String key = url + "|" + topic;
-		KafkaProducer producer = producers.get(key);
-		if(producer == null) {
-			Properties config = new Properties();
-			config.put("client.id", InetAddress.getLocalHost().getHostName());
-			config.put("bootstrap.servers", url);
-			config.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-			config.put("value.serializer", MapSerializer.class.getName());
-			config.put("acks", "all");
-			createTopic(topic, config);
-			producer = new KafkaProducer(config);
+		KafkaProducer<String, Object> producer = producers.get(key);
+		if (producer == null) {
+			HashMap<String, Object> producerConfigs = new HashMap<>();
+			producerConfigs.put(ProducerConfig.CLIENT_ID_CONFIG, InetAddress.getLocalHost().getHostName());
+			producerConfigs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
+			producerConfigs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringSerializer.class.getName());
+			producerConfigs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, MapSerializer.class.getName());
+			producerConfigs.put(ProducerConfig.ACKS_CONFIG, "all");
+
+			producerConfigs.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 1024 * 1024 * 3);
+
+			createTopic(topic, producerConfigs);
+			producer = new KafkaProducer<String, Object>(producerConfigs);
 			producers.put(key, producer);
 		}
 		//	
