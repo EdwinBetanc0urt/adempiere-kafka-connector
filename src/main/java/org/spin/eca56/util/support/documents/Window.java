@@ -346,6 +346,9 @@ public class Window extends DictionaryDocument {
 		detail.put("sequence", field.getSeqNo());
 		detail.put("is_displayed_grid", field.isDisplayedGrid());
 		detail.put("grid_sequence", field.getSeqNoGrid());
+		//	Custom display
+		detail.put("is_displayed_as_panel", field.isDisplayed() ? "Y" : "N");
+		detail.put("is_displayed_as_table", field.isDisplayedGrid() ? 'Y' : 'N');
 
 		//	Editable Properties
 		detail.put("is_read_only", field.isReadOnly());
