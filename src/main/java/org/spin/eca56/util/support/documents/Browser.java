@@ -167,7 +167,10 @@ public class Browser extends DictionaryDocument {
 		detail.put("display_logic", field.getDisplayLogic());
 		detail.put("sequence", field.getSeqNo());
 		detail.put("grid_sequence", field.getSeqNoGrid());
-		
+		//	Custom display
+		detail.put("is_displayed_as_panel", field.isQueryCriteria() ? "Y" : "N");
+		detail.put("is_displayed_as_table", field.isDisplayed() ? 'Y' : 'N');
+
 		//	Editable Properties
 		detail.put("is_read_only", field.isReadOnly());
 		detail.put("read_only_logic", field.getReadOnlyLogic());
@@ -186,7 +189,12 @@ public class Browser extends DictionaryDocument {
 			elementName = field.getAD_Element().getColumnName();
 		}
 		detail.put("element_name", elementName);
-		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(columnName, field.getAD_Reference_ID(), field.getAD_Reference_Value_ID(), field.getAD_Val_Rule_ID());
+		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(
+			elementName,
+			field.getAD_Reference_ID(),
+			field.getAD_Reference_Value_ID(),
+			field.getAD_Val_Rule_ID()
+		);
 		if(referenceValues != null) {
 			Map<String, Object> referenceDetail = new HashMap<>();
 			// referenceDetail.put("id", referenceValues.getReferenceId());

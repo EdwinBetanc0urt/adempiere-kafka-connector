@@ -148,6 +148,8 @@ public class Process extends DictionaryDocument {
 		//	Display Properties
 		detail.put("display_logic", parameter.getDisplayLogic());
 		detail.put("sequence", parameter.getSeqNo());
+		//	Custom display
+		detail.put("is_displayed_as_panel", "Y");
 
 		//	Mandatory Properties
 		detail.put("is_mandatory", parameter.isMandatory());
