@@ -131,6 +131,7 @@ public class DependenceUtil {
 				//	Process
 				detail.put("parent_id", process.getAD_Process_ID());
 				detail.put("parent_uuid", process.getUUID());
+				detail.put("parent_name", process.getName());
 				depenentFieldsList.add(detail);
 			});
 
@@ -208,6 +209,7 @@ public class DependenceUtil {
 						//	Tab
 						detail.put("parent_id", tab.getAD_Tab_ID());
 						detail.put("parent_uuid", tab.getUUID());
+						detail.put("parent_name", tab.getName());
 						depenentFieldsList.add(detail);
 					});
 			});
@@ -277,6 +279,7 @@ public class DependenceUtil {
 				//	Browse
 				detail.put("parent_id", browse.getAD_Browse_ID());
 				detail.put("parent_uuid", browse.getUUID());
+				detail.put("parent_name", browse.getName());
 				depenentFieldsList.add(detail);
 			});
 

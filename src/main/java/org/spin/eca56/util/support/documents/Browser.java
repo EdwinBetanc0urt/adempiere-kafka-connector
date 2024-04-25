@@ -111,6 +111,7 @@ public class Browser extends DictionaryDocument {
 			)
 		);
 
+		documentDetail.put("fields", convertFields(browser.getFields()));
 		documentDetail.put("display_fields", convertFields(browser.getDisplayFields()));
 		documentDetail.put("criteria_fields", convertFields(browser.getCriteriaFields()));
 		documentDetail.put("identifier_fields", convertFields(browser.getIdentifierFields()));
