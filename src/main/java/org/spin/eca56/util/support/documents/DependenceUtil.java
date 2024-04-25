@@ -91,11 +91,17 @@ public class DependenceUtil {
 	
 	public static List<Map<String, Object>> generateDependentProcessParameters(MProcessPara processParameter) {
 		List<Map<String, Object>> depenentFieldsList = new ArrayList<>();
+		if (processParameter == null) {
+			return depenentFieldsList;
+		}
 
 		String parentColumnName = processParameter.getColumnName();
 
 		MProcess process = MProcess.get(processParameter.getCtx(), processParameter.getAD_Process_ID());
 		List<MProcessPara> parametersList = process.getParametersAsList();
+		if (parametersList == null || parametersList.isEmpty()) {
+			return depenentFieldsList;
+		}
 
 		parametersList.parallelStream()
 			.filter(currentParameter -> {
@@ -140,10 +146,13 @@ public class DependenceUtil {
 	
 	public static List<Map<String, Object>> generateDependentWindowFields(MField field) {
 		List<Map<String, Object>> depenentFieldsList = new ArrayList<>();
+		if (field == null) {
+			return depenentFieldsList;
+		}
 		String parentColumnName = MColumn.getColumnName(field.getCtx(), field.getAD_Column_ID());
 		MTab parentTab = MTab.get(field.getCtx(), field.getAD_Tab_ID());
 		List<MTab> tabsList = Arrays.asList(MWindow.get(field.getCtx(), parentTab.getAD_Window_ID()).getTabs(false, null));
-		if (tabsList == null) {
+		if (tabsList == null || tabsList.isEmpty()) {
 			return depenentFieldsList;
 		}
 		tabsList.parallelStream()
@@ -153,7 +162,7 @@ public class DependenceUtil {
 			})
 			.forEach(tab -> {
 				List<MField> fieldsList = Arrays.asList(tab.getFields(false, null));
-				if (fieldsList == null) {
+				if (fieldsList == null || fieldsList.isEmpty()) {
 					return;
 				}
 
@@ -218,6 +227,9 @@ public class DependenceUtil {
 	
 	public static List<Map<String, Object>> generateDependentBrowseFields(MBrowseField browseField) {
 		List<Map<String, Object>> depenentFieldsList = new ArrayList<>();
+		if (browseField == null) {
+			return depenentFieldsList;
+		}
 
 		MViewColumn viewColumn = MViewColumn.getById(Env.getCtx(), browseField.getAD_View_Column_ID(), null);
 		String parentColumnName = viewColumn.getColumnName();
@@ -234,6 +246,9 @@ public class DependenceUtil {
 
 		MBrowse browse = MBrowse.get(browseField.getCtx(), browseField.getAD_Browse_ID());
 		List<MBrowseField> browseFieldsList = browse.getFields();
+		if (browseFieldsList == null || browseFieldsList.isEmpty()) {
+			return depenentFieldsList;
+		}
 
 		browseFieldsList.parallelStream()
 			.filter(currentBrowseField -> {
