@@ -39,6 +39,8 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	public static final String ECA56_EXPORTPROCESS = "ECA56_ExportProcess";
 	/**	Parameter Name for Export Browsers	*/
 	public static final String ECA56_EXPORTBROWSERS = "ECA56_ExportBrowsers";
+	/**	Parameter Name for Export Forms	*/
+	public static final String ECA56_EXPORTFORMS = "ECA56_ExportForms";
 	/**	Parameter Value for Export Menu	*/
 	private boolean isExportMenu;
 	/**	Parameter Value for Export Windows	*/
@@ -47,6 +49,8 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	private boolean isExportProcess;
 	/**	Parameter Value for Export Browsers	*/
 	private boolean isExportBrowsers;
+	/**	Parameter Value for Export Forms	*/
+	private boolean isExportForms;
 
 	@Override
 	protected void prepare() {
@@ -54,6 +58,7 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 		isExportWindows = getParameterAsBoolean(ECA56_EXPORTWINDOWS);
 		isExportProcess = getParameterAsBoolean(ECA56_EXPORTPROCESS);
 		isExportBrowsers = getParameterAsBoolean(ECA56_EXPORTBROWSERS);
+		isExportForms = getParameterAsBoolean(ECA56_EXPORTFORMS);
 	}
 
 	/**	 Getter Parameter Value for Export Menu	*/
@@ -94,6 +99,16 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	/**	 Setter Parameter Value for Export Browsers	*/
 	protected void setExportBrowsers(boolean isExportBrowsers) {
 		this.isExportBrowsers = isExportBrowsers;
+	}
+
+	/**	 Getter Parameter Value for Export Forms	*/
+	protected boolean isExportForms() {
+		return isExportForms;
+	}
+
+	/**	 Setter Parameter Value for Export Forms	*/
+	protected void setExportForms(boolean isExportForms) {
+		this.isExportForms = isExportForms;
 	}
 
 	/**	 Getter Parameter Value for Process ID	*/
