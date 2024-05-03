@@ -14,6 +14,7 @@
  ************************************************************************************/
 package org.spin.eca56.model.validator;
 
+import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Table;
 import org.compiere.model.MClient;
@@ -79,6 +80,9 @@ public class EngineAsQueue implements ModelValidator {
 								&& !entity.is_ValueChanged(I_AD_Process.COLUMNNAME_Statistic_Seconds))) {
 					QueueLoader.getInstance().getQueueManager(ApplicationDictionary.CODE).withEntity(entity);
 				}
+			} else if (entity.get_TableName().equals(I_AD_Form.Table_Name)
+				|| entity.get_TableName().equals(I_AD_Form.Table_Name + "_Trl")) {
+				QueueLoader.getInstance().getQueueManager(ApplicationDictionary.CODE).withEntity(entity);
 			}
 		}
 		return null;

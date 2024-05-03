@@ -22,10 +22,12 @@ import java.util.Enumeration;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
+import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
 import org.compiere.model.MClientInfo;
+import org.compiere.model.MForm;
 import org.compiere.model.MMenu;
 import org.compiere.model.MProcess;
 import org.compiere.model.MTree;
@@ -104,7 +106,37 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 				counter.incrementAndGet();
 			});
 		}
+
+		//	For Forms Definition
+		if(isExportForms()) {
+			exportFormsDefinition();
+		}
+
 		//	
 		return "@Created@ " + counter.get();
 	}
+
+	public void exportFormsDefinition() {
+		addLog("@AD_Form_ID@");
+		new Query(
+				getCtx(),
+				I_AD_Form.Table_Name,
+				null,
+				get_TrxName()
+			)
+			.setOnlyActiveRecords(true)
+			.getIDsAsList()
+			.forEach(formId -> {
+				MForm form = new MForm(getCtx(), formId, get_TrxName());
+				QueueLoader.getInstance()
+					.getQueueManager(ApplicationDictionary.CODE)
+					.withEntity(form)
+					.addToQueue()
+				;
+				addLog(form.getClassname() + " - " + form.getName());
+				counter.incrementAndGet();
+			})
+		;
+	}
+
 }
