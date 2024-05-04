@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Migrations>
-  <Migration EntityType="ECA56" Name="ECA56 Kafka Connector (Export a Specific Entity)" ReleaseNo="1.0" SeqNo="10180">
+  <Migration EntityType="ECA56" Name="ECA56 Export a Specific Entity" ReleaseNo="1.0" SeqNo="10180">
     <Step SeqNo="10" StepType="AD">
       <PO AD_Table_ID="285" Action="I" Record_ID="59119" Table="AD_Process_Para">
         <Data AD_Column_ID="2815" Column="AD_Client_ID">0</Data>
