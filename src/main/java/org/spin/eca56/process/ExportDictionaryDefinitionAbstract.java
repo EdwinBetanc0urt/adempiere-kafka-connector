@@ -33,32 +33,57 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	private static final int ID_FOR_PROCESS = 54692;
 	/**	Parameter Name for Export Menu	*/
 	public static final String ECA56_EXPORTMENU = "ECA56_ExportMenu";
+	/**	Parameter Name for Menu	*/
+	public static final String AD_MENU_ID = "AD_Menu_ID";
 	/**	Parameter Name for Export Windows	*/
 	public static final String ECA56_EXPORTWINDOWS = "ECA56_ExportWindows";
+	/**	Parameter Name for Window	*/
+	public static final String AD_WINDOW_ID = "AD_Window_ID";
 	/**	Parameter Name for Export Process	*/
 	public static final String ECA56_EXPORTPROCESS = "ECA56_ExportProcess";
+	/**	Parameter Name for Process	*/
+	public static final String AD_PROCESS_ID = "AD_Process_ID";
 	/**	Parameter Name for Export Browsers	*/
 	public static final String ECA56_EXPORTBROWSERS = "ECA56_ExportBrowsers";
+	/**	Parameter Name for Smart Browse	*/
+	public static final String AD_BROWSE_ID = "AD_Browse_ID";
 	/**	Parameter Name for Export Forms	*/
 	public static final String ECA56_EXPORTFORMS = "ECA56_ExportForms";
+	/**	Parameter Name for Special Form	*/
+	public static final String AD_FORM_ID = "AD_Form_ID";
 	/**	Parameter Value for Export Menu	*/
 	private boolean isExportMenu;
+	/**	Parameter Value for Menu	*/
+	private int menuId;
 	/**	Parameter Value for Export Windows	*/
 	private boolean isExportWindows;
+	/**	Parameter Value for Window	*/
+	private int windowId;
 	/**	Parameter Value for Export Process	*/
 	private boolean isExportProcess;
+	/**	Parameter Value for Process	*/
+	private int aDProcessId;
 	/**	Parameter Value for Export Browsers	*/
 	private boolean isExportBrowsers;
+	/**	Parameter Value for Smart Browse	*/
+	private int browseId;
 	/**	Parameter Value for Export Forms	*/
 	private boolean isExportForms;
+	/**	Parameter Value for Special Form	*/
+	private int formId;
 
 	@Override
 	protected void prepare() {
 		isExportMenu = getParameterAsBoolean(ECA56_EXPORTMENU);
+		menuId = getParameterAsInt(AD_MENU_ID);
 		isExportWindows = getParameterAsBoolean(ECA56_EXPORTWINDOWS);
+		windowId = getParameterAsInt(AD_WINDOW_ID);
 		isExportProcess = getParameterAsBoolean(ECA56_EXPORTPROCESS);
+		aDProcessId = getParameterAsInt(AD_PROCESS_ID);
 		isExportBrowsers = getParameterAsBoolean(ECA56_EXPORTBROWSERS);
+		browseId = getParameterAsInt(AD_BROWSE_ID);
 		isExportForms = getParameterAsBoolean(ECA56_EXPORTFORMS);
+		formId = getParameterAsInt(AD_FORM_ID);
 	}
 
 	/**	 Getter Parameter Value for Export Menu	*/
@@ -71,6 +96,16 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 		this.isExportMenu = isExportMenu;
 	}
 
+	/**	 Getter Parameter Value for Menu	*/
+	protected int getMenuId() {
+		return menuId;
+	}
+
+	/**	 Setter Parameter Value for Menu	*/
+	protected void setMenuId(int menuId) {
+		this.menuId = menuId;
+	}
+
 	/**	 Getter Parameter Value for Export Windows	*/
 	protected boolean isExportWindows() {
 		return isExportWindows;
@@ -79,6 +114,16 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	/**	 Setter Parameter Value for Export Windows	*/
 	protected void setExportWindows(boolean isExportWindows) {
 		this.isExportWindows = isExportWindows;
+	}
+
+	/**	 Getter Parameter Value for Window	*/
+	protected int getWindowId() {
+		return windowId;
+	}
+
+	/**	 Setter Parameter Value for Window	*/
+	protected void setWindowId(int windowId) {
+		this.windowId = windowId;
 	}
 
 	/**	 Getter Parameter Value for Export Process	*/
@@ -91,6 +136,16 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 		this.isExportProcess = isExportProcess;
 	}
 
+	/**	 Getter Parameter Value for Process	*/
+	protected int getADProcessId() {
+		return aDProcessId;
+	}
+
+	/**	 Setter Parameter Value for Process	*/
+	protected void setADProcessId(int aDProcessId) {
+		this.aDProcessId = aDProcessId;
+	}
+
 	/**	 Getter Parameter Value for Export Browsers	*/
 	protected boolean isExportBrowsers() {
 		return isExportBrowsers;
@@ -101,6 +156,16 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 		this.isExportBrowsers = isExportBrowsers;
 	}
 
+	/**	 Getter Parameter Value for Smart Browse	*/
+	protected int getBrowseId() {
+		return browseId;
+	}
+
+	/**	 Setter Parameter Value for Smart Browse	*/
+	protected void setBrowseId(int browseId) {
+		this.browseId = browseId;
+	}
+
 	/**	 Getter Parameter Value for Export Forms	*/
 	protected boolean isExportForms() {
 		return isExportForms;
@@ -109,6 +174,16 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	/**	 Setter Parameter Value for Export Forms	*/
 	protected void setExportForms(boolean isExportForms) {
 		this.isExportForms = isExportForms;
+	}
+
+	/**	 Getter Parameter Value for Special Form	*/
+	protected int getFormId() {
+		return formId;
+	}
+
+	/**	 Setter Parameter Value for Special Form	*/
+	protected void setFormId(int formId) {
+		this.formId = formId;
 	}
 
 	/**	 Getter Parameter Value for Process ID	*/
