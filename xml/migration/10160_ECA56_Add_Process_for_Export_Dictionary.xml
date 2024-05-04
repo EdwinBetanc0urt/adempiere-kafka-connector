@@ -58,7 +58,7 @@
     </Step>
     <Step SeqNo="30" StepType="AD">
       <PO AD_Table_ID="287" Action="U" Record_ID="0" Table="AD_Process_Trl">
-        <Data AD_Column_ID="2852" Column="Name" oldValue="Export Dictionary Definition">exportar Definición del Diccionario</Data>
+        <Data AD_Column_ID="2852" Column="Name" oldValue="Export Dictionary Definition">Exportar Definición del Diccionario</Data>
         <Data AD_Column_ID="2854" Column="Help" oldValue="This process use a queue for export all definition, note that many definitions can be generated">Éste proceso usa una cola para exportar toda la definición del diccionario de aplicación, note que muchas definiciones pueden ser exportadas</Data>
         <Data AD_Column_ID="2853" Column="Description" oldValue="Allows export all dictionary definition for external service">Permite exportar toda la definición del diccionario de aplicación</Data>
         <Data AD_Column_ID="2843" Column="AD_Process_ID" oldValue="54692">54692</Data>
