@@ -57,14 +57,14 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 			exportMenuDefinition();
 		}
 
-		//	For Process Definition
-		if(isExportProcess()) {
-			exportProcessesDefinition();
-		}
-
 		//	For Windows Definition
 		if(isExportWindows()) {
 			exportWindowsDefinition();
+		}
+
+		//	For Processes Definition
+		if(isExportProcess()) {
+			exportProcessesDefinition();
 		}
 
 		//	For Browsers Definition
@@ -84,6 +84,7 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 
 	private void exportMenuDefinition() {
 		if (this.getMenuId() > 0) {
+			addLog("@AD_Menu_ID@");
 			//	For only specific Menu node
 			MMenu menuNode = new Query(
 				getCtx(),
@@ -99,6 +100,7 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 				.withEntity(menuNode)
 				.addToQueue()
 			;
+			counter.incrementAndGet();
 		} else {
 			//	For all tree nodes
 			MClientInfo clientInfo = MClientInfo.get(getCtx(), getAD_Client_ID());
@@ -111,14 +113,48 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					MTreeNode childNode = (MTreeNode) childrens.nextElement();
 					QueueLoader.getInstance()
 						.getQueueManager(ApplicationDictionary.CODE)
+						// TODO: MMenu.getFromId verify local cache
 						.withEntity(MMenu.getFromId(getCtx(), childNode.getNode_ID()))
 						.addToQueue()
 					;
+					addLog(childNode.getNode_ID() + " - " + childNode.getName());
+					counter.incrementAndGet();
 				}
-				addLog(tree.getName());
-				counter.incrementAndGet();
 			}
 		}
+	}
+
+
+	private void exportWindowsDefinition() {
+		addLog("@AD_Window_ID@");
+
+		// Add filter a specific Window
+		String whereClause = "";
+		List<Object> filtersList = new ArrayList<>();
+		if (this.getWindowId() > 0) {
+			whereClause = "AD_Window_ID = ?";
+			filtersList.add(this.getWindowId());
+		}
+		new Query(
+				getCtx(),
+				I_AD_Window.Table_Name,
+				whereClause,
+				get_TrxName()
+		)
+			.setOnlyActiveRecords(true)
+			.setParameters(filtersList)
+			.getIDsAsList()
+			.forEach(windowId -> {
+				MWindow window = new MWindow(getCtx(), windowId, get_TrxName());
+				QueueLoader.getInstance()
+					.getQueueManager(ApplicationDictionary.CODE)
+					.withEntity(window)
+					.addToQueue()
+				;
+				addLog(window.getAD_Window_ID() + " - " + window.getName());
+				counter.incrementAndGet();
+			})
+		;
 	}
 
 
@@ -151,39 +187,6 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 				addLog(process.getValue() + " - " + process.getName());
 				counter.incrementAndGet();
 		});
-	}
-
-
-	private void exportWindowsDefinition() {
-		addLog("@AD_Window_ID@");
-
-		// AAdd filter a specific Window
-		String whereClause = "";
-		List<Object> filtersList = new ArrayList<>();
-		if (this.getWindowId() > 0) {
-			whereClause = "AD_Window_ID = ?";
-			filtersList.add(this.getWindowId());
-		}
-		new Query(
-				getCtx(),
-				I_AD_Window.Table_Name,
-				whereClause,
-				get_TrxName()
-		)
-			.setOnlyActiveRecords(true)
-			.setParameters(filtersList)
-			.getIDsAsList()
-			.forEach(windowId -> {
-				MWindow window = new MWindow(getCtx(), windowId, get_TrxName());
-				QueueLoader.getInstance()
-					.getQueueManager(ApplicationDictionary.CODE)
-					.withEntity(window)
-					.addToQueue()
-				;
-				addLog(window.getName());
-				counter.incrementAndGet();
-			})
-		;
 	}
 
 	private void exportBrowsersDefinition() {
