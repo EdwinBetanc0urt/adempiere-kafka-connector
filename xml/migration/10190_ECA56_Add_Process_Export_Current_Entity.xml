@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Migrations>
+  <Migration EntityType="ECA56" Name="ECA56 Add Process Export Current Entity" ReleaseNo="1.0" SeqNo="10190">
+    <Step SeqNo="10" StepType="AD">
+      <PO AD_Table_ID="284" Action="I" Record_ID="54728" Table="AD_Process">
+        <Data AD_Column_ID="63488" Column="AD_Browse_ID" isNewNull="true"/>
+        <Data AD_Column_ID="2802" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="56515" Column="AD_Form_ID" isNewNull="true"/>
+        <Data AD_Column_ID="2803" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="7752" Column="AD_PrintFormat_ID" isNewNull="true"/>
+        <Data AD_Column_ID="2801" Column="AD_Process_ID">54728</Data>
+        <Data AD_Column_ID="4374" Column="AD_ReportView_ID" isNewNull="true"/>
+        <Data AD_Column_ID="11834" Column="AD_Workflow_ID" isNewNull="true"/>
+        <Data AD_Column_ID="5790" Column="AccessLevel">6</Data>
+        <Data AD_Column_ID="4656" Column="Classname">org.spin.eca56.process.ExportCurrentDictionaryDefinition</Data>
+        <Data AD_Column_ID="57920" Column="CopyFromProcess">N</Data>
+        <Data AD_Column_ID="2805" Column="Created">2024-05-03 21:30:52.325</Data>
+        <Data AD_Column_ID="2806" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="2810" Column="Description">Allows export current dictionary definition for external service</Data>
+        <Data AD_Column_ID="6485" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="78843" Column="GenerateClass">N</Data>
+        <Data AD_Column_ID="2811" Column="Help">This process use a queue for export the current definition</Data>
+        <Data AD_Column_ID="2804" Column="IsActive">true</Data>
+        <Data AD_Column_ID="12458" Column="IsBetaFunctionality">false</Data>
+        <Data AD_Column_ID="4214" Column="IsDirectPrint">false</Data>
+        <Data AD_Column_ID="3371" Column="IsReport">false</Data>
+        <Data AD_Column_ID="14084" Column="IsServerProcess">false</Data>
+        <Data AD_Column_ID="50182" Column="JasperReport" isNewNull="true"/>
+        <Data AD_Column_ID="2809" Column="Name">Export Current Dictionary Definition</Data>
+        <Data AD_Column_ID="2813" Column="ProcedureName" isNewNull="true"/>
+        <Data AD_Column_ID="50181" Column="ShowHelp">Y</Data>
+        <Data AD_Column_ID="6652" Column="Statistic_Count">0</Data>
+        <Data AD_Column_ID="6653" Column="Statistic_Seconds">0</Data>
+        <Data AD_Column_ID="84383" Column="UUID">2a74ae50-e48c-4691-a38b-5d7c4cac9935</Data>
+        <Data AD_Column_ID="2807" Column="Updated">2024-05-03 21:30:52.326</Data>
+        <Data AD_Column_ID="2808" Column="UpdatedBy">100</Data>
+        <Data AD_Column_ID="4023" Column="Value">ECA56_ExportCurrentDictionaryDefinition</Data>
+        <Data AD_Column_ID="11563" Column="WorkflowValue" isNewNull="true"/>
+      </PO>
+    </Step>
+    <Step SeqNo="20" StepType="AD">
+      <PO AD_Table_ID="287" Action="I" Record_ID="0" Table="AD_Process_Trl">
+        <Data AD_Column_ID="2845" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="2844" Column="AD_Language">es_MX</Data>
+        <Data AD_Column_ID="2846" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="2843" Column="AD_Process_ID">54728</Data>
+        <Data AD_Column_ID="2848" Column="Created">2024-05-03 21:30:53.126</Data>
+        <Data AD_Column_ID="2849" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="2853" Column="Description">Permite exportar la definición actual del diccionario de aplicación</Data>
+        <Data AD_Column_ID="2854" Column="Help">Éste proceso usa una cola para exportar la definición actual del diccionario de aplicación</Data>
+        <Data AD_Column_ID="2847" Column="IsActive">true</Data>
+        <Data AD_Column_ID="2855" Column="IsTranslated">false</Data>
+        <Data AD_Column_ID="2852" Column="Name">Exportar Definición Actual del Diccionario</Data>
+        <Data AD_Column_ID="84387" Column="UUID">b017d122-9e24-4b48-aa8e-aa017b52bcf2</Data>
+        <Data AD_Column_ID="2850" Column="Updated">2024-05-03 21:30:53.126</Data>
+        <Data AD_Column_ID="2851" Column="UpdatedBy">100</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="30" StepType="AD">
+      <PO AD_Table_ID="53660" Action="I" Record_ID="54728" Table="AD_Table_Process">
+        <Data AD_Column_ID="69639" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="69640" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="69647" Column="AD_Process_ID">54728</Data>
+        <Data AD_Column_ID="69648" Column="AD_Table_ID">105</Data>
+        <Data AD_Column_ID="69642" Column="Created">2024-05-03 21:57:25.059</Data>
+        <Data AD_Column_ID="69644" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="69649" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="69641" Column="IsActive">true</Data>
+        <Data AD_Column_ID="84427" Column="UUID">5d53ec63-da6c-46d8-ab04-a43e0e8e60b0</Data>
+        <Data AD_Column_ID="69643" Column="Updated">2024-05-03 21:57:25.059</Data>
+        <Data AD_Column_ID="69645" Column="UpdatedBy">100</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="40" StepType="AD">
+      <PO AD_Table_ID="53660" Action="I" Record_ID="54728" Table="AD_Table_Process">
+        <Data AD_Column_ID="69639" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="69640" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="69647" Column="AD_Process_ID">54728</Data>
+        <Data AD_Column_ID="69648" Column="AD_Table_ID">116</Data>
+        <Data AD_Column_ID="69642" Column="Created">2024-05-03 21:58:18.952</Data>
+        <Data AD_Column_ID="69644" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="69649" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="69641" Column="IsActive">true</Data>
+        <Data AD_Column_ID="84427" Column="UUID">4e33f708-cf60-4600-b7f7-e6c67a2a692f</Data>
+        <Data AD_Column_ID="69643" Column="Updated">2024-05-03 21:58:18.952</Data>
+        <Data AD_Column_ID="69645" Column="UpdatedBy">100</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="50" StepType="AD">
+      <PO AD_Table_ID="53660" Action="I" Record_ID="54728" Table="AD_Table_Process">
+        <Data AD_Column_ID="69639" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="69640" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="69647" Column="AD_Process_ID">54728</Data>
+        <Data AD_Column_ID="69648" Column="AD_Table_ID">284</Data>
+        <Data AD_Column_ID="69642" Column="Created">2024-05-03 21:58:48.178</Data>
+        <Data AD_Column_ID="69644" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="69649" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="69641" Column="IsActive">true</Data>
+        <Data AD_Column_ID="84427" Column="UUID">103c5994-0e06-4113-8bf8-06cd7f9a5440</Data>
+        <Data AD_Column_ID="69643" Column="Updated">2024-05-03 21:58:48.178</Data>
+        <Data AD_Column_ID="69645" Column="UpdatedBy">100</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="60" StepType="AD">
+      <PO AD_Table_ID="53660" Action="I" Record_ID="54728" Table="AD_Table_Process">
+        <Data AD_Column_ID="69639" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="69640" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="69647" Column="AD_Process_ID">54728</Data>
+        <Data AD_Column_ID="69648" Column="AD_Table_ID">53224</Data>
+        <Data AD_Column_ID="69642" Column="Created">2024-05-03 21:59:10.164</Data>
+        <Data AD_Column_ID="69644" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="69649" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="69641" Column="IsActive">true</Data>
+        <Data AD_Column_ID="84427" Column="UUID">8d8b8c6b-088f-4756-94b2-377d7e2cb61f</Data>
+        <Data AD_Column_ID="69643" Column="Updated">2024-05-03 21:59:10.164</Data>
+        <Data AD_Column_ID="69645" Column="UpdatedBy">100</Data>
+      </PO>
+    </Step>
+    <Step SeqNo="70" StepType="AD">
+      <PO AD_Table_ID="53660" Action="I" Record_ID="54728" Table="AD_Table_Process">
+        <Data AD_Column_ID="69639" Column="AD_Client_ID">0</Data>
+        <Data AD_Column_ID="69640" Column="AD_Org_ID">0</Data>
+        <Data AD_Column_ID="69647" Column="AD_Process_ID">54728</Data>
+        <Data AD_Column_ID="69648" Column="AD_Table_ID">376</Data>
+        <Data AD_Column_ID="69642" Column="Created">2024-05-03 21:59:51.146</Data>
+        <Data AD_Column_ID="69644" Column="CreatedBy">100</Data>
+        <Data AD_Column_ID="69649" Column="EntityType">ECA56</Data>
+        <Data AD_Column_ID="69641" Column="IsActive">true</Data>
+        <Data AD_Column_ID="84427" Column="UUID">a8477bdc-63ec-4d5b-8210-be8bbf19e509</Data>
+        <Data AD_Column_ID="69643" Column="Updated">2024-05-03 21:59:51.146</Data>
+        <Data AD_Column_ID="69645" Column="UpdatedBy">100</Data>
+      </PO>
+    </Step>
+  </Migration>
+</Migrations>
