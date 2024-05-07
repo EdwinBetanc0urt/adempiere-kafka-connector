@@ -120,63 +120,88 @@ public class Window extends DictionaryDocument {
 		detail.put("is_translation_tab", tab.isTranslationTab());
 
 		// Table attributes
-		if(tab.getAD_Table_ID() > 0) {
-			MTable table = MTable.get(tab.getCtx(), tab.getAD_Table_ID());
-			detail.put("table_name", table.getTableName());
+		MTable table = MTable.get(tab.getCtx(), tab.getAD_Table_ID());
+		detail.put("table_name", table.getTableName());
 
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("table_name", table.getTableName());
-			referenceDetail.put("access_level", table.getAccessLevel());
-			referenceDetail.put("key_columns",
-				Arrays.asList(
-					table.getKeyColumns()
-				)
-			);
-			referenceDetail.put("is_view", table.isView());
-			referenceDetail.put("is_document", table.isDocument());
-			referenceDetail.put("is_deleteable", table.isDeleteable());
-			referenceDetail.put("is_change_log", table.isChangeLog());
-			List<String> identifierColumns = table.getColumnsAsList(false).stream()
-				.filter(column -> {
-					return column.isIdentifier();
-				})
-				.sorted(Comparator.comparing(MColumn::getSeqNo))
-				.map(column -> {
-					return column.getColumnName();
-				})
-				.collect(Collectors.toList())
-			;
-			referenceDetail.put("identifier_columns", identifierColumns);
-			List<String> selectionColums = table.getColumnsAsList(false).stream()
-				.filter(column -> {
-					return column.isSelectionColumn();
-				})
-				.map(column -> {
-					return column.getColumnName();
-				})
-				.collect(Collectors.toList())
-			;
-			referenceDetail.put("selection_colums", selectionColums);
-			detail.put("table_name", table.getTableName());
-			detail.put("table", referenceDetail);
-		}
+		Map<String, Object> tableDetil = new HashMap<>();
+		tableDetil.put("table_name", table.getTableName());
+		tableDetil.put("access_level", table.getAccessLevel());
+		List<String> keyColumnsList = Arrays.asList(
+			table.getKeyColumns()
+		);
+		tableDetil.put("key_columns", keyColumnsList);
+		tableDetil.put("is_view", table.isView());
+		tableDetil.put("is_document", table.isDocument());
+		tableDetil.put("is_deleteable", table.isDeleteable());
+		tableDetil.put("is_change_log", table.isChangeLog());
+		List<String> identifierColumns = table.getColumnsAsList(false).stream()
+			.filter(column -> {
+				return column.isIdentifier();
+			})
+			.sorted(Comparator.comparing(MColumn::getSeqNo))
+			.map(column -> {
+				return column.getColumnName();
+			})
+			.collect(Collectors.toList())
+		;
+		tableDetil.put("identifier_columns", identifierColumns);
+		List<String> selectionColums = table.getColumnsAsList(false).stream()
+			.filter(column -> {
+				return column.isSelectionColumn();
+			})
+			.map(column -> {
+				return column.getColumnName();
+			})
+			.collect(Collectors.toList())
+		;
+		tableDetil.put("selection_colums", selectionColums);
+		detail.put("table_name", table.getTableName());
+		detail.put("table", tableDetil);
 
 		// Link attributes
-		List<String> contextColumnsList = ReferenceUtil.getContextColumnNames(
-			Optional.ofNullable(tab.getWhereClause()).orElse("")
-			+ Optional.ofNullable(tab.getOrderByClause()).orElse("")
+		List<String> contextColumnsList = new ArrayList<String>();
+		contextColumnsList.addAll(
+			ReferenceUtil.getContextColumnNames(
+				Optional.ofNullable(tab.getWhereClause()).orElse("")
+				+ Optional.ofNullable(tab.getOrderByClause()).orElse("")
+			)
 		);
-		detail.put("context_column_names", contextColumnsList);
+
+		//	Parent Link Column Name
 		if(tab.getParent_Column_ID() > 0) {
-			//	Parent Link Column Name
 			MColumn column = MColumn.get(tab.getCtx(), tab.getParent_Column_ID());
 			detail.put("parent_column_name", column.getColumnName());
+			if (!contextColumnsList.contains(column.getColumnName())) {
+				contextColumnsList.add(
+					column.getColumnName()
+				);
+			}
 		}
+
+		//	Link Column Name
 		if(tab.getAD_Column_ID() > 0) {
-			//	Link Column Name
 			MColumn column = MColumn.get(tab.getCtx(), tab.getAD_Column_ID());
 			detail.put("link_column_name", column.getColumnName());
+			if (!contextColumnsList.contains(column.getColumnName())) {
+				contextColumnsList.add(
+					column.getColumnName()
+				);
+			}
 		}
+
+		// Add parent columns
+		if (tab.getTabLevel() > 0) {
+			for (MColumn column: table.getColumns(false)) {
+				if (column.isParent() && !contextColumnsList.contains(column.getColumnName())) {
+					contextColumnsList.add(
+						column.getColumnName()
+					);
+				}
+			}
+		}
+
+		detail.put("context_column_names", contextColumnsList);
+
 		// Sort attributes
 		detail.put("is_sort_tab", tab.isSortTab());
 		if (tab.isSortTab()) {
@@ -202,7 +227,10 @@ public class Window extends DictionaryDocument {
 				detail.put("process", referenceDetail);
 			}
 		}
-		detail.put("processes", convertProcesses(getProcessFromTab(tab)));
+		detail.put("processes", convertProcesses(
+				getProcessFromTab(tab)
+			)
+		);
 
 		//	Fields
 		List<MField> fields = Arrays.asList(tab.getFields(false, null));
