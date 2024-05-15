@@ -101,7 +101,7 @@ public class Process extends DictionaryDocument {
 			MBrowse browse = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
 			documentDetail.put("browse", parseDictionaryEntity(browse));
 		} else if (process.getAD_Form_ID() > 0) {
-			MForm form = new MForm(process.getCtx(), process.getAD_Workflow_ID(), null);
+			MForm form = new MForm(process.getCtx(), process.getAD_Form_ID(), null);
 			documentDetail.put("form", parseDictionaryEntity(form));
 		} else if (process.getAD_Workflow_ID() > 0) {
 			MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
