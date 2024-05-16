@@ -32,6 +32,7 @@ import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
 import org.compiere.model.MReportView;
 import org.compiere.model.PO;
+import org.compiere.model.Query;
 import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
 import org.spin.util.AbstractExportFormat;
@@ -73,6 +74,7 @@ public class Process extends DictionaryDocument {
 		documentDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
+		documentDetail.put("is_active", process.isActive());
 		documentDetail.put("show_help", process.getShowHelp());
 
 		// Report
@@ -109,12 +111,22 @@ public class Process extends DictionaryDocument {
 		}
 
 		//	Parameters
-		List<MProcessPara> parameters = process.getParametersAsList();
+		final StringBuffer whereClause = new StringBuffer(MProcessPara.COLUMNNAME_AD_Process_ID + "=?");
+		List<MProcessPara> parameters = new Query(
+			process.getCtx(),
+			I_AD_Process_Para.Table_Name,
+			whereClause.toString(),
+			null
+		)
+			.setParameters(process.getAD_Process_ID())
+			.setOrderBy(MProcessPara.COLUMNNAME_SeqNo)
+			.list();
+
 		boolean hasParameters = parameters != null && !parameters.isEmpty();
-		documentDetail.put("has_parameters",  hasParameters);
+		documentDetail.put("has_parameters", hasParameters);
 
 		List<Map<String, Object>> parametersDetail = new ArrayList<>();
-		if(hasParameters ) {
+		if(hasParameters) {
 			parameters.forEach(parameter -> {
 				Map<String, Object> detail = parseProcessParameter(parameter);
 				parametersDetail.add(detail);
@@ -134,6 +146,7 @@ public class Process extends DictionaryDocument {
 		detail.put("name", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Help, getLanguage()));
+		detail.put("is_active", parameter.isActive());
 		detail.put("display_type", parameter.getAD_Reference_ID());
 
 		//	Value Properties
@@ -149,11 +162,11 @@ public class Process extends DictionaryDocument {
 		detail.put("display_logic", parameter.getDisplayLogic());
 		detail.put("sequence", parameter.getSeqNo());
 		//	Custom display
-		detail.put("is_displayed_as_panel", "Y");
+		detail.put("is_displayed_as_panel", parameter.isActive() ? "Y" : "N");
 
 		//	Mandatory Properties
 		detail.put("is_mandatory", parameter.isMandatory());
-		
+
 		//	Editable Properties
 		detail.put("read_only_logic", parameter.getReadOnlyLogic());
 		detail.put("is_info_only", parameter.isInfoOnly());
