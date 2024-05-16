@@ -354,6 +354,7 @@ public class Window extends DictionaryDocument {
 		detail.put("column_name", column.getColumnName());
 		detail.put("column_sql", column.getColumnSQL());
 		detail.put("is_key", column.isKey());
+		detail.put("is_parent", column.isParent());
 		detail.put("is_translated", column.isTranslated());
 		detail.put("is_identifier", column.isIdentifier());
 		detail.put("identifier_sequence", column.getSeqNo());
