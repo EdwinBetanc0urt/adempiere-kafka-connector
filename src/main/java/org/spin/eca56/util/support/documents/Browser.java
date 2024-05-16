@@ -34,6 +34,7 @@ import org.compiere.model.MProcess;
 import org.compiere.model.MTable;
 import org.compiere.model.MWindow;
 import org.compiere.model.PO;
+import org.compiere.model.Query;
 import org.compiere.util.Util;
 import org.spin.eca56.util.support.DictionaryDocument;
 
@@ -72,6 +73,8 @@ public class Browser extends DictionaryDocument {
 		documentDetail.put("name", browser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", browser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", browser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
+		documentDetail.put("is_active", browser.isActive());
+
 		documentDetail.put("is_execute_query_by_default", browser.isExecutedQueryByDefault());
 		documentDetail.put("is_collapsible_by_default", browser.isCollapsibleByDefault());
 		documentDetail.put("is_selected_by_default", browser.isSelectedByDefault());
@@ -111,12 +114,22 @@ public class Browser extends DictionaryDocument {
 			)
 		);
 
-		documentDetail.put("fields", convertFields(browser.getFields()));
-		documentDetail.put("display_fields", convertFields(browser.getDisplayFields()));
-		documentDetail.put("criteria_fields", convertFields(browser.getCriteriaFields()));
-		documentDetail.put("identifier_fields", convertFields(browser.getIdentifierFields()));
-		documentDetail.put("order_fields", convertFields(browser.getOrderByFields()));
-		documentDetail.put("editable_fields", convertFields(browser.getNotReadOnlyFields()));
+		final String whereClause = MBrowseField.COLUMNNAME_AD_Browse_ID + "=?";
+		List<MBrowseField> browseFields = new Query(
+			browser.getCtx(),
+			MBrowseField.Table_Name,
+			whereClause,
+			null
+		)
+			.setParameters(browser.getAD_Browse_ID())
+			.setOrderBy(MBrowseField.COLUMNNAME_SeqNo)
+			.list();
+		documentDetail.put("fields", convertFields(browseFields));
+		// documentDetail.put("display_fields", convertFields(browser.getDisplayFields()));
+		// documentDetail.put("criteria_fields", convertFields(browser.getCriteriaFields()));
+		// documentDetail.put("identifier_fields", convertFields(browser.getIdentifierFields()));
+		// documentDetail.put("order_fields", convertFields(browser.getOrderByFields()));
+		// documentDetail.put("editable_fields", convertFields(browser.getNotReadOnlyFields()));
 
 		putDocument(documentDetail);
 		return this;
@@ -141,6 +154,7 @@ public class Browser extends DictionaryDocument {
 		detail.put("name", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Help, getLanguage()));
+		detail.put("is_active", field.isActive());
 		detail.put("display_type", field.getAD_Reference_ID());
 		detail.put("callout", field.getCallout());
 
@@ -169,8 +183,8 @@ public class Browser extends DictionaryDocument {
 		detail.put("sequence", field.getSeqNo());
 		detail.put("grid_sequence", field.getSeqNoGrid());
 		//	Custom display
-		detail.put("is_displayed_as_panel", field.isQueryCriteria() ? "Y" : "N");
-		detail.put("is_displayed_as_table", field.isDisplayed() ? 'Y' : 'N');
+		detail.put("is_displayed_as_panel", field.isActive() && field.isQueryCriteria() ? "Y" : "N");
+		detail.put("is_displayed_as_table", field.isActive() && field.isDisplayed() ? 'Y' : 'N');
 
 		//	Editable Properties
 		detail.put("is_read_only", field.isReadOnly());

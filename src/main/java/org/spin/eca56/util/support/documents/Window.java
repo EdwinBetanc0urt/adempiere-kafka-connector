@@ -70,6 +70,7 @@ public class Window extends DictionaryDocument {
 		documentDetail.put("help", window.get_Translation(I_AD_Window.COLUMNNAME_Help, getLanguage()));
 		documentDetail.put("window_type", window.getWindowType());
 		documentDetail.put("is_sales_transaction", window.isSOTrx());
+		documentDetail.put("is_active", window.isActive());
 		//	Tabs
 		documentDetail.put("tabs", convertTabs(Arrays.asList(window.getTabs(false, null))));
 		putDocument(documentDetail);
@@ -92,11 +93,14 @@ public class Window extends DictionaryDocument {
 			return tabsDetail;
 		}
 		tabs.forEach(tab -> {
+			if (!tab.isActive()) {
+				return;
+			}
 			tabsDetail.add(parseTab(tab));
 		});
 		return tabsDetail;
 	}
-	
+
 	private Map<String, Object> parseTab(MTab tab) {
 		Map<String, Object> detail = new HashMap<>();
 		detail.put("id", tab.getAD_Tab_ID());
@@ -104,6 +108,8 @@ public class Window extends DictionaryDocument {
 		detail.put("name", tab.get_Translation(I_AD_Tab.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", tab.get_Translation(I_AD_Tab.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", tab.get_Translation(I_AD_Tab.COLUMNNAME_Help, getLanguage()));
+		detail.put("is_active", tab.isActive());
+
 		// Record attributes
 		detail.put("is_insert_record", tab.isInsertRecord());
 		detail.put("commit_warning", tab.get_Translation(I_AD_Tab.COLUMNNAME_CommitWarning, getLanguage()));
@@ -235,8 +241,8 @@ public class Window extends DictionaryDocument {
 		//	Fields
 		List<MField> fields = Arrays.asList(tab.getFields(false, null));
 		detail.put("fields", convertFields(fields));
-		detail.put("row_fields", convertFields(fields.stream().filter(field -> field.isDisplayed()).collect(Collectors.toList())));
-		detail.put("grid_fields", convertFields(fields.stream().filter(field -> field.isDisplayedGrid()).collect(Collectors.toList())));
+		// detail.put("row_fields", convertFields(fields.stream().filter(field -> field.isDisplayed()).collect(Collectors.toList())));
+		// detail.put("grid_fields", convertFields(fields.stream().filter(field -> field.isDisplayedGrid()).collect(Collectors.toList())));
 		//	Processes
 		return detail;
 	}
@@ -336,6 +342,7 @@ public class Window extends DictionaryDocument {
 		detail.put("name", field.get_Translation(I_AD_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Field.COLUMNNAME_Description, getLanguage()));
 		detail.put("help", field.get_Translation(I_AD_Field.COLUMNNAME_Help, getLanguage()));
+		detail.put("is_active", field.isActive());
 
 		//
 		detail.put("is_allow_copy", field.isAllowCopy());
@@ -375,8 +382,8 @@ public class Window extends DictionaryDocument {
 		detail.put("is_displayed_grid", field.isDisplayedGrid());
 		detail.put("grid_sequence", field.getSeqNoGrid());
 		//	Custom display
-		detail.put("is_displayed_as_panel", field.isDisplayed() ? "Y" : "N");
-		detail.put("is_displayed_as_table", field.isDisplayedGrid() ? 'Y' : 'N');
+		detail.put("is_displayed_as_panel", field.isActive() && field.isDisplayed() ? "Y" : "N");
+		detail.put("is_displayed_as_table", field.isActive() && field.isDisplayedGrid() ? 'Y' : 'N');
 
 		//	Editable Properties
 		detail.put("is_read_only", field.isReadOnly());
