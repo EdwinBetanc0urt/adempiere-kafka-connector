@@ -324,7 +324,7 @@ public class Window extends DictionaryDocument {
 		detail.put("workflow_id", process.getAD_Workflow_ID());
 		if (process.getAD_Browse_ID() > 0) {
 			MBrowse browse = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
-			detail.put("browse", parseDictionaryEntity(browse));
+			detail.put("browser", parseDictionaryEntity(browse));
 		} else if (process.getAD_Form_ID() > 0) {
 			MForm form = new MForm(process.getCtx(), process.getAD_Form_ID(), null);
 			detail.put("form", parseDictionaryEntity(form));
