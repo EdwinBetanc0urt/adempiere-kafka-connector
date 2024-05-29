@@ -29,7 +29,7 @@ import org.compiere.util.Env;
  * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
 public abstract class DictionaryDocument implements IGenericDictionaryDocument {
-	
+
 	private int clientId = -1;
 	private int roleId = -1;
 	private int userId = -1;
@@ -37,27 +37,27 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 	private static final String KEY = "new";
 	private String channel = "none";
 	private Map<String, Object> document;
-	
+
 	public DictionaryDocument() {
 		withLanguage(Env.getAD_Language(Env.getCtx()));
 		document = new HashMap<>();
 	}
-	
+
 	@Override
 	public String getKey() {
 		return KEY;
 	}
-	
+
 	@Override
 	public String getChannel() {
 		return channel;
 	}
-	
+
 	@Override
 	public Map<String, Object> getValues() {
 		return document;
 	}
-	
+
 	public void putDocument(Map<String, Object> document) {
 		//	Generic Detail
 		document.put("language", getLanguage());
@@ -73,22 +73,22 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 		document.put("index_value", getIndexValue());
 		this.document.put("document", document);
 	}
-	
+
 	public DictionaryDocument withClientId(int clientId) {
 		this.clientId = clientId;
 		return this;
 	}
-	
+
 	public DictionaryDocument withRoleId(int roleId) {
 		this.roleId = roleId;
 		return this;
 	}
-	
+
 	public DictionaryDocument withUserId(int userId) {
 		this.userId = userId;
 		return this;
 	}
-	
+
 	public DictionaryDocument withLanguage(String language) {
 		this.language = language;
 		return this;
@@ -109,24 +109,23 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 	public String getLanguage() {
 		return language;
 	}
-	
+
 	private String getIndexValue() {
 		StringBuffer channel = new StringBuffer(getChannel());
-		if(!getLanguage().equals("en_US")) {
-			channel.append("_").append(getLanguage());
-		}
-		if(getClientId() > 0) {
+
+		channel.append("_").append(getLanguage());
+		if(getClientId() >= 0) {
 			channel.append("_").append(getClientId());
 		}
-		if(getRoleId() > 0) {
+		if(getRoleId() >= 0) {
 			channel.append("_").append(getRoleId());
 		}
-		if(getUserId() > 0) {
+		if(getUserId() >= 0) {
 			channel.append("_").append(getUserId());
 		}
 		return channel.toString().toLowerCase();
 	}
-	
+
 	public DictionaryDocument withEntity(PO entity) {
 		channel = entity.get_TableName().toLowerCase();
 		Map<String, Object> documentDetail = new HashMap<>();
@@ -136,4 +135,5 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 		putDocument(documentDetail);
 		return this;
 	}
+
 }
