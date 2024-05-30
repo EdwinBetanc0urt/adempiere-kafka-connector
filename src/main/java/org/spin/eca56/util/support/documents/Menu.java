@@ -170,8 +170,12 @@ public class Menu extends DictionaryDocument {
 		if(getRoleId() >= 0) {
 			Env.setContext(Env.getCtx(), "#AD_Role_ID", getRoleId());
 		}
-		MRole.getDefault(menu.getCtx(), true);
-		MTree tree = new MTree(menu.getCtx(), clientInfo.getAD_Tree_Menu_ID(), false, false, null, null);
+		MRole role = MRole.getDefault(menu.getCtx(), true);
+		int treeId = role.getAD_Tree_Menu_ID();
+		if(treeId == 0) {
+			treeId = clientInfo.getAD_Tree_Menu_ID();
+		}
+		MTree tree = new MTree(menu.getCtx(), treeId, false, false, null, null);
 		Env.setContext(Env.getCtx(), "#AD_Role_ID", currentRoleId);
 		MTreeNode rootNode = tree.getRoot();
 		return withNode(rootNode.findNode(menu.getAD_Menu_ID()));
