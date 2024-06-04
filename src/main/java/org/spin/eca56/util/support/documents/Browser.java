@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Browse_Field;
 import org.adempiere.core.domains.models.I_AD_Element;
+import org.adempiere.core.domains.models.I_AD_View_Column;
 import org.adempiere.model.MBrowse;
 import org.adempiere.model.MBrowseField;
 import org.adempiere.model.MViewColumn;
@@ -109,8 +111,26 @@ public class Browser extends DictionaryDocument {
 			Map<String, Object> referenceDetail = parseDictionaryEntity(window);
 			documentDetail.put("window", referenceDetail);
 		}
+
+		String queryClause = new Query(
+			browser.getCtx(),
+			I_AD_View_Column.Table_Name,
+			"AD_View_ID = ? AND ColumnSQL LIKE '%@%' ",
+			null
+		)
+			.setParameters(browser.getAD_View_ID())
+			.setOnlyActiveRecords(true)
+			.<MViewColumn>list()
+			.stream()
+			.map(viewColumn -> {
+				return viewColumn.getColumnSQL();
+			})
+			.collect(Collectors.joining(" "))
+		;
+
 		documentDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
-				Optional.ofNullable(browser.getWhereClause()).orElse("")
+				Optional.ofNullable(queryClause).orElse("")
+				+ Optional.ofNullable(browser.getWhereClause()).orElse("")
 			)
 		);
 
