@@ -47,13 +47,13 @@ public class ReferenceUtil {
 
 	/**
 	 * Validate reference
-	 * TODO: Add support to Resource Assigment reference to get display column
 	 * @param displayTypeId
 	 * @return
 	 */
 	public static boolean isLookupReference(int displayTypeId) {
 		if (DisplayType.isLookup(displayTypeId)
 				|| DisplayType.Account == displayTypeId
+				|| DisplayType.Assignment == displayTypeId
 				|| DisplayType.ID == displayTypeId
 				|| DisplayType.Location == displayTypeId
 				|| DisplayType.Locator == displayTypeId
@@ -143,6 +143,9 @@ public class ReferenceUtil {
 		if(DisplayType.ID == referenceId || DisplayType.Search == referenceId
 			|| DisplayType.Table == referenceId || DisplayType.TableDir == referenceId) {
 			tableName = columnName.replaceAll("(_ID_To|_To_ID|_ID)$", "");
+			if (columnName.endsWith("_Acct")) {
+				tableName = I_C_ElementValue.Table_Name;
+			}
 		} else if (DisplayType.List == referenceId) {
 			tableName = I_AD_Reference.Table_Name;
 		} else if (DisplayType.Location == referenceId) {
@@ -162,4 +165,5 @@ public class ReferenceUtil {
 		}
 		return tableName;
 	}
+
 }
