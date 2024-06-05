@@ -140,7 +140,7 @@ public class Menu extends DictionaryDocument {
 					referenceDetail.put("name", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
 					referenceDetail.put("description", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
 					referenceDetail.put("help", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
-					detail.put("browse", referenceDetail);
+					detail.put("browser", referenceDetail);
 					detail.put("action_id", smartBrowser.getAD_Browse_ID());
 					detail.put("action_uuid", smartBrowser.getUUID());
 				}
