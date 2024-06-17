@@ -24,6 +24,7 @@ import org.adempiere.core.domains.models.I_AD_Language;
 import org.adempiere.core.domains.models.I_AD_Menu;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Role;
+import org.adempiere.core.domains.models.I_AD_Tree;
 import org.adempiere.core.domains.models.I_AD_User;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.exceptions.AdempiereException;
@@ -33,11 +34,12 @@ import org.compiere.model.Query;
 import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.spin.eca56.util.support.IGenericDictionaryDocument;
-import org.spin.eca56.util.support.IGenericDocument;
 import org.spin.eca56.util.support.IGenericSender;
 import org.spin.eca56.util.support.documents.Browser;
 import org.spin.eca56.util.support.documents.Form;
 import org.spin.eca56.util.support.documents.Menu;
+import org.spin.eca56.util.support.documents.MenuItem;
+import org.spin.eca56.util.support.documents.MenuTree;
 import org.spin.eca56.util.support.documents.Process;
 import org.spin.eca56.util.support.documents.Window;
 import org.spin.queue.model.MADQueue;
@@ -74,11 +76,15 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		if(entity != null) {
 			IGenericSender sender = DefaultEngineQueueUtil.getEngineManager();
 			if(sender != null) {
+				IGenericDictionaryDocument documentByLanguage = getDocumentManager(entity);
+				if(documentByLanguage != null) {
+					sender.send(documentByLanguage, documentByLanguage.getChannel());
+				}
 				getLanguages().forEach(languageId -> {
 					MLanguage language = new MLanguage(getContext(), languageId, getTransactionName());
-					IGenericDictionaryDocument documentByLanguage = getDocumentManager(entity, language.getAD_Language());
-					if(documentByLanguage != null) {
-						sender.send(documentByLanguage, documentByLanguage.getChannel());
+					IGenericDictionaryDocument aloneDocument = getDocumentManager(entity, language.getAD_Language());
+					if(aloneDocument != null) {
+						sender.send(aloneDocument, aloneDocument.getChannel());
 					}
 					getRoles().forEach(roleId -> {
 						IGenericDictionaryDocument documentByRole = getDocumentManagerByRole(entity, language.getAD_Language(), roleId);
@@ -123,7 +129,14 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 	}
 
 	@Override
-	public IGenericDocument getDocumentManager(PO entity) {
+	public IGenericDictionaryDocument getDocumentManager(PO entity) {
+		String tableName = entity.get_TableName();
+		if(Util.isEmpty(tableName)) {
+			return null;
+		}
+		if(tableName.equals(I_AD_Tree.Table_Name)) {
+			return MenuTree.newInstance().withEntity(entity);
+		}
 		return null;
 	}
 
@@ -140,7 +153,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		} else if(tableName.equals(I_AD_Window.Table_Name)) {
 			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return MenuItem.newInstance().withLanguage(language).withEntity(entity);
 		} else if (tableName.equals(I_AD_Form.Table_Name)) {
 			return Form.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		}

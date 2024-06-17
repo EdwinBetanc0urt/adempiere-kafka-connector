@@ -27,6 +27,7 @@ import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Menu;
 import org.adempiere.core.domains.models.I_AD_Process;
+import org.adempiere.core.domains.models.I_AD_Tree;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
 import org.compiere.model.MClientInfo;
@@ -83,6 +84,9 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 
 
 	private void exportMenuDefinition() {
+		exportTree();
+		exportMenuItemDefinition();
+		//	Old implementation
 		if (this.getMenuId() > 0) {
 			addLog("@AD_Menu_ID@");
 			//	For only specific Menu node
@@ -122,6 +126,61 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 				}
 			}
 		}
+	}
+	
+	private void exportTree() {
+		new Query(
+				getCtx(),
+				I_AD_Tree.Table_Name,
+				I_AD_Tree.COLUMNNAME_TreeType + " = ?",
+				get_TrxName()
+		)
+			.setOnlyActiveRecords(true)
+			.setParameters(MTree.TREETYPE_Menu)
+			.getIDsAsList()
+			.forEach(treeId -> {
+				MTree tree = new MTree(getCtx(), treeId, false, false, null, null);
+				QueueLoader.getInstance()
+					.getQueueManager(ApplicationDictionary.CODE)
+					.withEntity(tree)
+					.addToQueue()
+				;
+				addLog(tree.getAD_Tree_ID() + " - " + tree.getName());
+				counter.incrementAndGet();
+			})
+		;
+	}
+	
+	private void exportMenuItemDefinition() {
+		addLog("@AD_Menu_ID@");
+
+		// Add filter a specific Window
+		String whereClause = "";
+		List<Object> filtersList = new ArrayList<>();
+		if (this.getMenuId() > 0) {
+			whereClause = "AD_Menu_ID = ?";
+			filtersList.add(this.getMenuId());
+		}
+		new Query(
+				getCtx(),
+				I_AD_Menu.Table_Name,
+				whereClause,
+				get_TrxName()
+		)
+			.setOnlyActiveRecords(true)
+			.setParameters(filtersList)
+			.getIDsAsList()
+			.forEach(menuId -> {
+				MMenu menu = new MMenu(getCtx(), menuId, get_TrxName());
+				QueueLoader.getInstance()
+					.getQueueManager(ApplicationDictionary.CODE)
+					.withEntity(menu)
+					.addToQueue()
+				;
+				addLog(menu.getAD_Window_ID() + " - " + menu.getName());
+				counter.incrementAndGet();
+			})
+		;
 	}
 
 
