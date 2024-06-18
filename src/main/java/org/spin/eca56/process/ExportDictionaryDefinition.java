@@ -27,6 +27,7 @@ import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Menu;
 import org.adempiere.core.domains.models.I_AD_Process;
+import org.adempiere.core.domains.models.I_AD_Role;
 import org.adempiere.core.domains.models.I_AD_Tree;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
@@ -34,6 +35,7 @@ import org.compiere.model.MClientInfo;
 import org.compiere.model.MForm;
 import org.compiere.model.MMenu;
 import org.compiere.model.MProcess;
+import org.compiere.model.MRole;
 import org.compiere.model.MTree;
 import org.compiere.model.MTreeNode;
 import org.compiere.model.MWindow;
@@ -85,7 +87,6 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 
 	private void exportMenuDefinition() {
 		exportTree();
-		exportMenuItemDefinition();
 		//	Old implementation
 		if (this.getMenuId() > 0) {
 			addLog("@AD_Menu_ID@");
@@ -129,6 +130,7 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 	}
 	
 	private void exportTree() {
+		exportRoleDefinition();
 		new Query(
 				getCtx(),
 				I_AD_Tree.Table_Name,
@@ -146,6 +148,30 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.addToQueue()
 				;
 				addLog(tree.getAD_Tree_ID() + " - " + tree.getName());
+				counter.incrementAndGet();
+			})
+		;
+		exportMenuItemDefinition();
+	}
+	
+	private void exportRoleDefinition() {
+		addLog("@AD_Role_ID@");
+		new Query(
+				getCtx(),
+				I_AD_Role.Table_Name,
+				null,
+				get_TrxName()
+		)
+			.setOnlyActiveRecords(true)
+			.getIDsAsList()
+			.forEach(roleId -> {
+				MRole role = MRole.get(getCtx(), roleId);
+				QueueLoader.getInstance()
+					.getQueueManager(ApplicationDictionary.CODE)
+					.withEntity(role)
+					.addToQueue()
+				;
+				addLog(role.getAD_Role_ID() + " - " + role.getName());
 				counter.incrementAndGet();
 			})
 		;

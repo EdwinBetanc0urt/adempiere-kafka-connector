@@ -37,10 +37,10 @@ import org.spin.eca56.util.support.IGenericDictionaryDocument;
 import org.spin.eca56.util.support.IGenericSender;
 import org.spin.eca56.util.support.documents.Browser;
 import org.spin.eca56.util.support.documents.Form;
-import org.spin.eca56.util.support.documents.Menu;
 import org.spin.eca56.util.support.documents.MenuItem;
 import org.spin.eca56.util.support.documents.MenuTree;
 import org.spin.eca56.util.support.documents.Process;
+import org.spin.eca56.util.support.documents.Role;
 import org.spin.eca56.util.support.documents.Window;
 import org.spin.queue.model.MADQueue;
 import org.spin.queue.util.QueueManager;
@@ -136,6 +136,8 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		}
 		if(tableName.equals(I_AD_Tree.Table_Name)) {
 			return MenuTree.newInstance().withEntity(entity);
+		} else if(tableName.equals(I_AD_Role.Table_Name)) {
+			return Role.newInstance().withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		}
 		return null;
 	}
@@ -173,7 +175,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		} else if(tableName.equals(I_AD_Window.Table_Name)) {
 			return null;//Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
+			return null;//Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
 		}
 		return null;
 	}

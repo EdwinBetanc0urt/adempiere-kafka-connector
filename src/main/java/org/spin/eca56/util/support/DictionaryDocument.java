@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.compiere.model.PO;
 import org.compiere.util.Env;
+import org.compiere.util.Util;
 
 /**
  * 	Interface for determinate if is a document to send, note that this is a mapping of values.
@@ -60,7 +61,9 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 
 	public void putDocument(Map<String, Object> document) {
 		//	Generic Detail
-		document.put("language", getLanguage());
+		if(!Util.isEmpty(getLanguage())) {
+			document.put("language", getLanguage());
+		}
 		if(getClientId() >= 0) {
 			document.put("client_id", getClientId());
 		}
@@ -112,8 +115,9 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 
 	private String getIndexValue() {
 		StringBuffer channel = new StringBuffer(getChannel());
-
-		channel.append("_").append(getLanguage());
+		if(!Util.isEmpty(getLanguage())) {
+			channel.append("_").append(getLanguage());
+		}
 		if(getClientId() >= 0) {
 			channel.append("_").append(getClientId());
 		}

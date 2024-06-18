@@ -105,6 +105,11 @@ public class MenuTree extends DictionaryDocument {
 	public static MenuTree newInstance() {
 		return new MenuTree();
 	}
+	
+	@Override
+	public String getLanguage() {
+		return null;
+	}
 
 	@Override
 	public String getChannel() {
