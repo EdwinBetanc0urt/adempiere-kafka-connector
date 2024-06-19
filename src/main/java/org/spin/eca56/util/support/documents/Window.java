@@ -221,6 +221,31 @@ public class Window extends DictionaryDocument {
 				MColumn column = MColumn.get(tab.getCtx(), tab.getAD_ColumnSortYesNo_ID());
 				detail.put("sort_yes_no_column_name", column.getColumnName());
 			}
+
+			//	Parent Column from parent tab
+			MTab parentTab = new Query(
+				tab.getCtx(),
+				I_AD_Tab.Table_Name,
+				"AD_Window_ID = ? AND AD_Table_ID = ? AND IsSortTab = ?",
+				null
+			)
+				.setParameters(tab.getAD_Window_ID(), table.getAD_Table_ID(), false)
+				.first()
+			;
+			if (parentTab != null && parentTab.getAD_Tab_ID() > 0) {
+				// is same table and columns
+				List<MColumn> columnsList = table.getColumnsAsList();
+				MColumn parentColumn = columnsList.parallelStream()
+					.filter(column -> {
+						return column.isParent();
+					})
+					.findFirst()
+					.orElse(null)
+				;
+				if (parentColumn != null && parentColumn.getAD_Column_ID() > 0) {
+					detail.put("filter_column_name", parentColumn.getColumnName());
+				}
+			}
 		}
 
 		// External info
