@@ -55,7 +55,8 @@ public class Process extends DictionaryDocument {
 
 	private Map<String, Object> parseDictionaryEntity(PO entity) {
 		Map<String, Object> documentEntity = new HashMap<>();
-		documentEntity.put("id", entity.get_ID());
+		documentEntity.put("internal_id", entity.get_ID());
+		documentEntity.put("id", entity.get_UUID());
 		documentEntity.put("uuid", entity.get_UUID());
 		documentEntity.put("name", entity.get_Translation(I_AD_Element.COLUMNNAME_Name, getLanguage()));
 		documentEntity.put("description", entity.get_Translation(I_AD_Element.COLUMNNAME_Description, getLanguage()));
@@ -68,7 +69,8 @@ public class Process extends DictionaryDocument {
 	public DictionaryDocument withEntity(PO entity) {
 		MProcess process = (MProcess) entity;
 		Map<String, Object> documentDetail = new HashMap<>();
-		documentDetail.put("id", process.getAD_Process_ID());
+		documentDetail.put("internal_id", process.getAD_Process_ID());
+		documentDetail.put("id", process.getUUID());
 		documentDetail.put("uuid", process.getUUID());
 		documentDetail.put("code", process.getValue());
 		documentDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
@@ -140,7 +142,8 @@ public class Process extends DictionaryDocument {
 	Map<String, Object> parseProcessParameter(MProcessPara parameter) {
 		Map<String, Object> detail = new HashMap<>();
 
-		detail.put("id", parameter.getAD_Process_Para_ID());
+		detail.put("internal_id", parameter.getAD_Process_Para_ID());
+		detail.put("id", parameter.getUUID());
 		detail.put("uuid", parameter.getUUID());
 		detail.put("column_name", parameter.getColumnName());
 		detail.put("name", parameter.get_Translation(I_AD_Process_Para.COLUMNNAME_Name, getLanguage()));
@@ -175,7 +178,7 @@ public class Process extends DictionaryDocument {
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(parameter.getColumnName(), parameter.getAD_Reference_ID(), parameter.getAD_Reference_Value_ID(), parameter.getAD_Val_Rule_ID());
 		if(referenceValues != null) {
 			Map<String, Object> referenceDetail = new HashMap<>();
-			// referenceDetail.put("id", referenceValues.getReferenceId());
+			// referenceDetail.put("internal_id", referenceValues.getReferenceId());
 			referenceDetail.put("table_name", referenceValues.getTableName());
 			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
 					referenceValues.getEmbeddedContextColumn()

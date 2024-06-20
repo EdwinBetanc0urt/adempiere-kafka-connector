@@ -57,7 +57,8 @@ public class Browser extends DictionaryDocument {
 
 	private Map<String, Object> parseDictionaryEntity(PO entity) {
 		Map<String, Object> documentEntity = new HashMap<>();
-		documentEntity.put("id", entity.get_ID());
+		documentEntity.put("internal_id", entity.get_ID());
+		documentEntity.put("id", entity.get_UUID());
 		documentEntity.put("uuid", entity.get_UUID());
 		documentEntity.put("name", entity.get_Translation(I_AD_Element.COLUMNNAME_Name, getLanguage()));
 		documentEntity.put("description", entity.get_Translation(I_AD_Element.COLUMNNAME_Description, getLanguage()));
@@ -69,7 +70,8 @@ public class Browser extends DictionaryDocument {
 	public DictionaryDocument withEntity(PO entity) {
 		MBrowse browser = (MBrowse) entity;
 		Map<String, Object> documentDetail = new HashMap<>();
-		documentDetail.put("id", browser.getAD_Browse_ID());
+		documentDetail.put("internal_id", browser.getAD_Browse_ID());
+		documentDetail.put("id", browser.getUUID());
 		documentDetail.put("uuid", browser.getUUID());
 		documentDetail.put("code", browser.getValue());
 		documentDetail.put("name", browser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
@@ -169,7 +171,8 @@ public class Browser extends DictionaryDocument {
 	private Map<String, Object> parseField(MBrowseField field) {
 		Map<String, Object> detail = new HashMap<>();
 
-		detail.put("id", field.getAD_Browse_Field_ID());
+		detail.put("internal_id", field.getAD_Browse_Field_ID());
+		detail.put("id", field.getUUID());
 		detail.put("uuid", field.getUUID());
 		detail.put("name", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Browse_Field.COLUMNNAME_Description, getLanguage()));
@@ -232,7 +235,7 @@ public class Browser extends DictionaryDocument {
 		);
 		if(referenceValues != null) {
 			Map<String, Object> referenceDetail = new HashMap<>();
-			// referenceDetail.put("id", referenceValues.getReferenceId());
+			// referenceDetail.put("internal_id", referenceValues.getReferenceId());
 			referenceDetail.put("table_name", referenceValues.getTableName());
 			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
 					referenceValues.getEmbeddedContextColumn()

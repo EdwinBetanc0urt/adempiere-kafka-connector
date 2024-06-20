@@ -31,9 +31,9 @@ import org.compiere.util.Util;
  */
 public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 
-	private int clientId = -1;
-	private int roleId = -1;
-	private int userId = -1;
+	private String clientId;
+	private String roleId;
+	private String userId;
 	private String language;
 	private static final String KEY = "new";
 	private String channel = "none";
@@ -64,30 +64,30 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 		if(!Util.isEmpty(getLanguage())) {
 			document.put("language", getLanguage());
 		}
-		if(getClientId() >= 0) {
+		if(!Util.isEmpty(getClientId())) {
 			document.put("client_id", getClientId());
 		}
-		if(getRoleId() >= 0) {
+		if(!Util.isEmpty(getRoleId())) {
 			document.put("role_id", getRoleId());
 		}
-		if(getUserId() >= 0) {
+		if(!Util.isEmpty(getUserId())) {
 			document.put("user_id", getUserId());
 		}
 		document.put("index_value", getIndexValue());
 		this.document.put("document", document);
 	}
 
-	public DictionaryDocument withClientId(int clientId) {
+	public DictionaryDocument withClientId(String clientId) {
 		this.clientId = clientId;
 		return this;
 	}
 
-	public DictionaryDocument withRoleId(int roleId) {
+	public DictionaryDocument withRoleId(String roleId) {
 		this.roleId = roleId;
 		return this;
 	}
 
-	public DictionaryDocument withUserId(int userId) {
+	public DictionaryDocument withUserId(String userId) {
 		this.userId = userId;
 		return this;
 	}
@@ -97,15 +97,15 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 		return this;
 	}
 
-	public int getClientId() {
+	public String getClientId() {
 		return clientId;
 	}
 
-	public int getRoleId() {
+	public String getRoleId() {
 		return roleId;
 	}
 
-	public int getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
@@ -118,13 +118,13 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 		if(!Util.isEmpty(getLanguage())) {
 			channel.append("_").append(getLanguage());
 		}
-		if(getClientId() >= 0) {
+		if(!Util.isEmpty(getClientId())) {
 			channel.append("_").append(getClientId());
 		}
-		if(getRoleId() >= 0) {
+		if(!Util.isEmpty(getRoleId())) {
 			channel.append("_").append(getRoleId());
 		}
-		if(getUserId() >= 0) {
+		if(!Util.isEmpty(getUserId())) {
 			channel.append("_").append(getUserId());
 		}
 		return channel.toString().toLowerCase();

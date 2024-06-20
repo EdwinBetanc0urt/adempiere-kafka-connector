@@ -29,6 +29,7 @@ import org.adempiere.core.domains.models.I_AD_Workflow;
 import org.adempiere.core.domains.models.I_PA_DashboardContent;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MRole;
+import org.compiere.model.MTree;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.spin.eca56.util.support.DictionaryDocument;
@@ -49,7 +50,8 @@ public class Role extends DictionaryDocument {
 	
 	private Map<String, Object> convertRole(MRole role) {
 		Map<String, Object> detail = new HashMap<>();
-		detail.put("id", role.getAD_Role_ID());
+		detail.put("internal_id", role.getAD_Role_ID());
+		detail.put("id", role.getUUID());
 		detail.put("uuid", role.getUUID());
 		detail.put("name", role.getName());
 		detail.put("description", role.getDescription());
@@ -58,7 +60,9 @@ public class Role extends DictionaryDocument {
 		if(treeId == 0) {
 			treeId = clientInfo.getAD_Tree_Menu_ID();
 		}
+		MTree tree = MTree.get(role.getCtx(), treeId, null);
 		detail.put("tree_id", treeId);
+		detail.put("tree_uuid", tree.getUUID());
 		detail.put("window_access", getWindowAccess(role));
 		detail.put("process_access", getProcessAccess(role));
 		detail.put("form_access", getFormAccess(role));

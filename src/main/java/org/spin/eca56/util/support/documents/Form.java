@@ -47,7 +47,8 @@ public class Form extends DictionaryDocument {
 	public DictionaryDocument withEntity(PO entity) {
 		MForm form = (MForm) entity;
 		Map<String, Object> documentDetail = new HashMap<>();
-		documentDetail.put("id", form.getAD_Form_ID());
+		documentDetail.put("internal_id", form.getAD_Form_ID());
+		documentDetail.put("id", form.getUUID());
 		documentDetail.put("uuid", form.getUUID());
 		documentDetail.put("name", form.get_Translation(I_AD_Form.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, getLanguage()));

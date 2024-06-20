@@ -62,7 +62,7 @@ public class MenuTree extends DictionaryDocument {
 	
 	private Map<String, Object> convertNode(MTreeNode node) {
 		Map<String, Object> detail = new HashMap<>();
-		detail.put("id", node.getNode_ID());
+		detail.put("node_id", node.getNode_ID());
 		detail.put("parent_id", node.getParent_ID());
 		detail.put("sequence", Integer.parseInt(node.getSeqNo()));
 		return detail;
@@ -72,15 +72,18 @@ public class MenuTree extends DictionaryDocument {
 	public DictionaryDocument withEntity(PO entity) {
 		MTree tree = (MTree) entity;
 		MTreeNode rootNode = tree.getRoot();
-		return withNode(rootNode);
+		return withNode(tree, rootNode);
 	}
 	
-	public MenuTree withNode(MTreeNode node) {
+	public MenuTree withNode(MTree tree, MTreeNode node) {
 		if(node == null) {
 			return this;
 		}
 		Enumeration<?> childrens = node.children();
 		Map<String, Object> documentDetail = convertNode(node);
+		documentDetail.put("internal_id", tree.getAD_Tree_ID());
+		documentDetail.put("id", tree.getUUID());
+		documentDetail.put("uuid", tree.getUUID());
 		List<Map<String, Object>> children = new ArrayList<>();
 		while (childrens.hasMoreElements()) {
 			MTreeNode childNode = (MTreeNode)childrens.nextElement();

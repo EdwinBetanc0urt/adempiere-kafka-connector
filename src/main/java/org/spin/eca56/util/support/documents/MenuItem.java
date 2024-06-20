@@ -52,7 +52,8 @@ public class MenuItem extends DictionaryDocument {
 	
 	private Map<String, Object> convertMenu(MMenu menu) {
 		Map<String, Object> detail = new HashMap<>();
-		detail.put("id", menu.getAD_Menu_ID());
+		detail.put("internal_id", menu.getAD_Menu_ID());
+		detail.put("id", menu.getUUID());
 		detail.put("uuid", menu.getUUID());
 		detail.put("name", menu.get_Translation(I_AD_Menu.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", menu.get_Translation(I_AD_Menu.COLUMNNAME_Description, getLanguage()));
@@ -66,7 +67,8 @@ public class MenuItem extends DictionaryDocument {
 				if(menu.getAD_Form_ID() > 0) {
 					MForm form = new MForm(menu.getCtx(), menu.getAD_Form_ID(), null);
 					Map<String, Object> referenceDetail = new HashMap<>();
-					referenceDetail.put("id", form.getAD_Form_ID());
+					referenceDetail.put("internal_id", form.getAD_Form_ID());
+					referenceDetail.put("id", form.getUUID());
 					referenceDetail.put("uuid", form.getUUID());
 					referenceDetail.put("name", form.get_Translation(I_AD_Form.COLUMNNAME_Name, getLanguage()));
 					referenceDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, getLanguage()));
@@ -79,7 +81,8 @@ public class MenuItem extends DictionaryDocument {
 				if(menu.getAD_Window_ID() > 0) {
 					MWindow window = new MWindow(menu.getCtx(), menu.getAD_Window_ID(), null);
 					Map<String, Object> referenceDetail = new HashMap<>();
-					referenceDetail.put("id", window.getAD_Window_ID());
+					referenceDetail.put("internal_id", window.getAD_Window_ID());
+					referenceDetail.put("id", window.getUUID());
 					referenceDetail.put("uuid", window.getUUID());
 					referenceDetail.put("name", window.get_Translation(I_AD_Window.COLUMNNAME_Name, getLanguage()));
 					referenceDetail.put("description", window.get_Translation(I_AD_Window.COLUMNNAME_Description, getLanguage()));
@@ -93,7 +96,8 @@ public class MenuItem extends DictionaryDocument {
 				if(menu.getAD_Process_ID() > 0) {
 					MProcess process = MProcess.get(menu.getCtx(), menu.getAD_Process_ID());
 					Map<String, Object> referenceDetail = new HashMap<>();
-					referenceDetail.put("id", process.getAD_Process_ID());
+					referenceDetail.put("internal_id", process.getAD_Process_ID());
+					referenceDetail.put("id", process.getUUID());
 					referenceDetail.put("uuid", process.getUUID());
 					referenceDetail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
 					referenceDetail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
@@ -106,7 +110,8 @@ public class MenuItem extends DictionaryDocument {
 				if(menu.getAD_Browse_ID() > 0) {
 					MBrowse smartBrowser = MBrowse.get(menu.getCtx(), menu.getAD_Browse_ID());
 					Map<String, Object> referenceDetail = new HashMap<>();
-					referenceDetail.put("id", smartBrowser.getAD_Browse_ID());
+					referenceDetail.put("internal_id", smartBrowser.getAD_Browse_ID());
+					referenceDetail.put("id", smartBrowser.getUUID());
 					referenceDetail.put("uuid", smartBrowser.getUUID());
 					referenceDetail.put("name", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Name, getLanguage()));
 					referenceDetail.put("description", smartBrowser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
@@ -119,7 +124,8 @@ public class MenuItem extends DictionaryDocument {
 				if(menu.getAD_Workflow_ID() > 0) {
 					MWorkflow workflow = MWorkflow.get(menu.getCtx(), menu.getAD_Workflow_ID());
 					Map<String, Object> referenceDetail = new HashMap<>();
-					referenceDetail.put("id", workflow.getAD_Workflow_ID());
+					referenceDetail.put("internal_id", workflow.getAD_Workflow_ID());
+					referenceDetail.put("id", workflow.getUUID());
 					referenceDetail.put("uuid", workflow.getUUID());
 					referenceDetail.put("name", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Name, getLanguage()));
 					referenceDetail.put("description", workflow.get_Translation(I_AD_Workflow.COLUMNNAME_Description, getLanguage()));

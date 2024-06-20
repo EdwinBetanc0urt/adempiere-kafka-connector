@@ -24,11 +24,11 @@ package org.spin.eca56.util.support;
  */
 public interface IGenericDictionaryDocument extends IGenericDocument {
 	
-	public IGenericDictionaryDocument withClientId(int clientId);
+	public IGenericDictionaryDocument withClientId(String clientId);
 	
-	public IGenericDictionaryDocument withRoleId(int roleId);
+	public IGenericDictionaryDocument withRoleId(String roleId);
 	
-	public IGenericDictionaryDocument withUserId(int userId);
+	public IGenericDictionaryDocument withUserId(String userId);
 	
 	public IGenericDictionaryDocument withLanguage(String language);
 }

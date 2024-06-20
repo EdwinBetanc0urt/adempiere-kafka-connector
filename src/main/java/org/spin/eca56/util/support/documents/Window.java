@@ -63,7 +63,8 @@ public class Window extends DictionaryDocument {
 	public DictionaryDocument withEntity(PO entity) {
 		MWindow window = (MWindow) entity;
 		Map<String, Object> documentDetail = new HashMap<>();
-		documentDetail.put("id", window.getAD_Window_ID());
+		documentDetail.put("internal_id", window.getAD_Window_ID());
+		documentDetail.put("id", window.getUUID());
 		documentDetail.put("uuid", window.getUUID());
 		documentDetail.put("name", window.get_Translation(I_AD_Window.COLUMNNAME_Name, getLanguage()));
 		documentDetail.put("description", window.get_Translation(I_AD_Window.COLUMNNAME_Description, getLanguage()));
@@ -79,7 +80,8 @@ public class Window extends DictionaryDocument {
 
 	private Map<String, Object> parseDictionaryEntity(PO entity) {
 		Map<String, Object> documentEntity = new HashMap<>();
-		documentEntity.put("id", entity.get_ID());
+		documentEntity.put("internal_id", entity.get_ID());
+		documentEntity.put("id", entity.get_UUID());
 		documentEntity.put("uuid", entity.get_UUID());
 		documentEntity.put("name", entity.get_Translation(I_AD_Element.COLUMNNAME_Name, getLanguage()));
 		documentEntity.put("description", entity.get_Translation(I_AD_Element.COLUMNNAME_Description, getLanguage()));
@@ -103,7 +105,8 @@ public class Window extends DictionaryDocument {
 
 	private Map<String, Object> parseTab(MTab tab) {
 		Map<String, Object> detail = new HashMap<>();
-		detail.put("id", tab.getAD_Tab_ID());
+		detail.put("internal_id", tab.getAD_Tab_ID());
+		detail.put("id", tab.getUUID());
 		detail.put("uuid", tab.getUUID());
 		detail.put("name", tab.get_Translation(I_AD_Tab.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", tab.get_Translation(I_AD_Tab.COLUMNNAME_Description, getLanguage()));
@@ -311,7 +314,8 @@ public class Window extends DictionaryDocument {
 	
 	private Map<String, Object> parseProcess(MProcess process) {
 		Map<String, Object> detail = new HashMap<>();
-		detail.put("id", process.getAD_Process_ID());
+		detail.put("internal_id", process.getAD_Process_ID());
+		detail.put("id", process.getUUID());
 		detail.put("uuid", process.getUUID());
 		detail.put("name", process.get_Translation(I_AD_Process.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", process.get_Translation(I_AD_Process.COLUMNNAME_Description, getLanguage()));
@@ -337,7 +341,8 @@ public class Window extends DictionaryDocument {
 
 	private Map<String, Object> parseField(MField field) {
 		Map<String, Object> detail = new HashMap<>();
-		detail.put("id", field.getAD_Field_ID());
+		detail.put("internal_id", field.getAD_Field_ID());
+		detail.put("id", field.getUUID());
 		detail.put("uuid", field.getUUID());
 		detail.put("name", field.get_Translation(I_AD_Field.COLUMNNAME_Name, getLanguage()));
 		detail.put("description", field.get_Translation(I_AD_Field.COLUMNNAME_Description, getLanguage()));
@@ -409,7 +414,7 @@ public class Window extends DictionaryDocument {
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), displayTypeId, referenceValueId, validationRuleId);
 		if(referenceValues != null) {
 			Map<String, Object> referenceDetail = new HashMap<>();
-			// referenceDetail.put("id", referenceValues.getReferenceId());
+			// referenceDetail.put("internal_id", referenceValues.getReferenceId());
 			referenceDetail.put("table_name", referenceValues.getTableName());
 			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
 					referenceValues.getEmbeddedContextColumn()

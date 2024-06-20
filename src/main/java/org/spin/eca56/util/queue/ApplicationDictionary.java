@@ -28,6 +28,7 @@ import org.adempiere.core.domains.models.I_AD_Tree;
 import org.adempiere.core.domains.models.I_AD_User;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.exceptions.AdempiereException;
+import org.compiere.model.MClient;
 import org.compiere.model.MLanguage;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
@@ -69,6 +70,10 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 	@Override
 	public void process(int queueId) {
 		send(queueId);
+	}
+	
+	private String getClientId() {
+		return MClient.get(getContext(), Env.getAD_Client_ID(getContext())).getUUID();
 	}
 	
 	public void send(int queueId) {
@@ -137,7 +142,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		if(tableName.equals(I_AD_Tree.Table_Name)) {
 			return MenuTree.newInstance().withEntity(entity);
 		} else if(tableName.equals(I_AD_Role.Table_Name)) {
-			return Role.newInstance().withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return Role.newInstance().withClientId(getClientId()).withEntity(entity);
 		}
 		return null;
 	}
@@ -149,15 +154,15 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			return null;
 		}
 		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return Process.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
 		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return Browser.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
 		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return Window.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
 			return MenuItem.newInstance().withLanguage(language).withEntity(entity);
 		} else if (tableName.equals(I_AD_Form.Table_Name)) {
-			return Form.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return Form.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
 		}
 		return null;
 	}
@@ -169,13 +174,13 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			return null;
 		}
 		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return null;//Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return null;//Process.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
 		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-			return null;//Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return null;//Browser.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
 		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-			return null;//Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withEntity(entity);
+			return null;//Window.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-			return null;//Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withRoleId(roleId).withEntity(entity);
+			return null;//Menu.newInstance().withLanguage(language).withClientId(getClientId()).withRoleId(roleId).withEntity(entity);
 		}
 		return null;
 	}
@@ -187,13 +192,13 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 //			return null;
 //		}
 //		if(tableName.equals(I_AD_Process.Table_Name)) {
-//			return Process.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//			return Process.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
 //		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-//			return Browser.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//			return Browser.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
 //		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-//			return Window.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//			return Window.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
 //		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-//			return Menu.newInstance().withLanguage(language).withClientId(Env.getAD_Client_ID(entity.getCtx())).withUserId(userId).withEntity(entity);
+//			return Menu.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
 //		}
 		return null;
 	}
