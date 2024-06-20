@@ -133,7 +133,7 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 	public DictionaryDocument withEntity(PO entity) {
 		channel = entity.get_TableName().toLowerCase();
 		Map<String, Object> documentDetail = new HashMap<>();
-		documentDetail.put("id", entity.get_ID());
+		documentDetail.put("id", entity.get_UUID());
 		documentDetail.put("uuid", entity.get_UUID());
 		documentDetail.put("display_value", entity.getDisplayValue());
 		putDocument(documentDetail);

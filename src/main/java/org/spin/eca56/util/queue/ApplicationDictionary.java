@@ -154,15 +154,15 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			return null;
 		}
 		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return Process.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			return Process.newInstance().withLanguage(language).withEntity(entity);
 		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-			return Browser.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			return Browser.newInstance().withLanguage(language).withEntity(entity);
 		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-			return Window.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			return Window.newInstance().withLanguage(language).withEntity(entity);
 		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
 			return MenuItem.newInstance().withLanguage(language).withEntity(entity);
 		} else if (tableName.equals(I_AD_Form.Table_Name)) {
-			return Form.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			return Form.newInstance().withLanguage(language).withEntity(entity);
 		}
 		return null;
 	}

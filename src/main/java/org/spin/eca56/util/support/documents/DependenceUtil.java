@@ -131,7 +131,8 @@ public class DependenceUtil {
 			})
 			.forEach(currentParameter -> {
 				Map<String, Object> detail = new HashMap<>();
-				detail.put("id", currentParameter.getAD_Process_Para_ID());
+				detail.put("internal_id", currentParameter.getAD_Process_Para_ID());
+				detail.put("id", currentParameter.getUUID());
 				detail.put("uuid", currentParameter.getUUID());
 				detail.put("column_name", currentParameter.getColumnName());
 				//	Process
@@ -212,7 +213,8 @@ public class DependenceUtil {
 					.forEach(currentField -> {
 						String currentColumnName = MColumn.getColumnName(Env.getCtx(), currentField.getAD_Column_ID());
 						Map<String, Object> detail = new HashMap<>();
-						detail.put("id", currentField.getAD_Field_ID());
+						detail.put("internal_id", currentField.getAD_Field_ID());
+						detail.put("id", currentField.getUUID());
 						detail.put("uuid", currentField.getUUID());
 						detail.put("column_name", currentColumnName);
 						//	Tab
@@ -289,6 +291,7 @@ public class DependenceUtil {
 				MViewColumn currentViewColumn = MViewColumn.getById(Env.getCtx(), currentBrowseField.getAD_View_Column_ID(), null);
 				Map<String, Object> detail = new HashMap<>();
 				detail.put("id", currentBrowseField.getAD_Browse_Field_ID());
+				detail.put("id", currentBrowseField.getUUID());
 				detail.put("uuid", currentBrowseField.getUUID());
 				detail.put("column_name", currentViewColumn.getColumnName());
 				//	Browse

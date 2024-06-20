@@ -94,7 +94,7 @@ public class ReferenceUtil {
 		if(referenceId > 0 && ReferenceUtil.isLookupReference(referenceId)) {
 //			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceId, null);
 			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("id", referenceId);
+			referenceDetail.put("internal_id", referenceId);
 //			MLookupInfo lookupInformation = null;
 			String tableName = getTableNameFromReference(columnName, referenceId);
 //			//	Special references
