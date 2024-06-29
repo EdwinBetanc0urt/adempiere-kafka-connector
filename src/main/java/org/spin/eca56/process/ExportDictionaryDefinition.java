@@ -19,7 +19,6 @@
 package org.spin.eca56.process;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,13 +30,11 @@ import org.adempiere.core.domains.models.I_AD_Role;
 import org.adempiere.core.domains.models.I_AD_Tree;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.model.MBrowse;
-import org.compiere.model.MClientInfo;
 import org.compiere.model.MForm;
 import org.compiere.model.MMenu;
 import org.compiere.model.MProcess;
 import org.compiere.model.MRole;
 import org.compiere.model.MTree;
-import org.compiere.model.MTreeNode;
 import org.compiere.model.MWindow;
 import org.compiere.model.Query;
 import org.spin.eca56.util.queue.ApplicationDictionary;
@@ -86,51 +83,12 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 
 
 	private void exportMenuDefinition() {
+		exportRoleDefinition();
 		exportTree();
-		//	Old implementation
-		if (this.getMenuId() > 0) {
-			addLog("@AD_Menu_ID@");
-			//	For only specific Menu node
-			MMenu menuNode = new Query(
-				getCtx(),
-				I_AD_Menu.Table_Name,
-				I_AD_Menu.COLUMNNAME_AD_Menu_ID + " = ?",
-				get_TrxName()
-			)
-				.setParameters(this.getMenuId())
-				.first()
-			;
-			QueueLoader.getInstance()
-				.getQueueManager(ApplicationDictionary.CODE)
-				.withEntity(menuNode)
-				.addToQueue()
-			;
-			counter.incrementAndGet();
-		} else {
-			//	For all tree nodes
-			MClientInfo clientInfo = MClientInfo.get(getCtx(), getAD_Client_ID());
-			if(clientInfo.getAD_Tree_Menu_ID() > 0) {
-				addLog("@AD_Menu_ID@");
-				MTree tree = new MTree(getCtx(), clientInfo.getAD_Tree_Menu_ID(), false, false, null, null);
-				MTreeNode rootNode = tree.getRoot();
-				Enumeration<?> childrens = rootNode.children();
-				while (childrens.hasMoreElements()) {
-					MTreeNode childNode = (MTreeNode) childrens.nextElement();
-					QueueLoader.getInstance()
-						.getQueueManager(ApplicationDictionary.CODE)
-						// TODO: MMenu.getFromId verify local cache
-						.withEntity(MMenu.getFromId(getCtx(), childNode.getNode_ID()))
-						.addToQueue()
-					;
-					addLog(childNode.getNode_ID() + " - " + childNode.getName());
-					counter.incrementAndGet();
-				}
-			}
-		}
+		exportMenuItemDefinition();
 	}
 	
 	private void exportTree() {
-		exportRoleDefinition();
 		new Query(
 				getCtx(),
 				I_AD_Tree.Table_Name,
@@ -151,7 +109,6 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 				counter.incrementAndGet();
 			})
 		;
-		exportMenuItemDefinition();
 	}
 	
 	private void exportRoleDefinition() {

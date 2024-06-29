@@ -25,10 +25,10 @@ import org.adempiere.core.domains.models.I_AD_Menu;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Role;
 import org.adempiere.core.domains.models.I_AD_Tree;
-import org.adempiere.core.domains.models.I_AD_User;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MClient;
+import org.compiere.model.MClientInfo;
 import org.compiere.model.MLanguage;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
@@ -53,6 +53,7 @@ import org.spin.queue.util.QueueManager;
 public class ApplicationDictionary extends QueueManager implements IEngineDictionaryManager {
 
 	public static final String CODE = "ADM";
+	public static final String ECA56_TemplateDictionary = "ECA56_TemplateDictionary";
 	
 	@Override
 	public void add(int queueId) {
@@ -91,18 +92,6 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 					if(aloneDocument != null) {
 						sender.send(aloneDocument, aloneDocument.getChannel());
 					}
-					getRoles().forEach(roleId -> {
-						IGenericDictionaryDocument documentByRole = getDocumentManagerByRole(entity, language.getAD_Language(), roleId);
-						if(documentByRole != null) {
-							sender.send(documentByRole, documentByRole.getChannel());
-						}
-					});
-					getUsers().forEach(userId -> {
-						IGenericDictionaryDocument documentByUser = getDocumentManagerByUser(entity, language.getAD_Language(), userId);
-						if(documentByUser != null) {
-							sender.send(documentByUser, documentByUser.getChannel());
-						}
-					});
 				});
 			} else {
 				throw new AdempiereException("@AD_AppRegistration_ID@ @NotFound@");
@@ -111,25 +100,9 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		}
 	}
 	
-	private List<Integer> getRoles() {
-		return new Query(getContext(), I_AD_Role.Table_Name, null, getTransactionName())
-				.setClient_ID()
-				.setOnlyActiveRecords(true)
-				.getIDsAsList();
-	}
-	
 	private List<Integer> getLanguages() {
 		return new Query(getContext(), I_AD_Language.Table_Name, "(IsBaseLanguage = 'Y' OR IsSystemLanguage = 'Y')", getTransactionName())
 				.setOnlyActiveRecords(true)
-				.getIDsAsList();
-	}
-	
-	private List<Integer> getUsers() {
-		return new Query(getContext(), I_AD_User.Table_Name, "(EXISTS(SELECT 1 FROM AD_WindowCustom wc WHERE wc.AD_User_ID = AD_User.AD_User_ID AND wc.IsActive = 'Y') "
-				+ "OR EXISTS(SELECT 1 FROM AD_ProcessCustom wc WHERE wc.AD_User_ID = AD_User.AD_User_ID AND wc.IsActive = 'Y') "
-				+ "OR EXISTS(SELECT 1 FROM AD_BrowseCustom wc WHERE wc.AD_User_ID = AD_User.AD_User_ID AND wc.IsActive = 'Y'))", getTransactionName())
-				.setOnlyActiveRecords(true)
-				.setClient_ID()
 				.getIDsAsList();
 	}
 
@@ -153,53 +126,41 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		if(Util.isEmpty(tableName)) {
 			return null;
 		}
-		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return Process.newInstance().withLanguage(language).withEntity(entity);
-		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-			return Browser.newInstance().withLanguage(language).withEntity(entity);
-		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-			return Window.newInstance().withLanguage(language).withEntity(entity);
-		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-			return MenuItem.newInstance().withLanguage(language).withEntity(entity);
-		} else if (tableName.equals(I_AD_Form.Table_Name)) {
-			return Form.newInstance().withLanguage(language).withEntity(entity);
+		if(MClientInfo.get(getContext()).get_ValueAsBoolean(ECA56_TemplateDictionary)) {
+			if(tableName.equals(I_AD_Process.Table_Name)) {
+				return Process.newInstance().withLanguage(language).withEntity(entity);
+			} else if(tableName.equals(I_AD_Browse.Table_Name)) {
+				return Browser.newInstance().withLanguage(language).withEntity(entity);
+			} else if(tableName.equals(I_AD_Window.Table_Name)) {
+				return Window.newInstance().withLanguage(language).withEntity(entity);
+			} else if(tableName.equals(I_AD_Menu.Table_Name)) {
+				return MenuItem.newInstance().withLanguage(language).withEntity(entity);
+			} else if (tableName.equals(I_AD_Form.Table_Name)) {
+				return Form.newInstance().withLanguage(language).withEntity(entity);
+			}
+		} else {
+			if(tableName.equals(I_AD_Process.Table_Name)) {
+				return Process.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			} else if(tableName.equals(I_AD_Browse.Table_Name)) {
+				return Browser.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			} else if(tableName.equals(I_AD_Window.Table_Name)) {
+				return Window.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			} else if(tableName.equals(I_AD_Menu.Table_Name)) {
+				return MenuItem.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			} else if (tableName.equals(I_AD_Form.Table_Name)) {
+				return Form.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public IGenericDictionaryDocument getDocumentManagerByRole(PO entity, String language, int roleId) {
-		String tableName = entity.get_TableName();
-		if(Util.isEmpty(tableName)) {
-			return null;
-		}
-		if(tableName.equals(I_AD_Process.Table_Name)) {
-			return null;//Process.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
-		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-			return null;//Browser.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
-		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-			return null;//Window.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
-		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-			return null;//Menu.newInstance().withLanguage(language).withClientId(getClientId()).withRoleId(roleId).withEntity(entity);
-		}
 		return null;
 	}
 
 	@Override
 	public IGenericDictionaryDocument getDocumentManagerByUser(PO entity, String language, int userId) {
-//		String tableName = entity.get_TableName();
-//		if(Util.isEmpty(tableName)) {
-//			return null;
-//		}
-//		if(tableName.equals(I_AD_Process.Table_Name)) {
-//			return Process.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
-//		} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-//			return Browser.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
-//		} else if(tableName.equals(I_AD_Window.Table_Name)) {
-//			return Window.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
-//		} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-//			return Menu.newInstance().withLanguage(language).withClientId(getClientId()).withUserId(userId).withEntity(entity);
-//		}
 		return null;
 	}
 }
