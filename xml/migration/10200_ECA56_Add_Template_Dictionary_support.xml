@@ -404,7 +404,7 @@
     </Step>
     <Step SeqNo="170" StepType="AD">
       <PO AD_Table_ID="107" Action="U" Record_ID="104227" Table="AD_Field">
-        <Data AD_Column_ID="177" Column="DisplayLogic" isOldNull="true">@ECA56_TemplateDictionary@='N'</Data>
+        <Data AD_Column_ID="177" Column="DisplayLogic" isOldNull="true">@ECA56_TemplateDictionary@='N' &amp; @AD_Client_ID@=0</Data>
       </PO>
     </Step>
   </Migration>
