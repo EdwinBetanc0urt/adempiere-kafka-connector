@@ -54,6 +54,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 
 	public static final String CODE = "ADM";
 	public static final String ECA56_TemplateDictionary = "ECA56_TemplateDictionary";
+	public static final String ECA56_DictionaryCode = "ECA56_DictionaryCode";
 	
 	@Override
 	public void add(int queueId) {
@@ -73,8 +74,12 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		send(queueId);
 	}
 	
-	private String getClientId() {
-		return MClient.get(getContext(), Env.getAD_Client_ID(getContext())).getUUID();
+	private String getDictionaryCode() {
+		String code = MClientInfo.get(getContext(), Env.getAD_Client_ID(getContext())).get_ValueAsString(ECA56_DictionaryCode);
+		if(Util.isEmpty(code)) {
+			code = "";
+		}
+		return code.toLowerCase();
 	}
 	
 	public void send(int queueId) {
@@ -112,10 +117,18 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		if(Util.isEmpty(tableName)) {
 			return null;
 		}
-		if(tableName.equals(I_AD_Tree.Table_Name)) {
-			return MenuTree.newInstance().withEntity(entity);
-		} else if(tableName.equals(I_AD_Role.Table_Name)) {
-			return Role.newInstance().withClientId(getClientId()).withEntity(entity);
+		if(MClientInfo.get(getContext()).get_ValueAsBoolean(ECA56_TemplateDictionary)) {
+			if(tableName.equals(I_AD_Tree.Table_Name)) {
+				return MenuTree.newInstance().withEntity(entity);
+			}
+		} else {
+			if(tableName.equals(I_AD_Tree.Table_Name)) {
+				return MenuTree.newInstance().withClientId(getDictionaryCode()).withEntity(entity);
+			}
+		}
+		if(tableName.equals(I_AD_Role.Table_Name)) {
+			String localClientId = MClient.get(getContext(), entity.getAD_Client_ID()).getUUID();
+			return Role.newInstance().withClientId(localClientId).withEntity(entity);
 		}
 		return null;
 	}
@@ -140,15 +153,15 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			}
 		} else {
 			if(tableName.equals(I_AD_Process.Table_Name)) {
-				return Process.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+				return Process.newInstance().withLanguage(language).withClientId(getDictionaryCode()).withEntity(entity);
 			} else if(tableName.equals(I_AD_Browse.Table_Name)) {
-				return Browser.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+				return Browser.newInstance().withLanguage(language).withClientId(getDictionaryCode()).withEntity(entity);
 			} else if(tableName.equals(I_AD_Window.Table_Name)) {
-				return Window.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+				return Window.newInstance().withLanguage(language).withClientId(getDictionaryCode()).withEntity(entity);
 			} else if(tableName.equals(I_AD_Menu.Table_Name)) {
-				return MenuItem.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+				return MenuItem.newInstance().withLanguage(language).withClientId(getDictionaryCode()).withEntity(entity);
 			} else if (tableName.equals(I_AD_Form.Table_Name)) {
-				return Form.newInstance().withLanguage(language).withClientId(getClientId()).withEntity(entity);
+				return Form.newInstance().withLanguage(language).withClientId(getDictionaryCode()).withEntity(entity);
 			}
 		}
 		return null;

@@ -32,6 +32,7 @@ import org.compiere.util.Util;
 public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 
 	private String clientId;
+	private String clientCode;
 	private String roleId;
 	private String userId;
 	private String language;
@@ -81,6 +82,13 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 		this.clientId = clientId;
 		return this;
 	}
+	
+	public DictionaryDocument withClientCode(String clientCode) {
+		if(Util.isEmpty(clientCode)) {
+			clientCode = "";
+		}
+		return this;
+	}
 
 	public DictionaryDocument withRoleId(String roleId) {
 		this.roleId = roleId;
@@ -100,6 +108,18 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 	public String getClientId() {
 		return clientId;
 	}
+	
+	public String getClientCode() {
+		return clientCode;
+	}
+	
+	public String getValidClientCode() {
+		String validClientCode = getClientCode();
+		if(Util.isEmpty(validClientCode)) {
+			validClientCode = "";
+		}
+		return validClientCode.replaceAll("[^a-zA-Z0-9-_]", "").trim();
+	}
 
 	public String getRoleId() {
 		return roleId;
@@ -118,7 +138,9 @@ public abstract class DictionaryDocument implements IGenericDictionaryDocument {
 		if(!Util.isEmpty(getLanguage())) {
 			channel.append("_").append(getLanguage());
 		}
-		if(!Util.isEmpty(getClientId())) {
+		if(!Util.isEmpty(getValidClientCode())) {
+			channel.append("_").append(getValidClientCode());
+		} else if(!Util.isEmpty(getClientId())) {
 			channel.append("_").append(getClientId());
 		}
 		if(!Util.isEmpty(getRoleId())) {
