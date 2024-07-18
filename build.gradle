@@ -47,7 +47,7 @@ java {
 
 def entityType = 'ECA56'
 group = "io.github.adempiere"
-version = System.getenv("ADEMPIERE_LIBRARY_VERSION") ?: "local-1.0.0"
+version = findProperty("deployVersion") ?: "local-1.0.0"
 
 jar {
 	manifest {
@@ -64,10 +64,10 @@ publishing {
 		mavenLocal()
 
         maven {
-            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            url = findProperty("deployPublishUrl") ?: System.properties['deploy.publish_url']
             credentials {
-                username = findProperty("sonatypeUsername")
-                password = findProperty("sonatypePassword")
+                username = findProperty("deployUsername") ?: System.properties['deploy.user']
+                password = findProperty("deployPassword") ?: System.properties['deploy.token']
             }
         }
     }
@@ -122,8 +122,8 @@ signing {
 			it.equals(PublishToMavenRepository)
 		}
 	}
-	def signingKey = findProperty("signingKey")
-    def signingPassword = findProperty("signingPassword")
+	def signingKey = findProperty("deploySigningKey")
+    def signingPassword = findProperty("deploySigningPassword")
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign publishing.publications.mavenJava
 }
