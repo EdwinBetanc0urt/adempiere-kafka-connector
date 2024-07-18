@@ -17,6 +17,7 @@
  *****************************************************************************/
 package org.spin.eca56.util.support.documents;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.core.domains.models.I_AD_Workflow;
-import org.adempiere.core.domains.models.I_PA_DashboardContent;
+// import org.adempiere.core.domains.models.I_PA_DashboardContent;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MRole;
 import org.compiere.model.MTree;
@@ -73,45 +74,76 @@ public class Role extends DictionaryDocument {
 	}
 	
 	private List<Integer> getWindowAccess(MRole role) {
-		return new Query(role.getCtx(), I_AD_Window.Table_Name, "EXISTS(SELECT 1 FROM AD_Window_Access wa WHERE wa.AD_Window_ID = AD_Window.AD_Window_ID AND wa.AD_Role_ID = ?)", null)
-				.setParameters(role.getAD_Role_ID())
-				.setOnlyActiveRecords(true)
-				.getIDsAsList();
+		return new Query(
+			role.getCtx(),
+			I_AD_Window.Table_Name,
+			"EXISTS(SELECT 1 FROM AD_Window_Access AS wa WHERE wa.IsActive = 'Y' AND wa.AD_Window_ID = AD_Window.AD_Window_ID AND wa.AD_Role_ID = ?)",
+			null
+		)
+			.setParameters(role.getAD_Role_ID())
+			.setOnlyActiveRecords(true)
+			.getIDsAsList();
 	}
 	
 	private List<Integer> getProcessAccess(MRole role) {
-		return new Query(role.getCtx(), I_AD_Process.Table_Name, "EXISTS(SELECT 1 FROM AD_Process_Access wa WHERE wa.AD_Process_ID = AD_Process.AD_Process_ID AND wa.AD_Role_ID = ?)", null)
-				.setParameters(role.getAD_Role_ID())
-				.setOnlyActiveRecords(true)
-				.getIDsAsList();
+		return new Query(
+			role.getCtx(),
+			I_AD_Process.Table_Name,
+			"EXISTS(SELECT 1 FROM AD_Process_Access AS pa WHERE pa.IsActive = 'Y' AND pa.AD_Process_ID = AD_Process.AD_Process_ID AND pa.AD_Role_ID = ?)",
+			null
+		)
+			.setParameters(role.getAD_Role_ID())
+			.setOnlyActiveRecords(true)
+			.getIDsAsList();
 	}
 	
 	private List<Integer> getFormAccess(MRole role) {
-		return new Query(role.getCtx(), I_AD_Form.Table_Name, "EXISTS(SELECT 1 FROM AD_Form_Access wa WHERE wa.AD_Form_ID = AD_Form.AD_Form_ID AND wa.AD_Role_ID = ?)", null)
-				.setParameters(role.getAD_Role_ID())
-				.setOnlyActiveRecords(true)
-				.getIDsAsList();
+		return new Query(
+			role.getCtx(),
+			I_AD_Form.Table_Name,
+			"EXISTS(SELECT 1 FROM AD_Form_Access AS fa WHERE fa.IsActive = 'Y' AND fa.AD_Form_ID = AD_Form.AD_Form_ID AND fa.AD_Role_ID = ?)",
+			null
+		)
+			.setParameters(role.getAD_Role_ID())
+			.setOnlyActiveRecords(true)
+			.getIDsAsList();
 	}
 	
 	private List<Integer> getBrowserAccess(MRole role) {
-		return new Query(role.getCtx(), I_AD_Browse.Table_Name, "EXISTS(SELECT 1 FROM AD_Browse_Access wa WHERE wa.AD_Browse_ID = AD_Browse.AD_Browse_ID AND wa.AD_Role_ID = ?)", null)
-				.setParameters(role.getAD_Role_ID())
-				.setOnlyActiveRecords(true)
-				.getIDsAsList();
+		return new Query(
+			role.getCtx(),
+			I_AD_Browse.Table_Name,
+			"EXISTS(SELECT 1 FROM AD_Browse_Access AS ba WHERE ba.IsActive = 'Y' AND ba.AD_Browse_ID = AD_Browse.AD_Browse_ID AND ba.AD_Role_ID = ?)",
+			null
+		)
+			.setParameters(role.getAD_Role_ID())
+			.setOnlyActiveRecords(true)
+			.getIDsAsList();
 	}
 	
 	private List<Integer> getWorkflowAccess(MRole role) {
-		return new Query(role.getCtx(), I_AD_Workflow.Table_Name, "EXISTS(SELECT 1 FROM AD_Workflow_Access wa WHERE wa.AD_Workflow_ID = AD_Workflow.AD_Workflow_ID AND wa.AD_Role_ID = ?)", null)
-				.setParameters(role.getAD_Role_ID())
-				.setOnlyActiveRecords(true)
-				.getIDsAsList();
+		return new Query(
+			role.getCtx(),
+			I_AD_Workflow.Table_Name,
+			"EXISTS(SELECT 1 FROM AD_Workflow_Access AS wa WHERE wa.IsActive = 'Y' AND wa.AD_Workflow_ID = AD_Workflow.AD_Workflow_ID AND wa.AD_Role_ID = ?)",
+			null
+		)
+			.setParameters(role.getAD_Role_ID())
+			.setOnlyActiveRecords(true)
+			.getIDsAsList();
 	}
 	
 	private List<Integer> getDashboardAccess(MRole role) {
-		return new Query(role.getCtx(), I_PA_DashboardContent.Table_Name, "EXISTS(SELECT 1 FROM AD_Dashboard_Access wa WHERE wa.PA_DashboardContent_ID = PA_DashboardContent.PA_DashboardContent_ID AND wa.AD_Role_ID = ?)", null)
-				.setParameters(role.getAD_Role_ID())
-				.setOnlyActiveRecords(true)
-				.getIDsAsList();
+		// return new Query(
+		// 	role.getCtx(),
+		// 	I_PA_DashboardContent.Table_Name,
+		// 	"EXISTS(SELECT 1 FROM AD_Dashboard_Access AS da WHERE da.IsActive = 'Y' AND da.PA_DashboardContent_ID = PA_DashboardContent.PA_DashboardContent_ID AND da.AD_Role_ID = ?)",
+		// 	null
+		// )
+		// 	.setParameters(role.getAD_Role_ID())
+		// 	.setOnlyActiveRecords(true)
+		// 	.getIDsAsList();
+		return new ArrayList<>();
 	}
 	
 	@Override
