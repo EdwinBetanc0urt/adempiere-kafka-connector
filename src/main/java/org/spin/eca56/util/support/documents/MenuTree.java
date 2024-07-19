@@ -84,6 +84,8 @@ public class MenuTree extends DictionaryDocument {
 		documentDetail.put("internal_id", tree.getAD_Tree_ID());
 		documentDetail.put("id", tree.getUUID());
 		documentDetail.put("uuid", tree.getUUID());
+		documentDetail.put("name", tree.getName());
+
 		List<Map<String, Object>> children = new ArrayList<>();
 		while (childrens.hasMoreElements()) {
 			MTreeNode childNode = (MTreeNode)childrens.nextElement();
