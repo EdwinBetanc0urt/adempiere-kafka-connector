@@ -29,6 +29,9 @@ dependencies {
     //	ADempiere Core
     api "${baseGroupId}:base:${baseVersion}"
 	api 'org.apache.kafka:kafka_2.13:2.8.2'
+
+	// ADempiere External Libraries
+	implementation 'io.vavr:vavr:0.10.4' // used by org.compiere.util.DB
 }
 
 sourceSets {

@@ -25,36 +25,34 @@ public class TreeNodeReference {
 	private int nodeId;
 	private int parentId;
 	private int sequence;
-	
+
 	public static TreeNodeReference newInstance() {
 		return new TreeNodeReference();
 	}
-	
+
 	public int getNodeId() {
 		return nodeId;
 	}
-	
 	public TreeNodeReference withNodeId(int nodeId) {
 		this.nodeId = nodeId;
 		return this;
 		
 	}
-	
+
 	public int getParentId() {
 		return parentId;
 	}
-	
 	public TreeNodeReference withParentId(int parentId) {
 		this.parentId = parentId;
 		return this;
 	}
-	
+
 	public int getSequence() {
 		return sequence;
 	}
-	
 	public TreeNodeReference withSequence(int sequence) {
 		this.sequence = sequence;
 		return this;
 	}
+
 }

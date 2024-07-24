@@ -36,26 +36,27 @@ public class MenuTree extends DictionaryDocument {
 
 	public static final String CHANNEL = "menu_tree";
 	public static final String KEY = "new";
-	
+
 	@Override
 	public String getKey() {
 		return KEY;
 	}
-	
+
 	private Map<String, Object> convertNode(TreeNodeReference node) {
 		Map<String, Object> detail = new HashMap<>();
 		detail.put("node_id", node.getNodeId());
+		detail.put("internal_id", node.getNodeId());
 		detail.put("parent_id", node.getParentId());
 		detail.put("sequence", node.getSequence());
 		return detail;
 	}
-	
+
 	@Override
 	public DictionaryDocument withEntity(PO entity) {
 		MTree tree = (MTree) entity;
 		return withNode(tree);
 	}
-	
+
 	private List<TreeNodeReference> getChildren(int treeId, int parentId) {
 		String tableName = MTree.getNodeTableName(MTree.TREETYPE_Menu);
 		final String sql = "SELECT tn.Node_ID, tn.SeqNo "
@@ -69,17 +70,21 @@ public class MenuTree extends DictionaryDocument {
 		DB.runResultSet(null, sql, parameters, resulset -> {
 			while (resulset.next()) {
 				nodeIds.add(TreeNodeReference.newInstance()
-						.withNodeId(resulset.getInt("Node_ID"))
-						.withParentId(parentId)
-						.withSequence(resulset.getInt("SeqNo")));
+					.withNodeId(
+						resulset.getInt("Node_ID")
+					)
+					.withParentId(parentId)
+					.withSequence(
+						resulset.getInt("SeqNo"))
+					)
+				;
 			}
 		}).onFailure(throwable -> {
 			throw new AdempiereException(throwable);
 		});
 		return nodeIds;
 	}
-	
-	
+
 	public MenuTree withNode(MTree tree) {
 		List<TreeNodeReference> children = getChildren(tree.getAD_Tree_ID(), 0);
 		Map<String, Object> documentDetail = convertNode(TreeNodeReference.newInstance());
@@ -97,7 +102,7 @@ public class MenuTree extends DictionaryDocument {
 		putDocument(documentDetail);
 		return this;
 	}
-	
+
 	/**
 	 * Add children to menu
 	 * @param context
@@ -115,11 +120,11 @@ public class MenuTree extends DictionaryDocument {
 		});
 		parent.put("children", childrenAsMap);
 	}
-	
+
 	private MenuTree() {
 		super();
 	}
-	
+
 	/**
 	 * Default instance
 	 * @return
@@ -127,7 +132,7 @@ public class MenuTree extends DictionaryDocument {
 	public static MenuTree newInstance() {
 		return new MenuTree();
 	}
-	
+
 	@Override
 	public String getLanguage() {
 		return null;
@@ -137,4 +142,5 @@ public class MenuTree extends DictionaryDocument {
 	public String getChannel() {
 		return CHANNEL;
 	}
+
 }
