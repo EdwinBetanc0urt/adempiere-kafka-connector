@@ -116,6 +116,7 @@ public class DependenceUtil {
 				if (isUseParentColumnOnContext(parentColumnName, currentParameter.getDefaultValue())) {
 					return true;
 				}
+				// TODO: Validate range with `_To` suffix
 				if (isUseParentColumnOnContext(parentColumnName, currentParameter.getDefaultValue2())) {
 					return true;
 				}
@@ -296,7 +297,8 @@ public class DependenceUtil {
 					|| isUseParentColumnOnContext(parentElementName, currentBrowseField.getDefaultValue())) {
 					return true;
 				}
-				// Default Value 2
+				// Default Value 2 (range)
+				// TODO: Validate range with `_To` suffix
 				if (isUseParentColumnOnContext(parentColumnName, currentBrowseField.getDefaultValue2())
 					|| isUseParentColumnOnContext(parentElementName, currentBrowseField.getDefaultValue2())) {
 					return true;
