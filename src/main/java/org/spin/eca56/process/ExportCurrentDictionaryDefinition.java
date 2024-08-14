@@ -1,6 +1,6 @@
 /******************************************************************************
  * Product: ADempiere ERP & CRM Smart Business Solution                       *
- * Copyright (C) 2006-2017 ADempiere Foundation, All Rights Reserved.         *
+ * Copyright (C) 2006-2024 ADempiere Foundation, All Rights Reserved.         *
  * This program is free software, you can redistribute it and/or modify it    *
  * under the terms version 2 of the GNU General Public License as published   *
  * or (at your option) any later version.                                     *
@@ -24,12 +24,14 @@ import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Menu;
 import org.adempiere.core.domains.models.I_AD_Process;
+import org.adempiere.core.domains.models.I_AD_Tree;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.model.MBrowse;
 import org.compiere.model.MForm;
 import org.compiere.model.MMenu;
 import org.compiere.model.MProcess;
+import org.compiere.model.MTree;
 import org.compiere.model.MWindow;
 import org.compiere.model.Query;
 import org.spin.eca56.util.queue.ApplicationDictionary;
@@ -63,7 +65,8 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 	protected String doIt() throws Exception {
 		//	For menu
 		if (this.getTable_ID() == I_AD_Menu.Table_ID) {
-			exportMenuDefinition();
+			exportMenuItemDefinition();
+			exportTree();
 		}
 
 		//	For Window Definition
@@ -90,10 +93,10 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 	}
 
 
-	private void exportMenuDefinition() {
+	private void exportMenuItemDefinition() {
 		addLog("@AD_Menu_ID@");
-		//	For only specific Menu node
-		MMenu menuNode = new Query(
+		//	For only specific Menu Item
+		MMenu menuItem = new Query(
 			getCtx(),
 			I_AD_Menu.Table_Name,
 			I_AD_Menu.COLUMNNAME_AD_Menu_ID + " = ?",
@@ -104,12 +107,37 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 		;
 		QueueLoader.getInstance()
 			.getQueueManager(ApplicationDictionary.CODE)
-			.withEntity(menuNode)
+			.withEntity(menuItem)
 			.addToQueue()
 		;
+		addLog(menuItem.getAD_Menu_ID() + " - " + menuItem.getName());
 		counter.incrementAndGet();
 	}
 
+	private void exportTree() {
+		new Query(
+				getCtx(),
+				I_AD_Tree.Table_Name,
+				// I_AD_Tree.COLUMNNAME_AD_Tree_ID + " = ? ",
+				I_AD_Tree.COLUMNNAME_TreeType + " = ? AND " + I_AD_Tree.COLUMNNAME_AD_Table_ID + " = ? ",
+				get_TrxName()
+		)
+			.setOnlyActiveRecords(true)
+			.setParameters(MTree.TREETYPE_Menu, MMenu.Table_ID)
+			// .setParameters(menuItem.getAD_Tree_ID())
+			.getIDsAsList()
+			.forEach(treeId -> {
+				MTree tree = new MTree(getCtx(), treeId, false, false, null, null);
+				QueueLoader.getInstance()
+					.getQueueManager(ApplicationDictionary.CODE)
+					.withEntity(tree)
+					.addToQueue()
+				;
+				addLog(tree.getAD_Tree_ID() + " - " + tree.getName());
+				counter.incrementAndGet();
+			})
+		;
+	}
 
 	private void exportWindowDefinition() {
 		addLog("@AD_Window_ID@");
@@ -121,7 +149,7 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.withEntity(window)
 			.addToQueue()
 		;
-		addLog(window.getName());
+		addLog(window.getAD_Window_ID() + " - " + window.getName());
 		counter.incrementAndGet();
 	}
 

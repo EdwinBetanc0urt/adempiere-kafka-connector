@@ -89,6 +89,7 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 	}
 	
 	private void exportTree() {
+		addLog("@AD_Tree_ID@");
 		new Query(
 				getCtx(),
 				I_AD_Tree.Table_Name,
@@ -160,7 +161,7 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.withEntity(menu)
 					.addToQueue()
 				;
-				addLog(menu.getAD_Window_ID() + " - " + menu.getName());
+				addLog(menu.getAD_Menu_ID() + " - " + menu.getName());
 				counter.incrementAndGet();
 			})
 		;
