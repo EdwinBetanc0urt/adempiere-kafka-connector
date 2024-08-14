@@ -35,7 +35,6 @@ import org.compiere.model.MProcessPara;
 import org.compiere.model.MTab;
 import org.compiere.model.MValRule;
 import org.compiere.model.MWindow;
-import org.compiere.util.Env;
 import org.compiere.util.Util;
 
 /**
@@ -43,7 +42,7 @@ import org.compiere.util.Util;
  * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
 public class DependenceUtil {
-	
+
 	/**
 	 * Determinate if columnName is used on context values
 	 * @param columnName
@@ -61,7 +60,7 @@ public class DependenceUtil {
 		// @ColumnName@ , @#ColumnName@ , @$ColumnName@
 		StringBuffer patternValue = new StringBuffer()
 			.append("@")
-			.append("($|#){0,1}")
+			.append("($|#|\\d\\|){0,1}")
 			.append(columnName)
 			.append("(@)")
 		;
@@ -88,14 +87,15 @@ public class DependenceUtil {
 
 		return isUsedParentColumn;
 	}
-	
+
+
 	public static List<Map<String, Object>> generateDependentProcessParameters(MProcessPara processParameter) {
 		List<Map<String, Object>> depenentFieldsList = new ArrayList<>();
 		if (processParameter == null) {
 			return depenentFieldsList;
 		}
 
-		String parentColumnName = processParameter.getColumnName();
+		final String parentColumnName = processParameter.getColumnName();
 
 		MProcess process = MProcess.get(processParameter.getCtx(), processParameter.getAD_Process_ID());
 		List<MProcessPara> parametersList = process.getParametersAsList();
@@ -103,9 +103,9 @@ public class DependenceUtil {
 			return depenentFieldsList;
 		}
 
-		parametersList.parallelStream()
+		parametersList.stream()
 			.filter(currentParameter -> {
-				if (!currentParameter.isActive()) {
+				if (currentParameter == null || !currentParameter.isActive()) {
 					return false;
 				}
 				// Display Logic
@@ -116,13 +116,20 @@ public class DependenceUtil {
 				if (isUseParentColumnOnContext(parentColumnName, currentParameter.getDefaultValue())) {
 					return true;
 				}
+				// TODO: Validate range with `_To` suffix
+				if (isUseParentColumnOnContext(parentColumnName, currentParameter.getDefaultValue2())) {
+					return true;
+				}
 				// ReadOnly Logic
 				if (isUseParentColumnOnContext(parentColumnName, currentParameter.getReadOnlyLogic())) {
 					return true;
 				}
 				// Dynamic Validation
 				if (currentParameter.getAD_Val_Rule_ID() > 0) {
-					MValRule validationRule = MValRule.get(Env.getCtx(), currentParameter.getAD_Val_Rule_ID());
+					MValRule validationRule = MValRule.get(
+						currentParameter.getCtx(),
+						currentParameter.getAD_Val_Rule_ID()
+					);
 					if (isUseParentColumnOnContext(parentColumnName, validationRule.getCode())) {
 						return true;
 					}
@@ -130,11 +137,12 @@ public class DependenceUtil {
 				return false;
 			})
 			.forEach(currentParameter -> {
+				final String currentColumnName = currentParameter.getColumnName();
 				Map<String, Object> detail = new HashMap<>();
 				detail.put("internal_id", currentParameter.getAD_Process_Para_ID());
 				detail.put("id", currentParameter.getUUID());
 				detail.put("uuid", currentParameter.getUUID());
-				detail.put("column_name", currentParameter.getColumnName());
+				detail.put("column_name", currentColumnName);
 				//	Process
 				detail.put("parent_id", process.getAD_Process_ID());
 				detail.put("parent_uuid", process.getUUID());
@@ -144,19 +152,21 @@ public class DependenceUtil {
 
 		return depenentFieldsList;
 	}
-	
+
+
 	public static List<Map<String, Object>> generateDependentWindowFields(MField field) {
 		List<Map<String, Object>> depenentFieldsList = new ArrayList<>();
 		if (field == null) {
 			return depenentFieldsList;
 		}
-		String parentColumnName = MColumn.getColumnName(field.getCtx(), field.getAD_Column_ID());
+		MColumn column = MColumn.get(field.getCtx(), field.getAD_Column_ID());
+		final String parentColumnName = column.getColumnName();
 		MTab parentTab = MTab.get(field.getCtx(), field.getAD_Tab_ID());
 		List<MTab> tabsList = Arrays.asList(MWindow.get(field.getCtx(), parentTab.getAD_Window_ID()).getTabs(false, null));
 		if (tabsList == null || tabsList.isEmpty()) {
 			return depenentFieldsList;
 		}
-		tabsList.parallelStream()
+		tabsList.stream()
 			.filter(currentTab -> {
 				// transaltion tab is not rendering on client
 				return currentTab.isActive() && !currentTab.isTranslationTab() && !currentTab.isSortTab();
@@ -167,9 +177,9 @@ public class DependenceUtil {
 					return;
 				}
 
-				fieldsList.parallelStream()
+				fieldsList.stream()
 					.filter(currentField -> {
-						if (!currentField.isActive()) {
+						if (currentField == null || !currentField.isActive()) {
 							return false;
 						}
 						// Display Logic
@@ -182,13 +192,19 @@ public class DependenceUtil {
 						}
 						// Dynamic Validation
 						if (currentField.getAD_Val_Rule_ID() > 0) {
-							MValRule validationRule = MValRule.get(Env.getCtx(), currentField.getAD_Val_Rule_ID());
+							MValRule validationRule = MValRule.get(
+								currentField.getCtx(),
+								currentField.getAD_Val_Rule_ID()
+							);
 							if (isUseParentColumnOnContext(parentColumnName, validationRule.getCode())) {
 								return true;
 							}
 						}
 
-						MColumn currentColumn = MColumn.get(Env.getCtx(), currentField.getAD_Column_ID());
+						MColumn currentColumn = MColumn.get(
+							currentField.getCtx(),
+							currentField.getAD_Column_ID()
+						);
 						// Default Value of Column
 						if (isUseParentColumnOnContext(parentColumnName, currentColumn.getDefaultValue())) {
 							return true;
@@ -203,7 +219,10 @@ public class DependenceUtil {
 						}
 						// Dynamic Validation
 						if (currentColumn.getAD_Val_Rule_ID() > 0) {
-							MValRule validationRule = MValRule.get(Env.getCtx(), currentColumn.getAD_Val_Rule_ID());
+							MValRule validationRule = MValRule.get(
+								currentColumn.getCtx(),
+								currentColumn.getAD_Val_Rule_ID()
+							);
 							if (isUseParentColumnOnContext(parentColumnName, validationRule.getCode())) {
 								return true;
 							}
@@ -211,7 +230,10 @@ public class DependenceUtil {
 						return false;
 					})
 					.forEach(currentField -> {
-						String currentColumnName = MColumn.getColumnName(Env.getCtx(), currentField.getAD_Column_ID());
+						final String currentColumnName = MColumn.getColumnName(
+							currentField.getCtx(),
+							currentField.getAD_Column_ID()
+						);
 						Map<String, Object> detail = new HashMap<>();
 						detail.put("internal_id", currentField.getAD_Field_ID());
 						detail.put("id", currentField.getUUID());
@@ -226,19 +248,27 @@ public class DependenceUtil {
 			});
 		return depenentFieldsList;
 	}
-	
+
+
 	public static List<Map<String, Object>> generateDependentBrowseFields(MBrowseField browseField) {
 		List<Map<String, Object>> depenentFieldsList = new ArrayList<>();
 		if (browseField == null) {
 			return depenentFieldsList;
 		}
 
-		MViewColumn viewColumn = MViewColumn.getById(Env.getCtx(), browseField.getAD_View_Column_ID(), null);
+		MViewColumn viewColumn = MViewColumn.getById(
+			browseField.getCtx(),
+			browseField.getAD_View_Column_ID(),
+			null
+		);
 		String parentColumnName = viewColumn.getColumnName();
 
 		String elementName = null;
 		if(viewColumn.getAD_Column_ID() != 0) {
-			MColumn column = MColumn.get(Env.getCtx(), viewColumn.getAD_Column_ID());
+			MColumn column = MColumn.get(
+				browseField.getCtx(),
+				viewColumn.getAD_Column_ID()
+			);
 			elementName = column.getColumnName();
 		}
 		if(Util.isEmpty(elementName, true)) {
@@ -252,9 +282,9 @@ public class DependenceUtil {
 			return depenentFieldsList;
 		}
 
-		browseFieldsList.parallelStream()
+		browseFieldsList.stream()
 			.filter(currentBrowseField -> {
-				if(!currentBrowseField.isActive()) {
+				if(currentBrowseField == null || !currentBrowseField.isActive()) {
 					return false;
 				}
 				// Display Logic
@@ -267,7 +297,8 @@ public class DependenceUtil {
 					|| isUseParentColumnOnContext(parentElementName, currentBrowseField.getDefaultValue())) {
 					return true;
 				}
-				// Default Value 2
+				// Default Value 2 (range)
+				// TODO: Validate range with `_To` suffix
 				if (isUseParentColumnOnContext(parentColumnName, currentBrowseField.getDefaultValue2())
 					|| isUseParentColumnOnContext(parentElementName, currentBrowseField.getDefaultValue2())) {
 					return true;
@@ -279,7 +310,10 @@ public class DependenceUtil {
 				}
 				// Dynamic Validation
 				if (currentBrowseField.getAD_Val_Rule_ID() > 0) {
-					MValRule validationRule = MValRule.get(Env.getCtx(), currentBrowseField.getAD_Val_Rule_ID());
+					MValRule validationRule = MValRule.get(
+						currentBrowseField.getCtx(),
+						currentBrowseField.getAD_Val_Rule_ID()
+					);
 					if (isUseParentColumnOnContext(parentColumnName, validationRule.getCode())
 						|| isUseParentColumnOnContext(parentElementName, validationRule.getCode())) {
 						return true;
@@ -288,12 +322,17 @@ public class DependenceUtil {
 				return false;
 			})
 			.forEach(currentBrowseField -> {
-				MViewColumn currentViewColumn = MViewColumn.getById(Env.getCtx(), currentBrowseField.getAD_View_Column_ID(), null);
+				MViewColumn currentViewColumn = MViewColumn.getById(
+					currentBrowseField.getCtx(),
+					currentBrowseField.getAD_View_Column_ID(),
+					null
+				);
+				final String currentColumnName = currentViewColumn.getColumnName();
 				Map<String, Object> detail = new HashMap<>();
 				detail.put("id", currentBrowseField.getAD_Browse_Field_ID());
 				detail.put("id", currentBrowseField.getUUID());
 				detail.put("uuid", currentBrowseField.getUUID());
-				detail.put("column_name", currentViewColumn.getColumnName());
+				detail.put("column_name", currentColumnName);
 				//	Browse
 				detail.put("parent_id", browse.getAD_Browse_ID());
 				detail.put("parent_uuid", browse.getUUID());
@@ -303,4 +342,5 @@ public class DependenceUtil {
 
 		return depenentFieldsList;
 	}
+
 }

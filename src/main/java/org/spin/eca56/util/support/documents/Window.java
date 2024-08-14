@@ -423,7 +423,8 @@ public class Window extends DictionaryDocument {
 		detail.put("is_always_updateable", column.isAlwaysUpdateable());
 
 		//	Mandatory Properties
-		detail.put("is_mandatory", (field.getIsMandatory() != null && field.getIsMandatory().equals("Y")? true: column.isMandatory()));
+		boolean isMandatory = (field.getIsMandatory() != null && field.getIsMandatory().equals("Y") ? true: column.isMandatory());
+		detail.put("is_mandatory", isMandatory);
 		detail.put("mandatory_logic", column.getMandatoryLogic());
 
 		//	External Info
@@ -451,7 +452,8 @@ public class Window extends DictionaryDocument {
 				Optional.ofNullable(field.getDefaultValue()).orElse(column.getDefaultValue())
 			)
 		);
-		detail.put("dependent_fields", DependenceUtil.generateDependentWindowFields(field));
+		List<Map<String, Object>> dependentFieldsList = DependenceUtil.generateDependentWindowFields(field);
+		detail.put("dependent_fields", dependentFieldsList);
 		detail.put("process_id", column.getAD_Process_ID());
 		if (column.getAD_Process_ID() > 0) {
 			detail.put("process", parseProcess(
