@@ -78,17 +78,21 @@ public class ReferenceUtil {
 		String END   = "\\@";  // A literal ")" character in regex
 
 		// Captures the word(s) between the above two character(s)
-		String patternValue = START + "(#|$){0,1}(\\w+)" + END;
+		final String COLUMN_NAME_PATTERN = START + "(#|$|\\d\\|){0,1}(\\w+)" + END;
 
-		Pattern pattern = Pattern.compile(patternValue);
+		Pattern pattern = Pattern.compile(
+			COLUMN_NAME_PATTERN,
+			Pattern.CASE_INSENSITIVE | Pattern.DOTALL
+		);
 		Matcher matcher = pattern.matcher(context);
 		Map<String, Boolean> columnNamesMap = new HashMap<String, Boolean>();
 		while(matcher.find()) {
-			columnNamesMap.put(matcher.group().replace("@", "").replace("@", ""), true);
+			final String columnContext = matcher.group().replace("@", "").replace("@", "");
+			columnNamesMap.put(columnContext, true);
 		}
 		return new ArrayList<String>(columnNamesMap.keySet());
 	}
-	
+
 	public static ReferenceValues getReferenceDefinition(String columnName, int referenceId, int referenceValueId, int validationRuleId) {
 		String embeddedContextColumn = null;
 		if(referenceId > 0 && ReferenceUtil.isLookupReference(referenceId)) {
