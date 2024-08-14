@@ -191,7 +191,8 @@ public class Process extends DictionaryDocument {
 				+ Optional.ofNullable(parameter.getDefaultValue2()).orElse("")
 			)
 		);
-		detail.put("dependent_fields", DependenceUtil.generateDependentProcessParameters(parameter));
+		List<Map<String, Object>> dependentFieldsList = DependenceUtil.generateDependentProcessParameters(parameter);
+		detail.put("dependent_fields", dependentFieldsList);
 		return detail;
 	}
 

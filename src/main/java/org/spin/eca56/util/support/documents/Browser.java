@@ -213,7 +213,7 @@ public class Browser extends DictionaryDocument {
 		detail.put("is_read_only", field.isReadOnly());
 		detail.put("read_only_logic", field.getReadOnlyLogic());
 		detail.put("is_info_only", field.isInfoOnly());
-		
+
 		//	Mandatory Properties
 		detail.put("is_mandatory", field.isMandatory());
 
@@ -248,7 +248,8 @@ public class Browser extends DictionaryDocument {
 				+ Optional.ofNullable(field.getDefaultValue2()).orElse("")
 			)
 		);
-		detail.put("dependent_fields", DependenceUtil.generateDependentBrowseFields(field));
+		List<Map<String, Object>> dependentFieldsList = DependenceUtil.generateDependentBrowseFields(field);
+		detail.put("dependent_fields", dependentFieldsList);
 		return detail;
 	}
 
