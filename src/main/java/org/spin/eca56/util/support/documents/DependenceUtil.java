@@ -105,7 +105,7 @@ public class DependenceUtil {
 
 		parametersList.stream()
 			.filter(currentParameter -> {
-				if (!currentParameter.isActive()) {
+				if (currentParameter == null || !currentParameter.isActive()) {
 					return false;
 				}
 				// Display Logic
@@ -179,7 +179,7 @@ public class DependenceUtil {
 
 				fieldsList.stream()
 					.filter(currentField -> {
-						if (!currentField.isActive()) {
+						if (currentField == null || !currentField.isActive()) {
 							return false;
 						}
 						// Display Logic
@@ -284,7 +284,7 @@ public class DependenceUtil {
 
 		browseFieldsList.stream()
 			.filter(currentBrowseField -> {
-				if(!currentBrowseField.isActive()) {
+				if(currentBrowseField == null || !currentBrowseField.isActive()) {
 					return false;
 				}
 				// Display Logic
