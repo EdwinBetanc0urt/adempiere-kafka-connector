@@ -95,21 +95,21 @@ public class Process extends DictionaryDocument {
 				reportExportReference.put("type", reportType.getExtension());
 			}
 			documentDetail.put("report_export_types", reportExportReference);
-		}
-
-		// Linked
-		documentDetail.put("browser_id", process.getAD_Browse_ID());
-		documentDetail.put("form_id", process.getAD_Form_ID());
-		documentDetail.put("workflow_id", process.getAD_Workflow_ID());
-		if (process.getAD_Browse_ID() > 0) {
-			MBrowse browse = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
-			documentDetail.put("browser", parseDictionaryEntity(browse));
-		} else if (process.getAD_Form_ID() > 0) {
-			MForm form = new MForm(process.getCtx(), process.getAD_Form_ID(), null);
-			documentDetail.put("form", parseDictionaryEntity(form));
-		} else if (process.getAD_Workflow_ID() > 0) {
-			MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
-			documentDetail.put("workflow", parseDictionaryEntity(workflow));
+		} else {
+			// Linked to Process
+			documentDetail.put("browser_id", process.getAD_Browse_ID());
+			documentDetail.put("form_id", process.getAD_Form_ID());
+			documentDetail.put("workflow_id", process.getAD_Workflow_ID());
+			if (process.getAD_Browse_ID() > 0) {
+				MBrowse browse = MBrowse.get(process.getCtx(), process.getAD_Browse_ID());
+				documentDetail.put("browser", parseDictionaryEntity(browse));
+			} else if (process.getAD_Form_ID() > 0) {
+				MForm form = new MForm(process.getCtx(), process.getAD_Form_ID(), null);
+				documentDetail.put("form", parseDictionaryEntity(form));
+			} else if (process.getAD_Workflow_ID() > 0) {
+				MWorkflow workflow = MWorkflow.get(process.getCtx(), process.getAD_Workflow_ID());
+				documentDetail.put("workflow", parseDictionaryEntity(workflow));
+			}
 		}
 
 		//	Parameters
