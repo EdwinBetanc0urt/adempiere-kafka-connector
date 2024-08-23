@@ -114,17 +114,18 @@ public class Process extends DictionaryDocument {
 			}
 		}
 
-		//	Parameters
-		final StringBuffer whereClause = new StringBuffer(MProcessPara.COLUMNNAME_AD_Process_ID + "=?");
+		// Process Parameters
 		List<MProcessPara> parameters = new Query(
 			process.getCtx(),
 			I_AD_Process_Para.Table_Name,
-			whereClause.toString(),
+			I_AD_Process_Para.COLUMNNAME_AD_Process_ID + "=?",
 			null
 		)
 			.setParameters(process.getAD_Process_ID())
-			.setOrderBy(MProcessPara.COLUMNNAME_SeqNo)
-			.list();
+			.setOnlyActiveRecords(true)
+			.setOrderBy(I_AD_Process_Para.COLUMNNAME_SeqNo)
+			.list()
+		;
 
 		boolean hasParameters = parameters != null && !parameters.isEmpty();
 		documentDetail.put("has_parameters", hasParameters);

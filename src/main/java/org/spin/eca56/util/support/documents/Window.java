@@ -267,7 +267,17 @@ public class Window extends DictionaryDocument {
 		);
 
 		//	Fields
-		List<MField> fields = Arrays.asList(tab.getFields(false, null));
+		List<MField> fields = new Query(
+			tab.getCtx(),
+			I_AD_Field.Table_Name,
+			I_AD_Field.COLUMNNAME_AD_Tab_ID + "=?",
+			null
+		)
+			.setParameters(tab.getAD_Tab_ID())
+			.setOnlyActiveRecords(true)
+			.setOrderBy(I_AD_Field.COLUMNNAME_SeqNo)
+			.list()
+		;
 		detail.put("fields", convertFields(fields));
 		// detail.put("row_fields", convertFields(fields.stream().filter(field -> field.isDisplayed()).collect(Collectors.toList())));
 		// detail.put("grid_fields", convertFields(fields.stream().filter(field -> field.isDisplayedGrid()).collect(Collectors.toList())));
