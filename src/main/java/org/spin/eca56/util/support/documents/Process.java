@@ -33,6 +33,7 @@ import org.compiere.model.MProcessPara;
 import org.compiere.model.MReportView;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
+import org.compiere.util.Util;
 import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
 import org.spin.util.AbstractExportFormat;
@@ -82,6 +83,7 @@ public class Process extends DictionaryDocument {
 		// Report
 		documentDetail.put("is_report", process.isReport());
 		if(process.isReport()) {
+			documentDetail.put("is_process_before_launch", !Util.isEmpty(process.getClassname(), true));
 			documentDetail.put("report_view_id", process.getAD_ReportView_ID());
 			documentDetail.put("print_format_id", process.getAD_PrintFormat_ID());
 			MReportView reportView = null;
