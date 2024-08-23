@@ -136,16 +136,18 @@ public class Browser extends DictionaryDocument {
 			)
 		);
 
-		final String whereClause = MBrowseField.COLUMNNAME_AD_Browse_ID + "=?";
+		// Browse Fields
 		List<MBrowseField> browseFields = new Query(
 			browser.getCtx(),
-			MBrowseField.Table_Name,
-			whereClause,
+			I_AD_Browse_Field.Table_Name,
+			I_AD_Browse_Field.COLUMNNAME_AD_Browse_ID + "=?",
 			null
 		)
 			.setParameters(browser.getAD_Browse_ID())
+			.setOnlyActiveRecords(true)
 			.setOrderBy(MBrowseField.COLUMNNAME_SeqNo)
-			.list();
+			.list()
+		;
 		documentDetail.put("fields", convertFields(browseFields));
 		// documentDetail.put("display_fields", convertFields(browser.getDisplayFields()));
 		// documentDetail.put("criteria_fields", convertFields(browser.getCriteriaFields()));
