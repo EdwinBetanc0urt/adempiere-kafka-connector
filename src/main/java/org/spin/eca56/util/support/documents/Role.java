@@ -21,18 +21,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Process;
 import org.adempiere.core.domains.models.I_AD_Window;
 import org.adempiere.core.domains.models.I_AD_Workflow;
+import org.adempiere.model.MBrowse;
 // import org.adempiere.core.domains.models.I_PA_DashboardContent;
 import org.compiere.model.MClientInfo;
+// import org.compiere.model.MDashboardContent;
+import org.compiere.model.MForm;
+import org.compiere.model.MProcess;
 import org.compiere.model.MRole;
 import org.compiere.model.MTree;
+import org.compiere.model.MWindow;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
+import org.compiere.wf.MWorkflow;
 import org.spin.eca56.util.support.DictionaryDocument;
 
 /**
@@ -72,8 +79,8 @@ public class Role extends DictionaryDocument {
 		detail.put("dashboard_access", getDashboardAccess(role));
 		return detail;
 	}
-	
-	private List<Integer> getWindowAccess(MRole role) {
+
+	private List<String> getWindowAccess(MRole role) {
 		return new Query(
 			role.getCtx(),
 			I_AD_Window.Table_Name,
@@ -82,10 +89,17 @@ public class Role extends DictionaryDocument {
 		)
 			.setParameters(role.getAD_Role_ID())
 			.setOnlyActiveRecords(true)
-			.getIDsAsList();
+			.getIDsAsList()
+			.stream()
+			.map(windowId -> {
+				MWindow window = MWindow.get(role.getCtx(), windowId);
+				return window.getUUID();
+			})
+			.collect(Collectors.toList())
+		;
 	}
-	
-	private List<Integer> getProcessAccess(MRole role) {
+
+	private List<String> getProcessAccess(MRole role) {
 		return new Query(
 			role.getCtx(),
 			I_AD_Process.Table_Name,
@@ -94,10 +108,17 @@ public class Role extends DictionaryDocument {
 		)
 			.setParameters(role.getAD_Role_ID())
 			.setOnlyActiveRecords(true)
-			.getIDsAsList();
+			.getIDsAsList()
+			.stream()
+			.map(processId -> {
+				MProcess process = MProcess.get(role.getCtx(), processId);
+				return process.getUUID();
+			})
+			.collect(Collectors.toList())
+		;
 	}
-	
-	private List<Integer> getFormAccess(MRole role) {
+
+	private List<String> getFormAccess(MRole role) {
 		return new Query(
 			role.getCtx(),
 			I_AD_Form.Table_Name,
@@ -106,10 +127,17 @@ public class Role extends DictionaryDocument {
 		)
 			.setParameters(role.getAD_Role_ID())
 			.setOnlyActiveRecords(true)
-			.getIDsAsList();
+			.getIDsAsList()
+			.stream()
+			.map(formId -> {
+				MForm form = new MForm(role.getCtx(), formId, null);
+				return form.getUUID();
+			})
+			.collect(Collectors.toList())
+		;
 	}
 	
-	private List<Integer> getBrowserAccess(MRole role) {
+	private List<String> getBrowserAccess(MRole role) {
 		return new Query(
 			role.getCtx(),
 			I_AD_Browse.Table_Name,
@@ -118,10 +146,17 @@ public class Role extends DictionaryDocument {
 		)
 			.setParameters(role.getAD_Role_ID())
 			.setOnlyActiveRecords(true)
-			.getIDsAsList();
+			.getIDsAsList()
+			.stream()
+			.map(browserId -> {
+				MBrowse browse = MBrowse.get(role.getCtx(), browserId);
+				return browse.getUUID();
+			})
+			.collect(Collectors.toList())
+		;
 	}
-	
-	private List<Integer> getWorkflowAccess(MRole role) {
+
+	private List<String> getWorkflowAccess(MRole role) {
 		return new Query(
 			role.getCtx(),
 			I_AD_Workflow.Table_Name,
@@ -130,10 +165,17 @@ public class Role extends DictionaryDocument {
 		)
 			.setParameters(role.getAD_Role_ID())
 			.setOnlyActiveRecords(true)
-			.getIDsAsList();
+			.getIDsAsList()
+			.stream()
+			.map(workflowId -> {
+				MWorkflow workflow = MWorkflow.get(role.getCtx(), workflowId);
+				return workflow.getUUID();
+			})
+			.collect(Collectors.toList())
+		;
 	}
-	
-	private List<Integer> getDashboardAccess(MRole role) {
+
+	private List<String> getDashboardAccess(MRole role) {
 		// return new Query(
 		// 	role.getCtx(),
 		// 	I_PA_DashboardContent.Table_Name,
@@ -142,7 +184,14 @@ public class Role extends DictionaryDocument {
 		// )
 		// 	.setParameters(role.getAD_Role_ID())
 		// 	.setOnlyActiveRecords(true)
-		// 	.getIDsAsList();
+		// 	.getIDsAsList()
+		// 	.stream()
+		// 	.map(dashboardId -> {
+		// 		MDashboardContent dashboard = new MDashboardContent(role.getCtx(), dashboardId, null);
+		// 		return dashboard.getUUID();
+		// 	})
+		// 	.collect(Collectors.toList())
+		// ;
 		return new ArrayList<>();
 	}
 	
