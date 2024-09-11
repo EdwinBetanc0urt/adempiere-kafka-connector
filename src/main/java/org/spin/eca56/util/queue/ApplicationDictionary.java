@@ -32,7 +32,6 @@ import org.compiere.model.MClientInfo;
 import org.compiere.model.MLanguage;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
-import org.compiere.util.Env;
 import org.compiere.util.Util;
 import org.spin.eca56.util.support.IGenericDictionaryDocument;
 import org.spin.eca56.util.support.IGenericSender;
@@ -75,8 +74,10 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 	}
 	
 	private String getDictionaryCode() {
-		String code = MClientInfo.get(getContext(), Env.getAD_Client_ID(getContext())).get_ValueAsString(ECA56_DictionaryCode);
-		if(Util.isEmpty(code)) {
+		// Only system
+		MClientInfo clientInfo = MClientInfo.get(getContext(), 0);
+		String code = clientInfo.get_ValueAsString(ECA56_DictionaryCode);
+		if(Util.isEmpty(code, true)) {
 			code = "";
 		}
 		return code.toLowerCase();
