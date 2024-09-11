@@ -91,12 +91,14 @@ public class Process extends DictionaryDocument {
 				reportView = MReportView.get(entity.getCtx(), process.getAD_ReportView_ID());
 			}
 			ReportExportHandler exportHandler = new ReportExportHandler(entity.getCtx(), reportView);
-			Map<String, Object> reportExportReference = new HashMap<>();
+			List<Map<String, String>> reportExportsList = new ArrayList<>();
 			for(AbstractExportFormat reportType : exportHandler.getExportFormatList()) {
+				Map<String, String> reportExportReference = new HashMap<>();
 				reportExportReference.put("name", reportType.getName());
 				reportExportReference.put("type", reportType.getExtension());
+				reportExportsList.add(reportExportReference);
 			}
-			documentDetail.put("report_export_types", reportExportReference);
+			documentDetail.put("report_export_types", reportExportsList);
 		} else {
 			// Linked to Process
 			documentDetail.put("browser_id", process.getAD_Browse_ID());
