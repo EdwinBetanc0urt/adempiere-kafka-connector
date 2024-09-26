@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Migrations>
+  <Migration EntityType="ECA56" Name="ECA56 Disable MQS App Type" ReleaseNo="1.0" SeqNo="10210">
+    <Comments>ECA56 Disable Local Printing with MQS as App Type</Comments>
+    <Step SeqNo="10" StepType="AD">
+      <PO AD_Table_ID="54540" Action="U" Record_ID="50000" Table="AD_AppRegistration">
+        <Data AD_Column_ID="91273" Column="IsActive" oldValue="true">false</Data>
+      </PO>
+    </Step>
+  </Migration>
+</Migrations>
