@@ -84,6 +84,7 @@ public class Process extends DictionaryDocument {
 		documentDetail.put("is_report", process.isReport());
 		if(process.isReport()) {
 			documentDetail.put("is_process_before_launch", !Util.isEmpty(process.getClassname(), true));
+			documentDetail.put("is_jasper_report", !Util.isEmpty(process.getJasperReport(), true));
 			documentDetail.put("report_view_id", process.getAD_ReportView_ID());
 			documentDetail.put("print_format_id", process.getAD_PrintFormat_ID());
 			MReportView reportView = null;
