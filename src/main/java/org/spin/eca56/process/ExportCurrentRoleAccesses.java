@@ -22,6 +22,7 @@ import org.adempiere.core.domains.models.I_AD_Role;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MRole;
 import org.compiere.model.Query;
+import org.compiere.util.Env;
 import org.spin.eca56.util.queue.ApplicationDictionary;
 import org.spin.queue.util.QueueLoader;
 
@@ -61,6 +62,11 @@ public class ExportCurrentRoleAccesses extends ExportCurrentRoleAccessesAbstract
 			.setParameters(this.getRecord_ID())
 			.first()
 		;
+
+		final int clientId = Env.getAD_Client_ID(getCtx());
+		if (clientId != role.getAD_Client_ID()) {
+			throw new AdempiereException("@AD_Role_ID@ @RecordOfAnotherClient@");
+		}
 
 		QueueLoader.getInstance()
 			.getQueueManager(ApplicationDictionary.CODE)
