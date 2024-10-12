@@ -50,4 +50,5 @@ public abstract class ExportCurrentRoleAccessesAbstract extends SvrProcess {
 	public static final String getProcessName() {
 		return NAME_FOR_PROCESS;
 	}
+
 }
