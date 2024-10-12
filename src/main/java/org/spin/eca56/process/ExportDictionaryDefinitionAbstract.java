@@ -51,6 +51,10 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	public static final String ECA56_EXPORTFORMS = "ECA56_ExportForms";
 	/**	Parameter Name for Special Form	*/
 	public static final String AD_FORM_ID = "AD_Form_ID";
+	/**	Parameter Name for Export Roles	*/
+	public static final String ECA56_EXPORTROLES = "ECA56_ExportRoles";
+	/**	Parameter Name for Role	*/
+	public static final String AD_ROLE_ID = "AD_Role_ID";
 	/**	Parameter Value for Export Menu	*/
 	private boolean isExportMenu;
 	/**	Parameter Value for Menu	*/
@@ -71,6 +75,10 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	private boolean isExportForms;
 	/**	Parameter Value for Special Form	*/
 	private int formId;
+	/**	Parameter Value for Export Roles	*/
+	private boolean isExportRoles;
+	/**	Parameter Value for Role	*/
+	private int roleId;
 
 	@Override
 	protected void prepare() {
@@ -84,6 +92,8 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 		browseId = getParameterAsInt(AD_BROWSE_ID);
 		isExportForms = getParameterAsBoolean(ECA56_EXPORTFORMS);
 		formId = getParameterAsInt(AD_FORM_ID);
+		isExportRoles = getParameterAsBoolean(ECA56_EXPORTROLES);
+		roleId = getParameterAsInt(AD_ROLE_ID);
 	}
 
 	/**	 Getter Parameter Value for Export Menu	*/
@@ -184,6 +194,26 @@ public abstract class ExportDictionaryDefinitionAbstract extends SvrProcess {
 	/**	 Setter Parameter Value for Special Form	*/
 	protected void setFormId(int formId) {
 		this.formId = formId;
+	}
+
+	/**	 Getter Parameter Value for Export Roles	*/
+	protected boolean isExportRoles() {
+		return isExportRoles;
+	}
+
+	/**	 Setter Parameter Value for Export Roles	*/
+	protected void setExportRoles(boolean isExportRoles) {
+		this.isExportRoles = isExportRoles;
+	}
+
+	/**	 Getter Parameter Value for Role	*/
+	protected int getRoleId() {
+		return roleId;
+	}
+
+	/**	 Setter Parameter Value for Role	*/
+	protected void setRoleId(int roleId) {
+		this.roleId = roleId;
 	}
 
 	/**	 Getter Parameter Value for Process ID	*/
