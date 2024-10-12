@@ -27,12 +27,13 @@ import java.util.regex.Pattern;
 
 import org.adempiere.core.domains.models.I_AD_Chart;
 import org.adempiere.core.domains.models.I_AD_Image;
-import org.adempiere.core.domains.models.I_AD_Reference;
+import org.adempiere.core.domains.models.I_AD_Ref_List;
 import org.adempiere.core.domains.models.I_C_ElementValue;
 import org.adempiere.core.domains.models.I_C_Location;
 import org.adempiere.core.domains.models.I_M_AttributeSetInstance;
 import org.adempiere.core.domains.models.I_M_Locator;
 import org.adempiere.core.domains.models.I_S_ResourceAssignment;
+import org.adempiere.core.domains.models.X_AD_Reference;
 import org.compiere.model.MRefTable;
 import org.compiere.model.MValRule;
 import org.compiere.util.DisplayType;
@@ -93,14 +94,28 @@ public class ReferenceUtil {
 		return new ArrayList<String>(columnNamesMap.keySet());
 	}
 
-	public static ReferenceValues getReferenceDefinition(String columnName, int referenceId, int referenceValueId, int validationRuleId) {
+	public static ReferenceValues getReferenceDefinition(String columnName, int displayTypeId, int referenceValueId, int validationRuleId) {
 		String embeddedContextColumn = null;
-		if(referenceId > 0 && ReferenceUtil.isLookupReference(referenceId)) {
-//			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceId, null);
-			Map<String, Object> referenceDetail = new HashMap<>();
-			referenceDetail.put("internal_id", referenceId);
+
+		if (DisplayType.Button == displayTypeId) {
+			//	Reference Value
+			if (referenceValueId > 0) {
+				X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), referenceValueId, null);
+				if (reference != null && reference.getAD_Reference_ID() > 0) {
+					// overwrite display type to Table or List
+					if (X_AD_Reference.VALIDATIONTYPE_TableValidation.equals(reference.getValidationType())) {
+						displayTypeId = DisplayType.Table;
+					} else {
+						displayTypeId = DisplayType.List;
+					}
+				}
+			}
+		}
+
+		if(displayTypeId > 0 && ReferenceUtil.isLookupReference(displayTypeId)) {
+//			X_AD_Reference reference = new X_AD_Reference(Env.getCtx(), displayTypeId, null);
 //			MLookupInfo lookupInformation = null;
-			String tableName = getTableNameFromReference(columnName, referenceId);
+			String tableName = getTableNameFromReference(columnName, displayTypeId);
 //			//	Special references
 //			if(Util.isEmpty(tableName)) {
 //				lookupInformation = MLookupFactory.getLookupInfo(Env.getCtx(), 0, 0, referenceId, Language.getBaseLanguage(), columnName, referenceValueId, false, null, false);
@@ -123,19 +138,20 @@ public class ReferenceUtil {
 				MValRule validationRule = MValRule.get(Env.getCtx(), validationRuleId);
 				validationRuleValue = validationRule.getCode();
 			}
-			if((referenceId == DisplayType.Table || referenceId == DisplayType.Search) && referenceValueId > 0) {
+			if ((displayTypeId == DisplayType.Table || displayTypeId == DisplayType.Search) && referenceValueId > 0) {
 				MRefTable tableReference = MRefTable.getById(Env.getCtx(), referenceValueId);
 				if(tableReference != null) {
 					whereClauseReference = tableReference.getWhereClause();
 				}
 			}
 			embeddedContextColumn = Optional.ofNullable(whereClauseReference).orElse("")
-					+ Optional.ofNullable(validationRuleValue).orElse("");
-			return ReferenceValues.newInstance(referenceId, tableName, embeddedContextColumn);
+				+ Optional.ofNullable(validationRuleValue).orElse("")
+			;
+			return ReferenceValues.newInstance(displayTypeId, tableName, embeddedContextColumn);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get Table Name for special tables
 	 * @param columnName
@@ -151,7 +167,7 @@ public class ReferenceUtil {
 				tableName = I_C_ElementValue.Table_Name;
 			}
 		} else if (DisplayType.List == referenceId) {
-			tableName = I_AD_Reference.Table_Name;
+			tableName = I_AD_Ref_List.Table_Name;
 		} else if (DisplayType.Location == referenceId) {
 			tableName = I_C_Location.Table_Name;
 		} else if (DisplayType.Locator == referenceId) {

@@ -450,8 +450,9 @@ public class Window extends DictionaryDocument {
 		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), displayTypeId, referenceValueId, validationRuleId);
 		if(referenceValues != null) {
 			Map<String, Object> referenceDetail = new HashMap<>();
-			// referenceDetail.put("internal_id", referenceValues.getReferenceId());
 			referenceDetail.put("table_name", referenceValues.getTableName());
+			referenceDetail.put("reference_id", referenceValues.getReferenceId());
+			referenceDetail.put("reference_value_id", referenceValueId);
 			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
 					referenceValues.getEmbeddedContextColumn()
 				)

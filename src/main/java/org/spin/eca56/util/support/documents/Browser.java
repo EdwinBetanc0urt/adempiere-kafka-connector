@@ -237,8 +237,9 @@ public class Browser extends DictionaryDocument {
 		);
 		if(referenceValues != null) {
 			Map<String, Object> referenceDetail = new HashMap<>();
-			// referenceDetail.put("internal_id", referenceValues.getReferenceId());
 			referenceDetail.put("table_name", referenceValues.getTableName());
+			referenceDetail.put("reference_id", referenceValues.getReferenceId());
+			referenceDetail.put("reference_value_id", field.getAD_Reference_Value_ID());
 			referenceDetail.put("context_column_names", ReferenceUtil.getContextColumnNames(
 					referenceValues.getEmbeddedContextColumn()
 				)
