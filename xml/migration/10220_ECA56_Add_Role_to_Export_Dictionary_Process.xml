@@ -2,7 +2,7 @@
 <Migrations>
   <Migration EntityType="ECA56" Name="ECA56 Add Role to Export Dictionary Process" ReleaseNo="1.0" SeqNo="10220">
     <Comments>ECA56 Add Role parameter to Export Dictionary Process with external service</Comments>
-    <Step SeqNo="20" StepType="AD">
+    <Step SeqNo="10" StepType="AD">
       <PO AD_Table_ID="276" Action="I" Record_ID="62461" Table="AD_Element">
         <Data AD_Column_ID="2595" Column="AD_Client_ID">0</Data>
         <Data AD_Column_ID="2594" Column="AD_Element_ID">62461</Data>
@@ -28,7 +28,7 @@
         <Data AD_Column_ID="2601" Column="UpdatedBy">1001212</Data>
       </PO>
     </Step>
-    <Step SeqNo="30" StepType="AD">
+    <Step SeqNo="20" StepType="AD">
       <PO AD_Table_ID="277" Action="I" Record_ID="62461" Table="AD_Element_Trl">
         <Data AD_Column_ID="2639" Column="AD_Client_ID">0</Data>
         <Data AD_Column_ID="2637" Column="AD_Element_ID">62461</Data>
@@ -51,7 +51,7 @@
         <Data AD_Column_ID="2645" Column="UpdatedBy">1001212</Data>
       </PO>
     </Step>
-    <Step SeqNo="80" StepType="AD">
+    <Step SeqNo="30" StepType="AD">
       <PO AD_Table_ID="285" Action="I" Record_ID="59223" Table="AD_Process_Para">
         <Data AD_Column_ID="2815" Column="AD_Client_ID">0</Data>
         <Data AD_Column_ID="7729" Column="AD_Element_ID">62461</Data>
@@ -87,7 +87,7 @@
         <Data AD_Column_ID="3741" Column="ValueMin" isNewNull="true"/>
       </PO>
     </Step>
-    <Step SeqNo="90" StepType="AD">
+    <Step SeqNo="40" StepType="AD">
       <PO AD_Table_ID="286" Action="I" Record_ID="0" Table="AD_Process_Para_Trl">
         <Data AD_Column_ID="2833" Column="AD_Client_ID">0</Data>
         <Data AD_Column_ID="2832" Column="AD_Language">es_MX</Data>
@@ -105,7 +105,7 @@
         <Data AD_Column_ID="2839" Column="UpdatedBy">1001212</Data>
       </PO>
     </Step>
-    <Step SeqNo="100" StepType="AD">
+    <Step SeqNo="50" StepType="AD">
       <PO AD_Table_ID="285" Action="I" Record_ID="59224" Table="AD_Process_Para">
         <Data AD_Column_ID="2815" Column="AD_Client_ID">0</Data>
         <Data AD_Column_ID="7729" Column="AD_Element_ID">123</Data>
@@ -141,7 +141,7 @@
         <Data AD_Column_ID="3741" Column="ValueMin" isNewNull="true"/>
       </PO>
     </Step>
-    <Step SeqNo="110" StepType="AD">
+    <Step SeqNo="60" StepType="AD">
       <PO AD_Table_ID="286" Action="I" Record_ID="0" Table="AD_Process_Para_Trl">
         <Data AD_Column_ID="2833" Column="AD_Client_ID">0</Data>
         <Data AD_Column_ID="2832" Column="AD_Language">es_MX</Data>
