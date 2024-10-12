@@ -18,8 +18,6 @@
 
 package org.spin.eca56.process;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Form;
 import org.adempiere.core.domains.models.I_AD_Menu;
@@ -43,8 +41,6 @@ import org.spin.queue.util.QueueLoader;
  */
 public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDefinitionAbstract
 {
-
-	private AtomicInteger counter = new AtomicInteger();
 
 	@Override
 	protected void prepare()
@@ -111,7 +107,6 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.addToQueue()
 		;
 		addLog(menuItem.getAD_Menu_ID() + " - " + menuItem.getName());
-		counter.incrementAndGet();
 	}
 
 	private void exportTree() {
@@ -134,7 +129,6 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 					.addToQueue()
 				;
 				addLog(tree.getAD_Tree_ID() + " - " + tree.getName());
-				counter.incrementAndGet();
 			})
 		;
 	}
@@ -150,7 +144,6 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.addToQueue()
 		;
 		addLog(window.getAD_Window_ID() + " - " + window.getName());
-		counter.incrementAndGet();
 	}
 
 
@@ -165,7 +158,6 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.addToQueue()
 		;
 		addLog(process.getValue() + " - " + process.getName());
-		counter.incrementAndGet();
 	}
 
 	private void exportBrowserDefinition() {
@@ -179,7 +171,6 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.addToQueue()
 		;
 		addLog(browser.getValue() + " - " + browser.getName());
-		counter.incrementAndGet();
 	}
 
 
@@ -194,6 +185,6 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.addToQueue()
 		;
 		addLog(form.getClassname() + " - " + form.getName());
-		counter.incrementAndGet();
 	}
+
 }

@@ -52,6 +52,11 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 
 	@Override
 	protected String doIt() throws Exception {
+		//	For Roless Access
+		if(isExportRoles()) {
+			exportRolesDefinition();
+		}
+
 		//	For menu
 		if(isExportMenu()) {
 			exportMenuDefinition();
@@ -83,7 +88,6 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 
 
 	private void exportMenuDefinition() {
-		exportRoleDefinition();
 		exportTree();
 		exportMenuItemDefinition();
 	}
@@ -111,16 +115,25 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 			})
 		;
 	}
-	
-	private void exportRoleDefinition() {
+
+	private void exportRolesDefinition() {
 		addLog("@AD_Role_ID@");
+
+		// Add filter a specific Role
+		String whereClause = "";
+		List<Object> filtersList = new ArrayList<>();
+		if (this.getRoleId() > 0) {
+			whereClause = "AD_Role_ID = ?";
+			filtersList.add(this.getRoleId());
+		}
 		new Query(
 				getCtx(),
 				I_AD_Role.Table_Name,
-				null,
+				whereClause,
 				get_TrxName()
 		)
 			.setOnlyActiveRecords(true)
+			.setParameters(filtersList)
 			.getIDsAsList()
 			.forEach(roleId -> {
 				MRole role = MRole.get(getCtx(), roleId);
@@ -134,11 +147,11 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 			})
 		;
 	}
-	
+
 	private void exportMenuItemDefinition() {
 		addLog("@AD_Menu_ID@");
 
-		// Add filter a specific Window
+		// Add filter a specific Menu
 		String whereClause = "";
 		List<Object> filtersList = new ArrayList<>();
 		if (this.getMenuId() > 0) {
