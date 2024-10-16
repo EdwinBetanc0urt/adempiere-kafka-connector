@@ -357,6 +357,12 @@ public class Window extends DictionaryDocument {
 		detail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
 		detail.put("is_report", process.isReport());
 
+		boolean isMultiSelection = false;
+		if (process.get_ColumnIndex("SP003_IsMultiSelection") >= 0) {
+			isMultiSelection = process.get_ValueAsBoolean("SP003_IsMultiSelection");
+		}
+		detail.put("is_multi_selection", isMultiSelection);
+
 		// Linked
 		detail.put("browser_id", process.getAD_Browse_ID());
 		detail.put("form_id", process.getAD_Form_ID());
