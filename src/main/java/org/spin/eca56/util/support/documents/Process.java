@@ -80,6 +80,12 @@ public class Process extends DictionaryDocument {
 		documentDetail.put("is_active", process.isActive());
 		documentDetail.put("show_help", process.getShowHelp());
 
+		boolean isMultiSelection = false;
+		if (process.get_ColumnIndex("SP003_IsMultiSelection") >= 0) {
+			isMultiSelection = process.get_ValueAsBoolean("SP003_IsMultiSelection");
+		}
+		documentDetail.put("is_multi_selection", isMultiSelection);
+
 		// Report
 		documentDetail.put("is_report", process.isReport());
 		if(process.isReport()) {
