@@ -453,7 +453,12 @@ public class Window extends DictionaryDocument {
 			validationRuleId = column.getAD_Val_Rule_ID();
 		}
 
-		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(column.getColumnName(), displayTypeId, referenceValueId, validationRuleId);
+		ReferenceValues referenceValues = ReferenceUtil.getReferenceDefinition(
+			column.getColumnName(),
+			displayTypeId,
+			referenceValueId,
+			validationRuleId
+		);
 		if(referenceValues != null) {
 			Map<String, Object> referenceDetail = new HashMap<>();
 			referenceDetail.put("table_name", referenceValues.getTableName());
