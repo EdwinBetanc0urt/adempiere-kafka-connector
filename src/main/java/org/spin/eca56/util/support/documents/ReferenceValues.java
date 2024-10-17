@@ -27,6 +27,7 @@ public class ReferenceValues {
 	private int referenceId;
 	
 	private ReferenceValues(int referenceId, String tableName, String embeddedContextColumn) {
+		this.referenceId = referenceId;
 		this.tableName = tableName;
 		this.embeddedContextColumn = embeddedContextColumn;
 	}
@@ -46,4 +47,5 @@ public class ReferenceValues {
 	public int getReferenceId() {
 		return referenceId;
 	}
+
 }
