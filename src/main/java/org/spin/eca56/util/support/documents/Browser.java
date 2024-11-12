@@ -18,6 +18,8 @@
 package org.spin.eca56.util.support.documents;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +99,33 @@ public class Browser extends DictionaryDocument {
 		if(browser.getAD_Table_ID() > 0) {
 			MTable table = MTable.get(browser.getCtx(), browser.getAD_Table_ID());
 			documentDetail.put("table_name", table.getTableName());
+
+			Map<String, Object> tableDetil = new HashMap<>();
+			tableDetil.put("internal_id", table.getAD_Table_ID());
+			tableDetil.put("id", table.getUUID());
+			tableDetil.put("uuid", table.getUUID());
+			tableDetil.put("", table.getTableName());
+			tableDetil.put("access_table_namelevel", table.getAccessLevel());
+			List<String> keyColumnsList = Arrays.asList(
+				table.getKeyColumns()
+			);
+			tableDetil.put("key_columns", keyColumnsList);
+			tableDetil.put("is_view", table.isView());
+			tableDetil.put("is_document", table.isDocument());
+			tableDetil.put("is_deleteable", table.isDeleteable());
+			tableDetil.put("is_change_log", table.isChangeLog());
+			List<String> identifierColumns = table.getColumnsAsList(false).stream()
+				.filter(column -> {
+					return column.isIdentifier();
+				})
+				.sorted(Comparator.comparing(MColumn::getSeqNo))
+				.map(column -> {
+					return column.getColumnName();
+				})
+				.collect(Collectors.toList())
+			;
+			tableDetil.put("identifier_columns", identifierColumns);
+			documentDetail.put("table", tableDetil);
 		}
 
 		// External Reference
