@@ -133,6 +133,9 @@ public class Window extends DictionaryDocument {
 		detail.put("table_name", table.getTableName());
 
 		Map<String, Object> tableDetil = new HashMap<>();
+		tableDetil.put("internal_id", table.getAD_Table_ID());
+		tableDetil.put("id", table.getUUID());
+		tableDetil.put("uuid", table.getUUID());
 		tableDetil.put("table_name", table.getTableName());
 		tableDetil.put("access_level", table.getAccessLevel());
 		List<String> keyColumnsList = Arrays.asList(
