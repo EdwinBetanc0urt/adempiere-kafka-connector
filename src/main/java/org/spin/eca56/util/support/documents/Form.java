@@ -54,6 +54,7 @@ public class Form extends DictionaryDocument {
 		documentDetail.put("description", form.get_Translation(I_AD_Form.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", form.get_Translation(I_AD_Form.COLUMNNAME_Help, getLanguage()));
 		documentDetail.put("is_active", form.isActive());
+		documentDetail.put("is_beta_functionality", form.isBetaFunctionality());
 
 		String fileName = form.getClassname();
 		if (!Util.isEmpty(fileName, true)) {

@@ -80,6 +80,7 @@ public class Browser extends DictionaryDocument {
 		documentDetail.put("description", browser.get_Translation(I_AD_Browse.COLUMNNAME_Description, getLanguage()));
 		documentDetail.put("help", browser.get_Translation(I_AD_Browse.COLUMNNAME_Help, getLanguage()));
 		documentDetail.put("is_active", browser.isActive());
+		documentDetail.put("is_beta_functionality", browser.isBetaFunctionality());
 
 		documentDetail.put("is_execute_query_by_default", browser.isExecutedQueryByDefault());
 		documentDetail.put("is_collapsible_by_default", browser.isCollapsibleByDefault());

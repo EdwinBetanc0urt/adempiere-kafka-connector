@@ -79,6 +79,7 @@ public class Process extends DictionaryDocument {
 		documentDetail.put("help", process.get_Translation(I_AD_Process.COLUMNNAME_Help, getLanguage()));
 		documentDetail.put("is_active", process.isActive());
 		documentDetail.put("show_help", process.getShowHelp());
+		documentDetail.put("is_beta_functionality", process.isBetaFunctionality());
 
 		boolean isMultiSelection = false;
 		if (process.get_ColumnIndex("SP003_IsMultiSelection") >= 0) {
