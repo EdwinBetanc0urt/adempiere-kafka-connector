@@ -133,6 +133,7 @@ public class Browser extends DictionaryDocument {
 		documentDetail.put("process_id", browser.getAD_Process_ID());
 		if(browser.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(browser.getCtx(), browser.getAD_Process_ID());
+			documentDetail.put("process_uuid", process.getUUID());
 			Map<String, Object> referenceDetail = parseDictionaryEntity(process);
 			documentDetail.put("process", referenceDetail);
 		}
