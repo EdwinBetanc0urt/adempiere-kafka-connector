@@ -256,14 +256,23 @@ public class Window extends DictionaryDocument {
 		detail.put("process_id", tab.getAD_Process_ID());
 		if(tab.getAD_Process_ID() > 0) {
 			MProcess process = MProcess.get(tab.getCtx(), tab.getAD_Process_ID());
+			detail.put("process_uuid", process.getUUID());
 			if (process.isActive()) {
 				Map<String, Object> referenceDetail = parseProcess(process);
 				detail.put("process", referenceDetail);
 			}
 		}
+		List<MProcess> processesList = getProcessFromTab(tab);
 		detail.put("processes", convertProcesses(
-				getProcessFromTab(tab)
+				processesList
 			)
+		);
+		detail.put("processes_uuid",
+			processesList.stream()
+				.map(process -> {
+					return process.getUUID();
+				})
+				.collect(Collectors.toList())
 		);
 
 		//	Fields
