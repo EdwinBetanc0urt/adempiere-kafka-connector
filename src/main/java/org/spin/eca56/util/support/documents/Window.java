@@ -72,6 +72,8 @@ public class Window extends DictionaryDocument {
 		documentDetail.put("window_type", window.getWindowType());
 		documentDetail.put("is_sales_transaction", window.isSOTrx());
 		documentDetail.put("is_active", window.isActive());
+		documentDetail.put("is_beta_functionality", window.isBetaFunctionality());
+
 		//	Tabs
 		documentDetail.put("tabs", convertTabs(Arrays.asList(window.getTabs(false, null))));
 		putDocument(documentDetail);
