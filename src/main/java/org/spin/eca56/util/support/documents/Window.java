@@ -407,6 +407,7 @@ public class Window extends DictionaryDocument {
 		detail.put("is_allow_copy", field.isAllowCopy());
 		detail.put("is_heading", field.isHeading());
 		detail.put("is_field_only", field.isFieldOnly());
+		detail.put("is_quick_entry", field.isQuickEntry());
 
 		//	Column Properties
 		MColumn column = MColumn.get(field.getCtx(), field.getAD_Column_ID());
