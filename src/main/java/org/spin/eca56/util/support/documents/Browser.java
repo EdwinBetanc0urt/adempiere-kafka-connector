@@ -106,7 +106,7 @@ public class Browser extends DictionaryDocument {
 			tableDetil.put("id", table.getUUID());
 			tableDetil.put("uuid", table.getUUID());
 			tableDetil.put("table_name", table.getTableName());
-			tableDetil.put("access_table_namelevel", table.getAccessLevel());
+			tableDetil.put("access_level", table.getAccessLevel());
 			List<String> keyColumnsList = Arrays.asList(
 				table.getKeyColumns()
 			);
