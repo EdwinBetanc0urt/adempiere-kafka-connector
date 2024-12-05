@@ -62,7 +62,8 @@ public class MenuTree extends DictionaryDocument {
 		final String sql = "SELECT tn.Node_ID, tn.SeqNo "
 				+ "FROM " + tableName + " tn "
 				+ "WHERE tn.AD_Tree_ID = ? "
-				+ "AND tn.Parent_ID = ?";
+				+ "AND COALESCE(tn.Parent_ID, 0) = ?"
+		;
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(treeId);
 		parameters.add(parentId);
@@ -91,6 +92,7 @@ public class MenuTree extends DictionaryDocument {
 		documentDetail.put("internal_id", tree.getAD_Tree_ID());
 		documentDetail.put("id", tree.getUUID());
 		documentDetail.put("uuid", tree.getUUID());
+		documentDetail.put("name", tree.getName());
 		List<Map<String, Object>> childrenAsMap = new ArrayList<>();
 		children.forEach(child -> {
 			Map<String, Object> nodeAsMap = convertNode(child);
