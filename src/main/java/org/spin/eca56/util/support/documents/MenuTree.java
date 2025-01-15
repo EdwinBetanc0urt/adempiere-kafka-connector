@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.adempiere.core.domains.models.I_AD_TreeNodeMM;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MTree;
 import org.compiere.model.PO;
@@ -73,11 +74,15 @@ public class MenuTree extends DictionaryDocument {
 			while (resulset.next()) {
 				TreeNodeReference treeNode = TreeNodeReference.newInstance()
 					.withNodeId(
-						resulset.getInt("Node_ID")
+						resulset.getInt(
+							I_AD_TreeNodeMM.COLUMNNAME_Node_ID
+						)
 					)
 					.withParentId(parentId)
 					.withSequence(
-						resulset.getInt("SeqNo")
+						resulset.getInt(
+							I_AD_TreeNodeMM.COLUMNNAME_SeqNo
+						)
 					)
 				;
 				nodesList.add(treeNode);
