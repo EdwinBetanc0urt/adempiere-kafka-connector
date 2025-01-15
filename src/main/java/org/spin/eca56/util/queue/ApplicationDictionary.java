@@ -73,7 +73,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 	public void process(int queueId) {
 		send(queueId);
 	}
-	
+
 	private String getDictionaryCode() {
 		// Only system
 		MClientInfo clientInfo = MClientInfo.get(getContext(), 0);
@@ -83,7 +83,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 		}
 		return code.toLowerCase();
 	}
-	
+
 	public void send(int queueId) {
 		PO entity = getEntity();
 		if(entity != null) {
@@ -93,7 +93,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 				if(documentByLanguage != null) {
 					sender.send(documentByLanguage, documentByLanguage.getChannel());
 				}
-				// TODO: Skip with AD_Tree and AD_Role
+				// TODO: Skip with `AD_Tree` and `AD_Role`
 				getLanguages().forEach(languageId -> {
 					MLanguage language = new MLanguage(getContext(), languageId, getTransactionName());
 					IGenericDictionaryDocument aloneDocument = getDocumentManager(entity, language.getAD_Language());
@@ -107,7 +107,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			logger.fine("Queue Processed: " + queueId);
 		}
 	}
-	
+
 	private List<Integer> getLanguages() {
 		return new Query(getContext(), I_AD_Language.Table_Name, "(IsBaseLanguage = 'Y' OR IsSystemLanguage = 'Y')", getTransactionName())
 				.setOnlyActiveRecords(true)
