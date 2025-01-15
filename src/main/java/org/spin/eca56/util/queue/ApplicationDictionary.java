@@ -64,6 +64,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 			queue.setProcessed(true);
 			queue.saveEx();
 		} catch (Throwable e) {
+			// e.printStackTrace();
 			logger.warning(e.getLocalizedMessage());
 		}
 	}
@@ -92,6 +93,7 @@ public class ApplicationDictionary extends QueueManager implements IEngineDictio
 				if(documentByLanguage != null) {
 					sender.send(documentByLanguage, documentByLanguage.getChannel());
 				}
+				// TODO: Skip with AD_Tree and AD_Role
 				getLanguages().forEach(languageId -> {
 					MLanguage language = new MLanguage(getContext(), languageId, getTransactionName());
 					IGenericDictionaryDocument aloneDocument = getDocumentManager(entity, language.getAD_Language());
