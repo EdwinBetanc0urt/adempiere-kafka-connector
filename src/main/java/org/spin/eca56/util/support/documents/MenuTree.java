@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.adempiere.core.domains.models.I_AD_TreeNodeMM;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MTree;
 import org.compiere.model.PO;
@@ -60,30 +61,36 @@ public class MenuTree extends DictionaryDocument {
 	private List<TreeNodeReference> getChildren(int treeId, int parentId) {
 		String tableName = MTree.getNodeTableName(MTree.TREETYPE_Menu);
 		final String sql = "SELECT tn.Node_ID, tn.SeqNo "
-				+ "FROM " + tableName + " tn "
-				+ "WHERE tn.AD_Tree_ID = ? "
-				+ "AND COALESCE(tn.Parent_ID, 0) = ?"
+			+ "FROM " + tableName + " tn "
+			+ "WHERE tn.Node_ID > 0 "
+			+ "AND tn.AD_Tree_ID = ? "
+			+ "AND COALESCE(tn.Parent_ID, 0) = ?"
 		;
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(treeId);
 		parameters.add(parentId);
-		List<TreeNodeReference> nodeIds = new ArrayList<TreeNodeReference>();
+		List<TreeNodeReference> nodesList = new ArrayList<TreeNodeReference>();
 		DB.runResultSet(null, sql, parameters, resulset -> {
 			while (resulset.next()) {
-				nodeIds.add(TreeNodeReference.newInstance()
+				TreeNodeReference treeNode = TreeNodeReference.newInstance()
 					.withNodeId(
-						resulset.getInt("Node_ID")
+						resulset.getInt(
+							I_AD_TreeNodeMM.COLUMNNAME_Node_ID
+						)
 					)
 					.withParentId(parentId)
 					.withSequence(
-						resulset.getInt("SeqNo"))
+						resulset.getInt(
+							I_AD_TreeNodeMM.COLUMNNAME_SeqNo
+						)
 					)
 				;
+				nodesList.add(treeNode);
 			}
 		}).onFailure(throwable -> {
 			throw new AdempiereException(throwable);
 		});
-		return nodeIds;
+		return nodesList;
 	}
 
 	public MenuTree withNode(MTree tree) {
