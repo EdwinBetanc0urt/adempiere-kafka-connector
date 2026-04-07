@@ -117,7 +117,12 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.withEntity(window)
 					.addToQueue()
 				;
-				addLog(window.getAD_Window_ID() + " - " + window.getName());
+				addLog(
+					window.getAD_Window_ID(),
+					null,
+					null,
+					window.getName()
+				);
 				counter.incrementAndGet();
 			})
 		;
@@ -150,7 +155,12 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.withEntity(process)
 					.addToQueue()
 				;
-				addLog(process.getValue() + " - " + process.getName());
+				addLog(
+					process.getAD_Process_ID(),
+					null,
+					null,
+					process.getValue() + " - " + process.getName()
+				);
 				counter.incrementAndGet();
 		});
 	}
@@ -182,7 +192,12 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.withEntity(browser)
 					.addToQueue()
 				;
-				addLog(browser.getValue() + " - " + browser.getName());
+				addLog(
+					browser.getAD_Browse_ID(),
+					null,
+					null,
+					browser.getValue() + " - " + browser.getName()
+				);
 				counter.incrementAndGet();
 			})
 		;
@@ -215,7 +230,12 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.withEntity(form)
 					.addToQueue()
 				;
-				addLog(form.getClassname() + " - " + form.getName());
+				addLog(
+					form.getAD_Form_ID(),
+					null,
+					null,
+					form.getClassname() + " - " + form.getName()
+				);
 				counter.incrementAndGet();
 			})
 		;
@@ -248,7 +268,12 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.withEntity(role)
 					.addToQueue()
 				;
-				addLog(role.getAD_Role_ID() + " - " + role.getName());
+				addLog(
+					role.getAD_Role_ID(),
+					null,
+					null,
+					role.getName()
+				);
 				counter.incrementAndGet();
 			})
 		;
@@ -273,7 +298,12 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 					.withEntity(tree)
 					.addToQueue()
 				;
-				addLog(tree.getAD_Tree_ID() + " - " + tree.getName());
+				addLog(
+					tree.getAD_Tree_ID(),
+					null,
+					null,
+					tree.getName()
+				);
 				counter.incrementAndGet();
 			})
 		;
@@ -309,13 +339,18 @@ public class ExportDictionaryDefinition extends ExportDictionaryDefinitionAbstra
 			.setParameters(filtersList)
 			.getIDsAsList()
 			.forEach(menuId -> {
-				MMenu menu = new MMenu(getCtx(), menuId, get_TrxName());
+				MMenu menuItem = new MMenu(getCtx(), menuId, get_TrxName());
 				QueueLoader.getInstance()
 					.getQueueManager(ApplicationDictionary.CODE)
-					.withEntity(menu)
+					.withEntity(menuItem)
 					.addToQueue()
 				;
-				addLog(menu.getAD_Menu_ID() + " - " + menu.getName());
+				addLog(
+					menuItem.getAD_Menu_ID(),
+					null,
+					null,
+					menuItem.getName()
+				);
 				counter.incrementAndGet();
 			})
 		;

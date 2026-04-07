@@ -73,7 +73,12 @@ public class ExportCurrentRoleAccesses extends ExportCurrentRoleAccessesAbstract
 			.withEntity(role)
 			.addToQueue()
 		;
-		addLog(role.getAD_Role_ID() + " - " + role.getName());
+		addLog(
+			role.getAD_Role_ID(),
+			null,
+			null,
+			role.getName()
+		);
 	}
 
 }
