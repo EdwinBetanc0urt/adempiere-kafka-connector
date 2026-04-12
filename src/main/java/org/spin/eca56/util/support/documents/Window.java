@@ -92,17 +92,17 @@ public class Window extends DictionaryDocument {
 	}
 
 	private List<Map<String, Object>> convertTabs(List<MTab> tabs) {
-		List<Map<String, Object>> tabsDetail = new ArrayList<>();
 		if(tabs == null || tabs.isEmpty()) {
-			return tabsDetail;
+			return new ArrayList<>();
 		}
-		tabs.forEach(tab -> {
-			if (!tab.isActive()) {
-				return;
-			}
-			tabsDetail.add(parseTab(tab));
-		});
-		return tabsDetail;
+		// Parallel: each tab is independent (own queries with null trx -> own pooled
+		// connection; MTable/MColumn caches are thread-safe). map().collect() is safe
+		// for parallel streams and preserves the encounter order of the source list.
+		return tabs.parallelStream()
+			.filter(MTab::isActive)
+			.map(this::parseTab)
+			.collect(Collectors.toList())
+		;
 	}
 
 	private Map<String, Object> parseTab(MTab tab) {
@@ -333,33 +333,35 @@ public class Window extends DictionaryDocument {
 			null
 		)
 			.setParameters(filterList)
-			.list();
+			.list()
+		;
 	}
-	
+
 	private List<Map<String, Object>> convertFields(List<MField> fields) {
-		List<Map<String, Object>> fieldsDetail = new ArrayList<>();
 		if(fields == null) {
-			return fieldsDetail;
+			return new ArrayList<>();
 		}
-		fields.forEach(field -> {
-			fieldsDetail.add(parseField(field));
-		});
-		return fieldsDetail;
+		// Parallel + thread-safe collector. Preserves encounter order from the source
+		// list (which already comes ordered by SeqNo from the Query above).
+		return fields.parallelStream()
+			.map(this::parseField)
+			.collect(Collectors.toList())
+		;
 	}
-	
+
 	private List<Map<String, Object>> convertProcesses(List<MProcess> processesList) {
-		List<Map<String, Object>> processesDetail = new ArrayList<>();
 		if(processesList == null || processesList.isEmpty()) {
-			return processesDetail;
+			return new ArrayList<>();
 		}
-		processesList.parallelStream().forEach(process -> {
-			processesDetail.add(
-				parseProcess(process)
-			);
-		});
-		return processesDetail;
+		// Use map().collect() instead of forEach + ArrayList.add: the latter is NOT
+		// thread-safe and was producing ArrayIndexOutOfBoundsException under parallel
+		// execution. This form is safe for parallel streams.
+		return processesList.parallelStream()
+			.map(this::parseProcess)
+			.collect(Collectors.toList())
+		;
 	}
-	
+
 	private Map<String, Object> parseProcess(MProcess process) {
 		Map<String, Object> detail = new HashMap<>();
 		detail.put("internal_id", process.getAD_Process_ID());

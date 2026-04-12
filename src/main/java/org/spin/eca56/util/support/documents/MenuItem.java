@@ -20,7 +20,6 @@ package org.spin.eca56.util.support.documents;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.adempiere.core.domains.models.I_AD_Browse;
 import org.adempiere.core.domains.models.I_AD_Form;
@@ -161,29 +160,26 @@ public class MenuItem extends DictionaryDocument {
 		if (Util.isEmpty(webPath, true) || !webPath.contains("@")) {
 			return webPath;
 		}
-		Properties context = Env.getCtx();
-		final int windowNo = ThreadLocalRandom.current().nextInt(1, 8996 + 1);
+		// Use a fresh, local Properties instead of writing to the shared process
+		// context. This is:
+		//   * thread-safe      — no shared mutable state
+		//   * collision-free   — no windowNo lottery with other menu items or procs
+		//   * leak-free        — the context is discarded when this method returns
+		// The windowNo 0 is just a scope key inside this local Properties; it has
+		// no relation to any real UI window.
+		final Properties localContext = new Properties();
+		final int windowNo = 0;
 
-		final int menuId = menu.getAD_Menu_ID();
-		final int windowId = menu.getAD_Window_ID();
-		final int processId = menu.getAD_Process_ID();
-		final int browserId = menu.getAD_Browse_ID();
-		final int workflowId = menu.getAD_Workflow_ID();
-		final int formId = menu.getAD_Form_ID();
-		final int moduleId = menu.get_ValueAsInt("AD_Module_ID");
-		final int subModuleId = menu.get_ValueAsInt("AD_SubModule_ID");
+		Env.setContext(localContext, windowNo, "AD_Menu_ID", menu.getAD_Menu_ID());
+		Env.setContext(localContext, windowNo, "AD_Window_ID", menu.getAD_Window_ID());
+		Env.setContext(localContext, windowNo, "AD_Process_ID", menu.getAD_Process_ID());
+		Env.setContext(localContext, windowNo, "AD_Browse_ID", menu.getAD_Browse_ID());
+		Env.setContext(localContext, windowNo, "AD_Workflow_ID", menu.getAD_Workflow_ID());
+		Env.setContext(localContext, windowNo, "AD_Form_ID", menu.getAD_Form_ID());
+		Env.setContext(localContext, windowNo, "AD_Module_ID", menu.get_ValueAsInt("AD_Module_ID"));
+		Env.setContext(localContext, windowNo, "AD_SubModule_ID", menu.get_ValueAsInt("AD_SubModule_ID"));
 
-		Env.setContext(context, windowNo, "AD_Menu_ID", menuId);
-		Env.setContext(context, windowNo, "AD_Window_ID", windowId);
-		Env.setContext(context, windowNo, "AD_Process_ID", processId);
-		Env.setContext(context, windowNo, "AD_Browse_ID", browserId);
-		Env.setContext(context, windowNo, "AD_Workflow_ID", workflowId);
-		Env.setContext(context, windowNo, "AD_Form_ID", formId);
-		Env.setContext(context, windowNo, "AD_Module_ID", moduleId);
-		Env.setContext(context, windowNo, "AD_SubModule_ID", subModuleId);
-
-		final String targetParh = Env.parseContext(context, windowNo, webPath, false);
-		return targetParh;
+		return Env.parseContext(localContext, windowNo, webPath, false);
 	}
 
 	@Override

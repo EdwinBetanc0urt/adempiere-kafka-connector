@@ -193,18 +193,24 @@ public class Browser extends DictionaryDocument {
 		putDocument(documentDetail);
 		return this;
 	}
-	
+
 	private List<Map<String, Object>> convertFields(List<MBrowseField> fields) {
-		List<Map<String, Object>> fieldsDetail = new ArrayList<>();
 		if(fields == null) {
-			return fieldsDetail;
+			return new ArrayList<>();
 		}
-		fields.forEach(field -> {
-			fieldsDetail.add(parseField(field));
-		});
-		return fieldsDetail;
+		// Parallel + thread-safe collector. Browsers typically have 80-200 fields
+		// and each parseField triggers several queries (MViewColumn, MColumn,
+		// AD_Element, ReferenceUtil, DependenceUtil), so this is where the time
+		// goes. Each field is independent (own queries with null trx -> own pooled
+		// connection; MTable/MColumn caches are thread-safe). map().collect()
+		// preserves the encounter order from the source list (already ordered by
+		// SeqNo from the Query above).
+		return fields.parallelStream()
+			.map(this::parseField)
+			.collect(Collectors.toList())
+		;
 	}
-	
+
 	private Map<String, Object> parseField(MBrowseField field) {
 		Map<String, Object> detail = new HashMap<>();
 

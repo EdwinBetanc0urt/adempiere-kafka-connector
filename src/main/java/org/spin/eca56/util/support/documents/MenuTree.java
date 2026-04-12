@@ -58,20 +58,28 @@ public class MenuTree extends DictionaryDocument {
 		return withNode(tree);
 	}
 
-	private List<TreeNodeReference> getChildren(int treeId, int parentId) {
+	/**
+	 * Load all tree nodes in a single SQL query and index them by parent id.
+	 * This replaces the previous N+1 pattern (one query per visited parent)
+	 * with a single round trip to the database.
+	 *
+	 * @param treeId the AD_Tree_ID
+	 * @return map from parent id (0 = root) to its children, sorted by SeqNo
+	 */
+	private Map<Integer, List<TreeNodeReference>> loadNodesByParent(int treeId) {
 		String tableName = MTree.getNodeTableName(MTree.TREETYPE_Menu);
-		final String sql = "SELECT tn.Node_ID, tn.SeqNo "
+		final String sql = "SELECT tn.Node_ID, COALESCE(tn.Parent_ID, 0) AS Parent_ID, tn.SeqNo "
 			+ "FROM " + tableName + " tn "
 			+ "WHERE tn.Node_ID > 0 "
 			+ "AND tn.AD_Tree_ID = ? "
-			+ "AND COALESCE(tn.Parent_ID, 0) = ?"
+			+ "ORDER BY COALESCE(tn.Parent_ID, 0), tn.SeqNo"
 		;
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add(treeId);
-		parameters.add(parentId);
-		List<TreeNodeReference> nodesList = new ArrayList<TreeNodeReference>();
+		Map<Integer, List<TreeNodeReference>> nodesByParent = new HashMap<>();
 		DB.runResultSet(null, sql, parameters, resulset -> {
 			while (resulset.next()) {
+				int parentId = resulset.getInt("Parent_ID");
 				TreeNodeReference treeNode = TreeNodeReference.newInstance()
 					.withNodeId(
 						resulset.getInt(
@@ -85,49 +93,49 @@ public class MenuTree extends DictionaryDocument {
 						)
 					)
 				;
-				nodesList.add(treeNode);
+				nodesByParent
+					.computeIfAbsent(parentId, k -> new ArrayList<>())
+					.add(treeNode);
 			}
 		}).onFailure(throwable -> {
 			throw new AdempiereException(throwable);
 		});
-		return nodesList;
+		return nodesByParent;
 	}
 
 	public MenuTree withNode(MTree tree) {
-		List<TreeNodeReference> children = getChildren(tree.getAD_Tree_ID(), 0);
+		// Single query: fetch the whole tree in one round trip.
+		Map<Integer, List<TreeNodeReference>> nodesByParent = loadNodesByParent(tree.getAD_Tree_ID());
+
 		Map<String, Object> documentDetail = convertNode(TreeNodeReference.newInstance());
 		documentDetail.put("internal_id", tree.getAD_Tree_ID());
 		documentDetail.put("id", tree.getUUID());
 		documentDetail.put("uuid", tree.getUUID());
 		documentDetail.put("name", tree.getName());
-		List<Map<String, Object>> childrenAsMap = new ArrayList<>();
-		children.forEach(child -> {
-			Map<String, Object> nodeAsMap = convertNode(child);
-			//	Explode child
-			addChildren(tree.getAD_Tree_ID(), child, nodeAsMap);
-			childrenAsMap.add(nodeAsMap);
-		});
-		documentDetail.put("children", childrenAsMap);
+		documentDetail.put("children", buildChildren(nodesByParent, 0));
 		putDocument(documentDetail);
 		return this;
 	}
 
 	/**
-	 * Add children to menu
-	 * @param context
-	 * @param builder
-	 * @param node
+	 * Build the children list for a given parent id from the pre-loaded map.
+	 * Recurses in-memory without touching the database.
 	 */
-	private void addChildren(int treeId, TreeNodeReference node, Map<String, Object> parent) {
-		List<TreeNodeReference> children = getChildren(treeId, node.getNodeId());
-		List<Map<String, Object>> childrenAsMap = new ArrayList<>();
-		children.forEach(child -> {
+	private List<Map<String, Object>> buildChildren(
+		Map<Integer, List<TreeNodeReference>> nodesByParent,
+		int parentId
+	) {
+		List<TreeNodeReference> children = nodesByParent.get(parentId);
+		if (children == null || children.isEmpty()) {
+			return new ArrayList<>();
+		}
+		List<Map<String, Object>> childrenAsMap = new ArrayList<>(children.size());
+		for (TreeNodeReference child : children) {
 			Map<String, Object> nodeAsMap = convertNode(child);
-			//	Explode child
-			addChildren(treeId, child, nodeAsMap);
+			nodeAsMap.put("children", buildChildren(nodesByParent, child.getNodeId()));
 			childrenAsMap.add(nodeAsMap);
-		});
-		parent.put("children", childrenAsMap);
+		}
+		return childrenAsMap;
 	}
 
 	private MenuTree() {

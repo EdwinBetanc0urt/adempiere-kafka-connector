@@ -105,7 +105,12 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.withEntity(window)
 			.addToQueue()
 		;
-		addLog(window.getAD_Window_ID() + " - " + window.getName());
+		addLog(
+			window.getAD_Window_ID(),
+			null,
+			null,
+			window.getName()
+		);
 	}
 
 
@@ -122,8 +127,14 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.withEntity(process)
 			.addToQueue()
 		;
-		addLog(process.getValue() + " - " + process.getName());
+		addLog(
+			process.getAD_Process_ID(),
+			null,
+			null,
+			process.getValue() + " - " + process.getName());
+
 	}
+
 
 	private void exportBrowserDefinition() {
 		addLog("@AD_Browse_ID@");
@@ -138,7 +149,13 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.withEntity(browser)
 			.addToQueue()
 		;
-		addLog(browser.getValue() + " - " + browser.getName());
+		addLog(
+			browser.getAD_Browse_ID(),
+			null,
+			null,
+			browser.getValue() + " - " + browser.getName()
+		);
+
 	}
 
 
@@ -155,7 +172,12 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.withEntity(form)
 			.addToQueue()
 		;
-		addLog(form.getClassname() + " - " + form.getName());
+		addLog(
+			form.getAD_Form_ID(),
+			null,
+			null,
+			form.getClassname() + " - " + form.getName()
+		);
 	}
 
 
@@ -175,7 +197,12 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.withEntity(menuTree)
 			.addToQueue()
 		;
-		addLog(menuTree.getAD_Tree_ID() + " - " + menuTree.getName());
+		addLog(
+			menuTree.getAD_Tree_ID(),
+			null,
+			null,
+			menuTree.getName()
+		);
 	}
 
 
@@ -199,7 +226,12 @@ public class ExportCurrentDictionaryDefinition extends ExportCurrentDictionaryDe
 			.withEntity(menuItem)
 			.addToQueue()
 		;
-		addLog(menuItem.getAD_Menu_ID() + " - " + menuItem.getName());
+		addLog(
+			menuItem.getAD_Menu_ID(),
+			null,
+			null,
+			menuItem.getName()
+		);
 	}
 
 }

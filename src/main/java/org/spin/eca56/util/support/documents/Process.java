@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.adempiere.core.domains.models.I_AD_Element;
 import org.adempiere.core.domains.models.I_AD_Process;
@@ -140,13 +141,18 @@ public class Process extends DictionaryDocument {
 		boolean hasParameters = parameters != null && !parameters.isEmpty();
 		documentDetail.put("has_parameters", hasParameters);
 
-		List<Map<String, Object>> parametersDetail = new ArrayList<>();
-		if(hasParameters) {
-			parameters.forEach(parameter -> {
-				Map<String, Object> detail = parseProcessParameter(parameter);
-				parametersDetail.add(detail);
-			});
-		}
+		// Parallel + thread-safe collector. Process parameters are usually few
+		// (~10 per process), so the speedup here is modest, but parseProcessParameter
+		// triggers ReferenceUtil + DependenceUtil queries which are non-trivial.
+		// Using map().collect() also makes the code consistent with Window/Browser
+		// and avoids the unsafe forEach + ArrayList.add pattern. Encounter order
+		// is preserved (parameters already come ordered by SeqNo from the Query).
+		List<Map<String, Object>> parametersDetail = hasParameters
+			? parameters.parallelStream()
+				.map(this::parseProcessParameter)
+				.collect(Collectors.toList())
+			: new ArrayList<>()
+		;
 		documentDetail.put("parameters", parametersDetail);
 		putDocument(documentDetail);
 		return this;
